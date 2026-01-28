@@ -1,1 +1,16 @@
-[]
+@app.route("/profil", methods=["GET", "POST"])
+def profil():
+    profils = charger_profils()
+
+    if request.method == "POST":
+        nouveau_profil = {
+            "nom": request.form["nom"],
+            "prenom": request.form["prenom"],
+            "role": request.form["role"],
+            "actif": True
+        }
+        profils.append(nouveau_profil)
+        sauvegarder_profils(profils)
+
+    return render_template("profil.html", profils=profils)
+
