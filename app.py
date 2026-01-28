@@ -1,3 +1,5 @@
+FICHIER_ECHANGES = "echanges.json"
+
 import json
 import os
 
