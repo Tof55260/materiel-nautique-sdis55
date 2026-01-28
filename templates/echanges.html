@@ -1,1 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Demandes d’échange</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="header">
+    <img src="{{ url_for('static', filename='logo-nautique.png') }}" class="logo">
+    <h1>Demandes d’échange de matériel</h1>
+</header>
+
+<div class="container">
+
+<form method="post" class="card">
+    <h2>Nouvelle demande</h2>
+
+    <select name="agent" required>
+        <option value="">Agent</option>
+        {% for p in profils %}
+            <option value="{{ p.prenom }} {{ p.nom }}">
+                {{ p.prenom }} {{ p.nom }} ({{ p.role }})
+            </option>
+        {% endfor %}
+    </select>
+
+    <input type="text" name="materiel" placeholder="Matériel concerné" required>
+
+    <textarea name="motif" placeholder="Motif de l’échange" required></textarea>
+
+    <button type="submit">Envoyer la demande</button>
+</form>
+
+<div class="card">
+    <h2>Demandes existantes</h2>
+
+    <ul>
+    {% for e in echanges %}
+        <li>
+            <strong>{{ e.agent }}</strong> — {{ e.materiel }}<br>
+            Motif : {{ e.motif }}<br>
+            Statut : <b>{{ e.statut }}</b>
+        </li>
+    {% else %}
+        <li>Aucune demande</li>
+    {% endfor %}
+    </ul>
+</div>
+
+</div>
+
+</body>
+</html>
 
