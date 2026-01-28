@@ -3,20 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Sélection du profil</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<h1>Sélection du profil utilisateur</h1>
+<div class="container">
 
-<form method="post">
-    <button type="submit" name="role" value="Plongeur">
-        👤 Plongeur
-    </button>
-    <br><br>
-    <button type="submit" name="role" value="Sauveteur aquatique">
-        👤 Sauveteur aquatique
-    </button>
-</form>
+    <div class="header">
+        <img src="/static/logo-nautique.png" alt="Nautique SDIS 55">
+        <h1>Sélection du profil utilisateur</h1>
+    </div>
+
+    <form method="post">
+        <button type="submit" name="role" value="Plongeur">
+            👤 Plongeur
+        </button>
+        <br><br>
+        <button type="submit" name="role" value="Sauveteur aquatique">
+            👤 Sauveteur aquatique
+        </button>
+    </form>
+
+</div>
 
 </body>
 </html>
