@@ -5,6 +5,18 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import os
 
 app = Flask(__name__, template_folder="templates")
+FICHIER_PROFILS = "profils.json"
+
+def charger_profils():
+    if os.path.exists(FICHIER_PROFILS):
+        with open(FICHIER_PROFILS, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+def sauvegarder_profils(profils):
+    with open(FICHIER_PROFILS, "w", encoding="utf-8") as f:
+        json.dump(profils, f, indent=2, ensure_ascii=False)
+
 app.secret_key = "sdis55-nautique"
 
 materiels = []
