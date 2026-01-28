@@ -3,42 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestion Matériel Nautique – SDIS 55</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<h1>Gestion du matériel nautique</h1>
+<div class="container">
 
-<p>
-👤 Profil actif : <strong>{{ role }}</strong>  
-<a href="/changer_profil">Changer de profil</a>
-</p>
+    <div class="header">
+        <img src="/static/logo-nautique.png" alt="Nautique SDIS 55">
+        <h1>Gestion du matériel nautique</h1>
+    </div>
 
-<hr>
+    <div class="profil">
+        👤 Profil actif : <strong>{{ role }}</strong>
+        <a href="/changer_profil">Changer de profil</a>
+    </div>
 
-<form method="post" action="/ajouter">
-    <label>Nom du matériel :</label><br>
-    <input name="nom" required><br><br>
+    <form method="post" action="/ajouter">
+        <label>Nom du matériel</label>
+        <input name="nom" required>
 
-    <label>Type de matériel :</label><br>
-    <input name="type" required><br><br>
+        <label>Type de matériel</label>
+        <input name="type" required>
 
-    <label>Contrôle périodique (en mois) :</label><br>
-    <input name="controle" type="number" required><br><br>
+        <label>Périodicité de contrôle (en mois)</label>
+        <input name="controle" type="number" required>
 
-    <button type="submit">Ajouter au stock</button>
-</form>
+        <button type="submit">Ajouter au stock</button>
+    </form>
 
-<hr>
+    <h2>Stock opérationnel</h2>
+    <ul>
+        {% for m in materiels %}
+        <li>
+            {{ m.nom }} — {{ m.type }}  
+            <br>
+            🔁 contrôle tous les {{ m.controle }} mois  
+            <br>
+            👤 ajouté par : {{ m.ajoute_par }}
+        </li>
+        {% endfor %}
+    </ul>
 
-<h2>Stock</h2>
-<ul>
-    {% for m in materiels %}
-    <li>
-        {{ m.nom }} — {{ m.type }} — contrôle tous les {{ m.controle }} mois  
-        (ajouté par : {{ m.ajoute_par }})
-    </li>
-    {% endfor %}
-</ul>
+</div>
 
 </body>
 </html>
