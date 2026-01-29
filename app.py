@@ -19,6 +19,18 @@ materiels = []
 # =====================
 
 def charger_profils():
+    FICHIER_ECHANGES = "echanges.json"
+
+def charger_echanges():
+    if os.path.exists(FICHIER_ECHANGES):
+        with open(FICHIER_ECHANGES, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+def sauvegarder_echanges(echanges):
+    with open(FICHIER_ECHANGES, "w", encoding="utf-8") as f:
+        json.dump(echanges, f, indent=2, ensure_ascii=False)
+
     if os.path.exists(FICHIER_PROFILS):
         with open(FICHIER_PROFILS, "r", encoding="utf-8") as f:
             return json.load(f)
