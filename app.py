@@ -2,61 +2,39 @@ import json
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
 
-# =====================
-# CONFIGURATION
-# =====================
-
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
 app.secret_key = "sdis55-nautique"
 
-FICHIER_PROFILS = "profils.json"
 FICHIER_ECHANGES = "echanges.json"
+FICHIER_PROFILS = "profils.json"
 
 materiels = []
 
-# =====================
-# FONCTIONS PROFILS
-# =====================
+# ---------- OUTILS JSON ----------
+
+def charger_echanges():
+    if not os.path.exists(FICHIER_ECHANGES):
+        return []
+    with open(FICHIER_ECHANGES, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            return []
+
+def sauvegarder_echanges(echanges):
+    with open(FICHIER_ECHANGES, "w", encoding="utf-8") as f:
+        json.dump(echanges, f, indent=2, ensure_ascii=False)
 
 def charger_profils():
-    FICHIER_ECHANGES = "echanges.json"
-
-def charger_echanges():
-    if os.path.exists(FICHIER_ECHANGES):
-        with open(FICHIER_ECHANGES, "r", encoding="utf-8") as f:
+    if not os.path.exists(FICHIER_PROFILS):
+        return []
+    with open(FICHIER_PROFILS, "r", encoding="utf-8") as f:
+        try:
             return json.load(f)
-    return []
+        except json.JSONDecodeError:
+            return []
 
-def sauvegarder_echanges(echanges):
-    with open(FICHIER_ECHANGES, "w", encoding="utf-8") as f:
-        json.dump(echanges, f, indent=2, ensure_ascii=False)
-
-    if os.path.exists(FICHIER_PROFILS):
-        with open(FICHIER_PROFILS, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
-def sauvegarder_profils(profils):
-    with open(FICHIER_PROFILS, "w", encoding="utf-8") as f:
-        json.dump(profils, f, indent=2, ensure_ascii=False)
-
-# =====================
-# FONCTIONS ÉCHANGES
-# =====================
-
-def charger_echanges():
-    if os.path.exists(FICHIER_ECHANGES):
-        with open(FICHIER_ECHANGES, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
-def sauvegarder_echanges(echanges):
-    with open(FICHIER_ECHANGES, "w", encoding="utf-8") as f:
-        json.dump(echanges, f, indent=2, ensure_ascii=False)
-
-# =====================
-# ROUTES
-# =====================
+# ---------- ROUTES ----------
 
 @app.route("/")
 def index():
@@ -94,8 +72,11 @@ def ajouter():
 
 @app.route("/echanges", methods=["GET", "POST"])
 def echanges():
+    role = session.get("role")
+    if not role:
+        return redirect(url_for("profil"))
+
     echanges = charger_echanges()
-    profils = charger_profils()
 
     if request.method == "POST":
         nouvelle_demande = {
@@ -107,11 +88,9 @@ def echanges():
         echanges.append(nouvelle_demande)
         sauvegarder_echanges(echanges)
 
-    return render_template("echanges.html", echanges=echanges, profils=profils)
+    return render_template("echanges.html", echanges=echanges, role=role)
 
-# =====================
-# LANCEMENT
-# =====================
+# ---------- LANCEMENT ----------
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
