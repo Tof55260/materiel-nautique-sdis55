@@ -6,7 +6,6 @@ app = Flask(__name__, template_folder="templates")
 app.secret_key = "sdis55-nautique"
 
 FICHIER_ECHANGES = "echanges.json"
-FICHIER_PROFILS = "profils.json"
 
 materiels = []
 
@@ -28,39 +27,51 @@ def sauvegarder_json(fichier, data):
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 # ======================
-# ROUTES PRINCIPALES
+# IDENTIFICATION OBLIGATOIRE
 # ======================
 
-@app.route("/")
-def index():
-    role = session.get("role")
-    if not role:
-        return redirect(url_for("profil"))
-    return render_template("index.html", materiels=materiels, role=role)
-
-@app.route("/profil", methods=["GET", "POST"])
-def profil():
+@app.route("/", methods=["GET", "POST"])
+def identification():
     if request.method == "POST":
+        session["nom"] = request.form["nom"]
+        session["prenom"] = request.form["prenom"]
         session["role"] = request.form["role"]
         return redirect(url_for("index"))
-    return render_template("profil.html")
+
+    return render_template("identification.html")
+
+# ======================
+# PAGES PRINCIPALES
+# ======================
+
+@app.route("/accueil")
+def index():
+    if "nom" not in session:
+        return redirect(url_for("identification"))
+
+    return render_template(
+        "index.html",
+        materiels=materiels,
+        nom=session["nom"],
+        prenom=session["prenom"],
+        role=session["role"]
+    )
 
 @app.route("/changer_profil")
 def changer_profil():
-    session.pop("role", None)
-    return redirect(url_for("profil"))
+    session.clear()
+    return redirect(url_for("identification"))
 
 @app.route("/ajouter", methods=["POST"])
 def ajouter():
-    role = session.get("role")
-    if not role:
-        return redirect(url_for("profil"))
+    if "nom" not in session:
+        return redirect(url_for("identification"))
 
     materiels.append({
         "nom": request.form["nom"],
         "type": request.form["type"],
         "controle": request.form["controle"],
-        "ajoute_par": role
+        "ajoute_par": f"{session['prenom']} {session['nom']}"
     })
 
     return redirect(url_for("index"))
@@ -71,33 +82,33 @@ def ajouter():
 
 @app.route("/echanges", methods=["GET", "POST"])
 def echanges():
-    role = session.get("role")
-    if not role:
-        return redirect(url_for("profil"))
+    if "nom" not in session:
+        return redirect(url_for("identification"))
 
     echanges = charger_json(FICHIER_ECHANGES)
 
     if request.method == "POST":
-        nouvelle_demande = {
+        echanges.append({
             "id": len(echanges) + 1,
-            "agent": request.form["agent"],
+            "agent": f"{session['prenom']} {session['nom']}",
+            "profil": session["role"],
             "materiel": request.form["materiel"],
             "motif": request.form["motif"],
             "statut": "En attente"
-        }
-        echanges.append(nouvelle_demande)
+        })
         sauvegarder_json(FICHIER_ECHANGES, echanges)
 
     return render_template(
         "echanges.html",
         echanges=echanges,
-        role=role
+        nom=session["nom"],
+        prenom=session["prenom"],
+        role=session["role"]
     )
 
 @app.route("/echanges/<int:id>/<action>")
 def changer_statut(id, action):
-    role = session.get("role")
-    if role != "chef":
+    if session.get("role") != "chef":
         return redirect(url_for("echanges"))
 
     echanges = charger_json(FICHIER_ECHANGES)
