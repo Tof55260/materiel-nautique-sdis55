@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Administration des agents</title>
+  <title>Administration</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -15,44 +15,42 @@
       <div class="brand-subtitle">Gestion des agents</div>
     </div>
   </div>
+
+  <div class="userchip">
+    <a class="link" href="{{ url_for('logout') }}">Se déconnecter</a>
+  </div>
 </header>
+
+<nav class="tabs">
+  <a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
+  <a class="tab" href="{{ url_for('page_echanges') }}">Échanges</a>
+  <a class="tab active" href="{{ url_for('admin_agents') }}">Administration</a>
+</nav>
 
 <main class="wrap">
   <section class="card">
-    <h2>Créer un agent</h2>
+    <h2>Agents enregistrés</h2>
 
-    <form method="POST" class="formgrid">
-      <input name="login" placeholder="Identifiant" required>
-      <input name="nom" placeholder="Nom" required>
-      <input name="prenom" placeholder="Prénom" required>
-
-      <select name="role">
-        <option value="Plongeur">Plongeur</option>
-        <option value="Sauveteur aquatique">Sauveteur aquatique</option>
-        <option value="Admin">Admin</option>
-      </select>
-
-      <input type="password" name="password" placeholder="Mot de passe" required>
-      <button type="submit">Créer</button>
-    </form>
-  </section>
-
-  <section class="card">
-    <h2>Agents existants</h2>
-
-    <table class="table">
-      <tr>
-        <th>Login</th><th>Nom</th><th>Prénom</th><th>Profil</th>
-      </tr>
-      {% for a in agents %}
-      <tr>
-        <td>{{ a.login }}</td>
-        <td>{{ a.nom }}</td>
-        <td>{{ a.prenom }}</td>
-        <td>{{ a.role }}</td>
-      </tr>
-      {% endfor %}
-    </table>
+    {% if agents|length == 0 %}
+      <p class="muted">Aucun agent enregistré.</p>
+    {% else %}
+      <table class="table">
+        <tr>
+          <th>Login</th>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Profil</th>
+        </tr>
+        {% for a in agents %}
+        <tr>
+          <td>{{ a.login }}</td>
+          <td>{{ a.nom }}</td>
+          <td>{{ a.prenom }}</td>
+          <td>{{ a.role }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    {% endif %}
   </section>
 </main>
 
