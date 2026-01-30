@@ -1,4 +1,3 @@
-import json
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
 
@@ -6,7 +5,15 @@ app = Flask(__name__, template_folder="templates")
 app.secret_key = "sdis55-nautique"
 
 # =========================
-# ROUTE DE CONNEXION
+# DONNÉES EN MÉMOIRE
+# =========================
+
+materiels = []
+echanges = []
+agents = []
+
+# =========================
+# CONNEXION (BYPASS ADMIN)
 # =========================
 
 @app.route("/", methods=["GET", "POST"])
@@ -15,7 +22,7 @@ def login():
         login = request.form.get("login", "").strip()
         password = request.form.get("password", "").strip()
 
-        # 🔥 BYPASS ADMIN GARANTI
+        # 🔓 BYPASS ADMIN GARANTI
         if login == "admin" and password == "admin55":
             session["login"] = "admin"
             session["nom"] = "BOUDOT"
@@ -33,7 +40,6 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
-
 # =========================
 # ACCUEIL
 # =========================
@@ -45,29 +51,28 @@ def accueil():
 
     return render_template(
         "index.html",
+        materiels=materiels,          # ✅ AJOUT CRITIQUE
         nom=session["nom"],
         prenom=session["prenom"],
         role=session["role"]
     )
 
-
 # =========================
-# ÉCHANGES (placeholder)
+# ÉCHANGES
 # =========================
 
 @app.route("/echanges")
-def echanges():
+def page_echanges():
     if "login" not in session:
         return redirect(url_for("login"))
 
     return render_template(
         "echanges.html",
-        echanges=[],
+        echanges=echanges,            # ✅ AJOUT CRITIQUE
         nom=session["nom"],
         prenom=session["prenom"],
         role=session["role"]
     )
-
 
 # =========================
 # ADMIN
@@ -78,8 +83,10 @@ def admin_agents():
     if session.get("role") != "Admin":
         return redirect(url_for("accueil"))
 
-    return render_template("admin_agents.html", agents=[])
-
+    return render_template(
+        "admin_agents.html",
+        agents=agents                 # ✅ AJOUT CRITIQUE
+    )
 
 # =========================
 # LANCEMENT
