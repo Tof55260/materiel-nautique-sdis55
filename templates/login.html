@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
+    <div>
+      <div class="brand-title">Matériel Nautique</div>
+      <div class="brand-subtitle">Connexion agent</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card">
+    <h2>Connexion</h2>
+
+    {% if erreur %}
+      <p style="color:red">{{ erreur }}</p>
+    {% endif %}
+
+    <form method="POST" class="formgrid">
+      <label>
+        Identifiant
+        <input type="text" name="login" required>
+      </label>
+
+      <label>
+        Mot de passe
+        <input type="password" name="password" required>
+      </label>
+
+      <button type="submit">Se connecter</button>
+    </form>
+  </section>
+</main>
+
+<footer class="footer">
+  Développé par <strong>Christophe BOUDOT</strong>
+</footer>
+
+</body>
+</html>
