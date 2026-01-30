@@ -1,1 +1,10 @@
+[
+  {
+    "login": "admin",
+    "nom": "BOUDOT",
+    "prenom": "Christophe",
+    "role": "Admin",
+    "password": "$2b$12$XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  }
+]
 
