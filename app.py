@@ -1,4 +1,3 @@
-raise Exception("TEST_RENDER_OK")
 
 import json
 import os
