@@ -2,93 +2,44 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Matériel Nautique SDIS 55</title>
+  <title>Accueil</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
 <header class="topbar">
   <div class="brand">
-<img src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}"
-     alt="Logo Nautique"
-     class="brand-logo">
-
-
-    <div class="brand-text">
+    <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
+    <div>
       <div class="brand-title">Matériel Nautique</div>
-      <div class="brand-subtitle">SDIS 55 — Application interne</div>
+      <div class="brand-subtitle">
+        {{ prenom }} {{ nom }} — {{ role }}
+      </div>
     </div>
   </div>
 
   <div class="userchip">
-    Profil : <strong>{{ role }}</strong>
     <a class="link" href="{{ url_for('logout') }}">Se déconnecter</a>
-
   </div>
 </header>
 
 <nav class="tabs">
-  <a class="tab active" href="{{ url_for('accueil')
- }}">Accueil</a>
-  <a class="tab" href="{{ url_for('page_echanges')
- }}">Échanges</a>
+  <a class="tab active" href="{{ url_for('accueil') }}">Accueil</a>
+  <a class="tab" href="{{ url_for('page_echanges') }}">Échanges</a>
+  {% if role == "Admin" %}
+    <a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
+  {% endif %}
 </nav>
 
 <main class="wrap">
-
   <section class="card">
-    <h2>Ajouter un matériel</h2>
-    <form class="formgrid" method="POST" action="{{ url_for('ajouter') }}">
-      <label>
-        Nom du matériel
-        <input type="text" name="nom" required>
-      </label>
-
-      <label>
-        Type
-        <input type="text" name="type" required>
-      </label>
-
-      <label>
-        Périodicité de contrôle (mois)
-        <input type="number" name="controle" min="1" required>
-      </label>
-
-      <button type="submit">Ajouter</button>
-    </form>
+    <h2>Bienvenue</h2>
+    <p class="muted">
+      Application de gestion du matériel nautique — SDIS 55
+    </p>
   </section>
-
-  <section class="card">
-    <h2>Stock</h2>
-
-    {% if materiels %}
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Nom</th>
-            <th>Type</th>
-            <th>Contrôle (mois)</th>
-            <th>Ajouté par</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for m in materiels %}
-          <tr>
-            <td>{{ m.nom }}</td>
-            <td>{{ m.type }}</td>
-            <td>{{ m.controle }}</td>
-            <td>{{ m.ajoute_par }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <p class="muted">Aucun matériel enregistré.</p>
-    {% endif %}
-  </section>
-
 </main>
+
 <footer class="footer">
   Développé par <strong>Christophe BOUDOT</strong>
 </footer>
