@@ -1,9 +1,0 @@
-[
-  {
-    "login": "admin",
-    "nom": "BOUDOT",
-    "prenom": "Christophe",
-    "role": "Admin",
-    "password": "pbkdf2:sha256:260000$kJwP4n4V$6f3d9a5b3b0d2c7b8a2f9e4f0a1d3c5e7b9c4d6a8f2e1c0b7a9d5e6"
-  }
-]
