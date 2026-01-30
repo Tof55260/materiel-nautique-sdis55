@@ -1,34 +1,213 @@
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  background: linear-gradient(180deg, #0a2a43, #0f3c5a);
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+/* ===== HEADER ===== */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #081e2e;
+  padding: 12px 20px;
+  border-bottom: 4px solid #e30613; /* rouge pompier */
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.brand-logo {
+  height: 60px;
+  width: auto;
+}
+
+.brand-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.brand-subtitle {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.userchip {
+  font-size: 0.9rem;
+}
+
+.userchip .link {
+  color: #e30613;
+  margin-left: 10px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  background: #0f3c5a;
+  border-bottom: 3px solid #081e2e;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.tab:hover {
+  background: #134f75;
+}
+
+.tab.active {
+  background: #e30613;
+}
+
+/* ===== LAYOUT ===== */
+.wrap {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.card {
+  background: #0c2f47;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+h2 {
+  margin-bottom: 15px;
+  color: #e6f4ff;
+}
+
+/* ===== FORMS ===== */
+.formgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.formgrid label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+
+input,
+textarea {
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  margin-top: 5px;
+}
+
+button {
+  background: #e30613;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #b90510;
+}
+
+/* ===== TABLE ===== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  text-align: left;
+}
+
+.table th {
+  background: #081e2e;
+}
+
+.table tr:nth-child(even) {
+  background: #0a2a43;
+}
+
+/* ===== BADGES ===== */
 .badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-weight: bold;
-    color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.85rem;
 }
 
 .badge.en\ attente {
-    background-color: orange;
+  background: #f39c12;
+  color: #000;
 }
 
 .badge.validé {
-    background-color: green;
+  background: #2ecc71;
+  color: #000;
 }
 
 .badge.refusé {
-    background-color: red;
+  background: #e74c3c;
 }
 
+/* ===== ACTION BUTTONS ===== */
 .btn {
-    padding: 6px 10px;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: bold;
-    color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  color: white;
 }
 
 .btn.green {
-    background-color: #2ecc71;
+  background: #2ecc71;
 }
 
 .btn.red {
-    background-color: #e74c3c;
+  background: #e74c3c;
+}
+
+/* ===== TEXT ===== */
+.muted {
+  opacity: 0.7;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .tabs {
+    flex-direction: column;
+  }
 }
