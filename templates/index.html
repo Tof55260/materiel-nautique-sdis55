@@ -2,50 +2,101 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Gestion Matériel Nautique – SDIS 55</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Gestion du matériel nautique</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
-<div class="container">
+    <!-- ===== EN-TÊTE ===== -->
+    <header class="header">
+        <div class="header-left">
+            <img src="{{ url_for('static', filename='images/logo_nautique.png') }}"
+                 alt="Logo Nautique"
+                 class="logo">
+            <h1>Matériel Nautique SDIS 55</h1>
+        </div>
+    </header>
 
-    <div class="header">
-        <img src="/static/logo-nautique.png" alt="Nautique SDIS 55">
-        <h1>Gestion du matériel nautique</h1>
-    </div>
+    <!-- ===== MENU ===== -->
+    <nav class="menu">
+        <a href="{{ url_for('index') }}">🏠 Accueil</a>
+        <a href="{{ url_for('echanges') }}">🔁 Échanges</a>
+        <a href="{{ url_for('changer_profil') }}">👤 Changer de profil</a>
+    </nav>
 
-    <div class="profil">
-        👤 Profil actif : <strong>{{ role }}</strong>
-        <a href="/changer_profil">Changer de profil</a>
-    </div>
+    <!-- ===== CONTENU PRINCIPAL ===== -->
+    <main class="container">
 
-    <form method="post" action="/ajouter">
-        <label>Nom du matériel</label>
-        <input name="nom" required>
+        <h2>Bienvenue</h2>
+        <p>
+            Profil connecté :
+            <strong>{{ role }}</strong>
+        </p>
 
-        <label>Type de matériel</label>
-        <input name="type" required>
+        <!-- ===== AJOUT MATÉRIEL ===== -->
+        <section class="card">
+            <h3>➕ Ajouter un matériel</h3>
 
-        <label>Périodicité de contrôle (en mois)</label>
-        <input name="controle" type="number" required>
+            <form method="POST" action="{{ url_for('ajouter') }}" class="form">
+                <label>
+                    Nom du matériel
+                    <input type="text" name="nom" required>
+                </label>
 
-        <button type="submit">Ajouter au stock</button>
-    </form>
+                <label>
+                    Type
+                    <input type="text" name="type" required>
+                </label>
 
-    <h2>Stock opérationnel</h2>
-    <ul>
-        {% for m in materiels %}
-        <li>
-            {{ m.nom }} — {{ m.type }}  
-            <br>
-            🔁 contrôle tous les {{ m.controle }} mois  
-            <br>
-            👤 ajouté par : {{ m.ajoute_par }}
-        </li>
-        {% endfor %}
-    </ul>
+                <label>
+                    Prochain contrôle (en mois)
+                    <input type="number" name="controle" min="1" required>
+                </label>
 
-</div>
+                <button type="submit">Ajouter</button>
+            </form>
+        </section>
+
+        <!-- ===== LISTE MATÉRIEL ===== -->
+        <section class="card">
+            <h3>📦 Matériel en stock</h3>
+
+            {% if materiels %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Type</th>
+                            <th>Contrôle (mois)</th>
+                            <th>Ajouté par</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in materiels %}
+                        <tr>
+                            <td>{{ m.nom }}</td>
+                            <td>{{ m.type }}</td>
+                            <td>{{ m.controle }}</td>
+                            <td>{{ m.ajoute_par }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Aucun matériel enregistré.</p>
+            {% endif %}
+        </section>
+
+    </main>
+
+    <!-- ===== PIED DE PAGE ===== -->
+    <footer class="footer">
+        <p>Équipe nautique SDIS 55 — Application interne</p>
+    </footer>
 
 </body>
 </html>
