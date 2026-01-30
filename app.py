@@ -1,7 +1,6 @@
 import json
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
-from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__, template_folder="templates")
 app.secret_key = "sdis55-nautique"
@@ -9,17 +8,18 @@ app.secret_key = "sdis55-nautique"
 FICHIER_AGENTS = "agents.json"
 FICHIER_ECHANGES = "echanges.json"
 
-materiels = []
-
-# ======================
+# =========================
 # OUTILS JSON
-# ======================
+# =========================
 
 def charger_json(fichier):
     if not os.path.exists(fichier):
         return []
-    with open(fichier, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with open(fichier, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        return []
 
 def sauvegarder_json(fichier, data):
     with open(fichier, "w", encoding="utf-8") as f:
@@ -32,25 +32,27 @@ def get_agent(login):
             return a
     return None
 
-# ======================
+# =========================
 # AUTHENTIFICATION
-# ======================
+# =========================
 
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        login = request.form["login"]
-        password = request.form["password"]
+        login = request.form["login"].strip()
+        password = request.form["password"].strip()
 
         agent = get_agent(login)
-        if agent and check_password_hash(agent["password"], password):
+
+        # ⚠️ TEMPORAIRE : mot de passe en clair
+        if agent and password == agent["password"]:
             session["login"] = agent["login"]
             session["nom"] = agent["nom"]
             session["prenom"] = agent["prenom"]
             session["role"] = agent["role"]
             return redirect(url_for("accueil"))
 
-        return render_template("login.html", erreur="Identifiants incorrects")
+        return render_template("login.html", erreur="Identifiant ou mot de passe incorrect")
 
     return render_template("login.html")
 
@@ -65,9 +67,9 @@ def login_requis():
 def admin_requis():
     return session.get("role") == "Admin"
 
-# ======================
-# PAGES PRINCIPALES
-# ======================
+# =========================
+# ACCUEIL
+# =========================
 
 @app.route("/accueil")
 def accueil():
@@ -76,15 +78,14 @@ def accueil():
 
     return render_template(
         "index.html",
-        materiels=materiels,
         nom=session["nom"],
         prenom=session["prenom"],
         role=session["role"]
     )
 
-# ======================
+# =========================
 # ADMIN — GESTION DES AGENTS
-# ======================
+# =========================
 
 @app.route("/admin/agents", methods=["GET", "POST"])
 def admin_agents():
@@ -95,19 +96,19 @@ def admin_agents():
 
     if request.method == "POST":
         agents.append({
-            "login": request.form["login"],
-            "nom": request.form["nom"],
-            "prenom": request.form["prenom"],
+            "login": request.form["login"].strip(),
+            "nom": request.form["nom"].strip(),
+            "prenom": request.form["prenom"].strip(),
             "role": request.form["role"],
-            "password": generate_password_hash(request.form["password"])
+            "password": request.form["password"].strip()  # TEMPORAIRE en clair
         })
         sauvegarder_json(FICHIER_AGENTS, agents)
 
     return render_template("admin_agents.html", agents=agents)
 
-# ======================
+# =========================
 # ÉCHANGES
-# ======================
+# =========================
 
 @app.route("/echanges", methods=["GET", "POST"])
 def echanges():
@@ -135,9 +136,26 @@ def echanges():
         role=session["role"]
     )
 
-# ======================
+@app.route("/echanges/<int:id>/<action>")
+def changer_statut(id, action):
+    if not login_requis() or not admin_requis():
+        return redirect(url_for("echanges"))
+
+    echanges = charger_json(FICHIER_ECHANGES)
+
+    for e in echanges:
+        if e["id"] == id:
+            if action == "valider":
+                e["statut"] = "Validé"
+            elif action == "refuser":
+                e["statut"] = "Refusé"
+
+    sauvegarder_json(FICHIER_ECHANGES, echanges)
+    return redirect(url_for("echanges"))
+
+# =========================
 # LANCEMENT
-# ======================
+# =========================
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
