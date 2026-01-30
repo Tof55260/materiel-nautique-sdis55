@@ -1,49 +1,34 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Profils – Équipe Nautique</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choix du profil — Nautique SDIS 55</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-<header class="header">
-    <img src="{{ url_for('static', filename='logo-nautique.png') }}" class="logo">
-    <h1>Gestion des profils</h1>
+<header class="topbar">
+  <div class="brand">
+    <img class="brand-logo" src="{{ url_for('static', filename='images/logo_nautique.png') }}" alt="Nautique SDIS 55">
+    <div class="brand-text">
+      <div class="brand-title">Matériel Nautique</div>
+      <div class="brand-subtitle">Choix du profil utilisateur</div>
+    </div>
+  </div>
 </header>
 
-<div class="container">
-
-    <form method="post" class="card">
-        <h2>Ajouter un agent</h2>
-
-        <input type="text" name="nom" placeholder="Nom" required>
-        <input type="text" name="prenom" placeholder="Prénom" required>
-
-        <select name="role" required>
-            <option value="">Rôle</option>
-            <option value="Plongeur">Plongeur</option>
-            <option value="Sauveteur aquatique">Sauveteur aquatique</option>
-        </select>
-
-        <button type="submit">Ajouter</button>
+<main class="wrap">
+  <section class="card">
+    <h2>Sélection du profil</h2>
+    <form method="POST" class="stack">
+      <button type="submit" name="role" value="Plongeur">Plongeur</button>
+      <button type="submit" name="role" value="Sauveteur aquatique">Sauveteur aquatique</button>
+      <button type="submit" name="role" value="chef">Chef (validation)</button>
     </form>
-
-    <div class="card">
-        <h2>Agents enregistrés</h2>
-
-        <ul>
-        {% for p in profils %}
-            <li>
-                <strong>{{ p.prenom }} {{ p.nom }}</strong> — {{ p.role }}
-            </li>
-        {% else %}
-            <li>Aucun agent enregistré</li>
-        {% endfor %}
-        </ul>
-    </div>
-
-</div>
+    <p class="muted">Le profil “Chef” permet d’accepter/refuser les échanges.</p>
+  </section>
+</main>
 
 </body>
 </html>
