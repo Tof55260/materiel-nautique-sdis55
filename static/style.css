@@ -226,3 +226,22 @@ button:hover {
   font-size: 0.9rem;
   opacity: 0.9;
 }
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  color: white;
+  font-size: 0.85em;
+}
+
+.badge.en attente {
+  background: #f39c12;
+}
+
+.badge.validé {
+  background: #27ae60;
+}
+
+.badge.refusé {
+  background: #c0392b;
+}
