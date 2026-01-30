@@ -4,7 +4,6 @@
     "nom": "BOUDOT",
     "prenom": "Christophe",
     "role": "Admin",
-    "password": "$2b$12$XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    "password": "pbkdf2:sha256:600000$9Rr6cR8p7wX7nF6A$ad7bfe21a43d35f8c91d4fbd0eaf7d3e3b7dfc1c34c65c07c9d8d2f36a6a7b1a"
   }
 ]
-
