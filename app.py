@@ -9,18 +9,44 @@ app.secret_key = "sdis55-nautique"
 FICHIER_AGENTS = "agents.json"
 
 # =========================
+# INITIALISATION ADMIN
+# =========================
+
+def initialiser_admin():
+    if not os.path.exists(FICHIER_AGENTS):
+        agents = []
+    else:
+        with open(FICHIER_AGENTS, "r", encoding="utf-8") as f:
+            try:
+                agents = json.load(f)
+            except json.JSONDecodeError:
+                agents = []
+
+    for a in agents:
+        if a.get("login") == "admin":
+            return  # admin déjà présent
+
+    agents.append({
+        "login": "admin",
+        "nom": "BOUDOT",
+        "prenom": "Christophe",
+        "role": "Admin",
+        "password": generate_password_hash("admin55")
+    })
+
+    with open(FICHIER_AGENTS, "w", encoding="utf-8") as f:
+        json.dump(agents, f, indent=2, ensure_ascii=False)
+
+# ⚠️ création garantie au démarrage
+initialiser_admin()
+
+# =========================
 # OUTILS
 # =========================
 
 def charger_agents():
-    if not os.path.exists(FICHIER_AGENTS):
-        return []
     with open(FICHIER_AGENTS, "r", encoding="utf-8") as f:
         return json.load(f)
-
-def sauvegarder_agents(agents):
-    with open(FICHIER_AGENTS, "w", encoding="utf-8") as f:
-        json.dump(agents, f, indent=2, ensure_ascii=False)
 
 def get_agent(login):
     for a in charger_agents():
@@ -80,48 +106,18 @@ def accueil():
     )
 
 # =========================
-# ADMIN — GESTION DES AGENTS
+# ADMIN
 # =========================
 
-@app.route("/admin/agents", methods=["GET", "POST"])
+@app.route("/admin/agents")
 def admin_agents():
     if not login_requis() or not admin_requis():
         return redirect(url_for("accueil"))
 
-    agents = charger_agents()
-
-    if request.method == "POST":
-        login = request.form["login"].strip()
-
-        # éviter doublons
-        if get_agent(login):
-            return render_template(
-                "admin_agents.html",
-                agents=agents,
-                erreur="Login déjà existant"
-            )
-
-        agents.append({
-            "login": login,
-            "nom": request.form["nom"].strip(),
-            "prenom": request.form["prenom"].strip(),
-            "role": request.form["role"],
-            "password": generate_password_hash(request.form["password"])
-        })
-
-        sauvegarder_agents(agents)
-        return redirect(url_for("admin_agents"))
-
-    return render_template("admin_agents.html", agents=agents)
-
-@app.route("/admin/agents/supprimer/<login>")
-def supprimer_agent(login):
-    if not login_requis() or not admin_requis():
-        return redirect(url_for("accueil"))
-
-    agents = [a for a in charger_agents() if a["login"] != login]
-    sauvegarder_agents(agents)
-    return redirect(url_for("admin_agents"))
+    return render_template(
+        "admin_agents.html",
+        agents=charger_agents()
+    )
 
 # =========================
 # ÉCHANGES (placeholder)
