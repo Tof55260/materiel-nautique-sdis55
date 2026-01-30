@@ -1,0 +1,9 @@
+[
+  {
+    "login": "admin",
+    "nom": "BOUDOT",
+    "prenom": "Christophe",
+    "role": "Admin",
+    "password": "__ADMIN_HASH__"
+  }
+]
