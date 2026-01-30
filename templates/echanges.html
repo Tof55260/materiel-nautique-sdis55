@@ -2,34 +2,71 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Échanges — Nautique SDIS 55</title>
+  <title>Échanges</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-  <footer class="footer">
-  Développé par <strong>Christophe BOUDOT</strong>
-</footer>
-
 <body>
 
 <header class="topbar">
   <div class="brand">
-<img src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}"
-     alt="Logo Nautique"
-     class="brand-logo">
-
-
-    <div class="brand-text">
+    <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
+    <div>
       <div class="brand-title">Échanges de matériel</div>
-      <div class="brand-subtitle">Suivi & validation</div>
+      <div class="brand-subtitle">
+        {{ prenom }} {{ nom }} — {{ role }}
+      </div>
     </div>
   </div>
 
   <div class="userchip">
-    Profil : <strong>{{ role }}</strong>
-    <a class="link" href="{{ url_for('changer_profil') }}">Changer</a>
+    <a class="link" href="{{ url_for('logout') }}">Se déconnecter</a>
   </div>
 </header>
 
 <nav class="tabs">
-  <a class="tab" href
+  <a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
+  <a class="tab active" href="{{ url_for('page_echanges') }}">Échanges</a>
+  {% if role == "Admin" %}
+    <a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
+  {% endif %}
+</nav>
+
+<main class="wrap">
+  <section class="card">
+    <h2>Demandes d’échanges</h2>
+
+    {% if echanges|length == 0 %}
+      <p class="muted">Aucune demande pour le moment.</p>
+    {% else %}
+      <table class="table">
+        <tr>
+          <th>Agent</th>
+          <th>Profil</th>
+          <th>Matériel</th>
+          <th>Motif</th>
+          <th>Statut</th>
+        </tr>
+        {% for e in echanges %}
+        <tr>
+          <td>{{ e.agent }}</td>
+          <td>{{ e.profil }}</td>
+          <td>{{ e.materiel }}</td>
+          <td>{{ e.motif }}</td>
+          <td>
+            <span class="badge {{ e.statut|lower }}">
+              {{ e.statut }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </section>
+</main>
+
+<footer class="footer">
+  Développé par <strong>Christophe BOUDOT</strong>
+</footer>
+
+</body>
+</html>
