@@ -1,7 +1,7 @@
 import json
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__, template_folder="templates")
 app.secret_key = "sdis55-nautique"
@@ -18,6 +18,10 @@ def charger_agents():
     with open(FICHIER_AGENTS, "r", encoding="utf-8") as f:
         return json.load(f)
 
+def sauvegarder_agents(agents):
+    with open(FICHIER_AGENTS, "w", encoding="utf-8") as f:
+        json.dump(agents, f, indent=2, ensure_ascii=False)
+
 def get_agent(login):
     for a in charger_agents():
         if a["login"] == login:
@@ -31,7 +35,7 @@ def admin_requis():
     return session.get("role") == "Admin"
 
 # =========================
-# CONNEXION
+# AUTHENTIFICATION
 # =========================
 
 @app.route("/", methods=["GET", "POST"])
@@ -76,7 +80,51 @@ def accueil():
     )
 
 # =========================
-# ÉCHANGES (placeholder stable)
+# ADMIN — GESTION DES AGENTS
+# =========================
+
+@app.route("/admin/agents", methods=["GET", "POST"])
+def admin_agents():
+    if not login_requis() or not admin_requis():
+        return redirect(url_for("accueil"))
+
+    agents = charger_agents()
+
+    if request.method == "POST":
+        login = request.form["login"].strip()
+
+        # éviter doublons
+        if get_agent(login):
+            return render_template(
+                "admin_agents.html",
+                agents=agents,
+                erreur="Login déjà existant"
+            )
+
+        agents.append({
+            "login": login,
+            "nom": request.form["nom"].strip(),
+            "prenom": request.form["prenom"].strip(),
+            "role": request.form["role"],
+            "password": generate_password_hash(request.form["password"])
+        })
+
+        sauvegarder_agents(agents)
+        return redirect(url_for("admin_agents"))
+
+    return render_template("admin_agents.html", agents=agents)
+
+@app.route("/admin/agents/supprimer/<login>")
+def supprimer_agent(login):
+    if not login_requis() or not admin_requis():
+        return redirect(url_for("accueil"))
+
+    agents = [a for a in charger_agents() if a["login"] != login]
+    sauvegarder_agents(agents)
+    return redirect(url_for("admin_agents"))
+
+# =========================
+# ÉCHANGES (placeholder)
 # =========================
 
 @app.route("/echanges")
@@ -90,20 +138,6 @@ def page_echanges():
         nom=session["nom"],
         prenom=session["prenom"],
         role=session["role"]
-    )
-
-# =========================
-# ADMIN
-# =========================
-
-@app.route("/admin/agents")
-def admin_agents():
-    if not login_requis() or not admin_requis():
-        return redirect(url_for("accueil"))
-
-    return render_template(
-        "admin_agents.html",
-        agents=charger_agents()
     )
 
 # =========================
