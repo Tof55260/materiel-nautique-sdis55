@@ -1,1 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Identification agent</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
+    <div>
+      <div class="brand-title">Matériel Nautique</div>
+      <div class="brand-subtitle">Identification agent</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card">
+    <h2>Connexion agent</h2>
+
+    <form method="POST" class="formgrid">
+      <label>
+        Nom
+        <input type="text" name="nom" required>
+      </label>
+
+      <label>
+        Prénom
+        <input type="text" name="prenom" required>
+      </label>
+
+      <label>
+        Profil
+        <select name="role" required>
+          <option value="Plongeur">Plongeur</option>
+          <option value="Sauveteur aquatique">Sauveteur aquatique</option>
+          <option value="chef">Chef / Responsable</option>
+        </select>
+      </label>
+
+      <button type="submit">Entrer</button>
+    </form>
+  </section>
+</main>
+
+<footer class="footer">
+  Développé par <strong>Christophe BOUDOT</strong>
+</footer>
+
+</body>
+</html>
 
