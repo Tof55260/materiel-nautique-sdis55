@@ -9,7 +9,8 @@ app.secret_key = "sdis55-nautique"
 # COMPTE ADMIN FIXE (TEMPORAIRE)
 # =========================
 ADMIN_LOGIN = "admin"
-ADMIN_PASSWORD = "admin55"
+ADMIN_PASSWORD_HASH = generate_password_hash("admin55")
+
 
 # =========================
 # AUTHENTIFICATION
@@ -21,7 +22,8 @@ def login():
         login = request.form.get("login", "").strip()
         password = request.form.get("password", "").strip()
 
-        if login == ADMIN_LOGIN and password == ADMIN_PASSWORD:
+        if login == ADMIN_LOGIN and check_password_hash(ADMIN_PASSWORD_HASH, password):
+
             session["login"] = "admin"
             session["nom"] = "BOUDOT"
             session["prenom"] = "Christophe"
