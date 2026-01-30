@@ -6,8 +6,13 @@ app = Flask(__name__, template_folder="templates")
 app.secret_key = "sdis55-nautique"
 
 FICHIER_ECHANGES = "echanges.json"
+FICHIER_PROFILS = "profils.json"
 
 materiels = []
+
+# ======================
+# OUTILS JSON
+# ======================
 
 def charger_json(fichier):
     if not os.path.exists(fichier):
@@ -21,6 +26,10 @@ def charger_json(fichier):
 def sauvegarder_json(fichier, data):
     with open(fichier, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
+
+# ======================
+# ROUTES PRINCIPALES
+# ======================
 
 @app.route("/")
 def index():
@@ -56,6 +65,10 @@ def ajouter():
 
     return redirect(url_for("index"))
 
+# ======================
+# ÉCHANGES
+# ======================
+
 @app.route("/echanges", methods=["GET", "POST"])
 def echanges():
     role = session.get("role")
@@ -65,20 +78,26 @@ def echanges():
     echanges = charger_json(FICHIER_ECHANGES)
 
     if request.method == "POST":
-        echanges.append({
+        nouvelle_demande = {
             "id": len(echanges) + 1,
             "agent": request.form["agent"],
             "materiel": request.form["materiel"],
             "motif": request.form["motif"],
             "statut": "En attente"
-        })
+        }
+        echanges.append(nouvelle_demande)
         sauvegarder_json(FICHIER_ECHANGES, echanges)
 
-    return render_template("echanges.html", echanges=echanges, role=role)
+    return render_template(
+        "echanges.html",
+        echanges=echanges,
+        role=role
+    )
 
 @app.route("/echanges/<int:id>/<action>")
 def changer_statut(id, action):
-    if session.get("role") != "chef":
+    role = session.get("role")
+    if role != "chef":
         return redirect(url_for("echanges"))
 
     echanges = charger_json(FICHIER_ECHANGES)
@@ -92,6 +111,10 @@ def changer_statut(id, action):
 
     sauvegarder_json(FICHIER_ECHANGES, echanges)
     return redirect(url_for("echanges"))
+
+# ======================
+# LANCEMENT
+# ======================
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
