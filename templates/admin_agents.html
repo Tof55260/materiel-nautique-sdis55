@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Administration</title>
+  <title>Administration — Agents</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -28,30 +28,62 @@
 </nav>
 
 <main class="wrap">
-  <section class="card">
-    <h2>Agents enregistrés</h2>
 
-    {% if agents|length == 0 %}
-      <p class="muted">Aucun agent enregistré.</p>
-    {% else %}
-      <table class="table">
-        <tr>
-          <th>Login</th>
-          <th>Nom</th>
-          <th>Prénom</th>
-          <th>Profil</th>
-        </tr>
-        {% for a in agents %}
-        <tr>
-          <td>{{ a.login }}</td>
-          <td>{{ a.nom }}</td>
-          <td>{{ a.prenom }}</td>
-          <td>{{ a.role }}</td>
-        </tr>
-        {% endfor %}
-      </table>
-    {% endif %}
-  </section>
+<section class="card">
+  <h2>Ajouter un agent</h2>
+
+  {% if erreur %}
+    <p style="color:red">{{ erreur }}</p>
+  {% endif %}
+
+  <form method="POST" class="formgrid">
+    <input name="login" placeholder="Login" required>
+    <input name="nom" placeholder="Nom" required>
+    <input name="prenom" placeholder="Prénom" required>
+
+    <select name="role">
+      <option>Plongeur</option>
+      <option>Sauveteur</option>
+      <option>Admin</option>
+    </select>
+
+    <input type="password" name="password" placeholder="Mot de passe" required>
+
+    <button type="submit">Créer l’agent</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Agents existants</h2>
+
+  {% if agents|length == 0 %}
+    <p class="muted">Aucun agent enregistré.</p>
+  {% else %}
+  <table class="table">
+    <tr>
+      <th>Login</th>
+      <th>Nom</th>
+      <th>Prénom</th>
+      <th>Profil</th>
+      <th></th>
+    </tr>
+    {% for a in agents %}
+    <tr>
+      <td>{{ a.login }}</td>
+      <td>{{ a.nom }}</td>
+      <td>{{ a.prenom }}</td>
+      <td>{{ a.role }}</td>
+      <td>
+        {% if a.login != "admin" %}
+          <a class="link danger" href="{{ url_for('supprimer_agent', login=a.login) }}">Supprimer</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+</section>
+
 </main>
 
 <footer class="footer">
