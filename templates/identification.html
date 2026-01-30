@@ -3,14 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Identification agent</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
 <header class="topbar">
   <div class="brand">
-    <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
-    <div>
+    <img
+      class="brand-logo big"
+      src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}"
+      alt="Logo Nautique"
+    >
+    <div class="brand-text">
       <div class="brand-title">Matériel Nautique</div>
       <div class="brand-subtitle">Identification agent</div>
     </div>
@@ -35,6 +41,7 @@
       <label>
         Profil
         <select name="role" required>
+          <option value="">— Sélectionner —</option>
           <option value="Plongeur">Plongeur</option>
           <option value="Sauveteur aquatique">Sauveteur aquatique</option>
           <option value="chef">Chef / Responsable</option>
@@ -52,4 +59,3 @@
 
 </body>
 </html>
-
