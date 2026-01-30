@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -14,10 +15,15 @@ ADMIN_LOGIN = "admin"
 ADMIN_PASSWORD_HASH = generate_password_hash("admin55")
 
 # =========================
-# FICHIER AGENTS
+# FICHIERS JSON
 # =========================
 
 FICHIER_AGENTS = "agents.json"
+FICHIER_ECHANGES = "echanges.json"
+
+# =========================
+# OUTILS AGENTS
+# =========================
 
 def charger_agents():
     if not os.path.exists(FICHIER_AGENTS):
@@ -34,6 +40,20 @@ def get_agent(login):
         if a["login"] == login:
             return a
     return None
+
+# =========================
+# OUTILS ÉCHANGES
+# =========================
+
+def charger_echanges():
+    if not os.path.exists(FICHIER_ECHANGES):
+        return []
+    with open(FICHIER_ECHANGES, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def sauvegarder_echanges(echanges):
+    with open(FICHIER_ECHANGES, "w", encoding="utf-8") as f:
+        json.dump(echanges, f, indent=2, ensure_ascii=False)
 
 # =========================
 # AUTHENTIFICATION
@@ -136,21 +156,53 @@ def supprimer_agent(login):
     return redirect(url_for("admin_agents"))
 
 # =========================
-# ÉCHANGES (PLACEHOLDER)
+# ÉCHANGES — WORKFLOW COMPLET
 # =========================
 
-@app.route("/echanges")
+@app.route("/echanges", methods=["GET", "POST"])
 def page_echanges():
     if "login" not in session:
         return redirect(url_for("login"))
 
+    echanges = charger_echanges()
+
+    if request.method == "POST":
+        echanges.append({
+            "id": len(echanges) + 1,
+            "date": datetime.now().strftime("%d/%m/%Y %H:%M"),
+            "agent": f"{session['prenom']} {session['nom']}",
+            "profil": session["role"],
+            "materiel": request.form["materiel"],
+            "motif": request.form["motif"],
+            "statut": "En attente"
+        })
+        sauvegarder_echanges(echanges)
+        return redirect(url_for("page_echanges"))
+
     return render_template(
         "echanges.html",
-        echanges=[],
+        echanges=echanges,
         nom=session["nom"],
         prenom=session["prenom"],
         role=session["role"]
     )
+
+@app.route("/echanges/<int:id>/<action>")
+def changer_statut(id, action):
+    if session.get("role") != "Admin":
+        return redirect(url_for("page_echanges"))
+
+    echanges = charger_echanges()
+
+    for e in echanges:
+        if e["id"] == id:
+            if action == "valider":
+                e["statut"] = "Validé"
+            elif action == "refuser":
+                e["statut"] = "Refusé"
+
+    sauvegarder_echanges(echanges)
+    return redirect(url_for("page_echanges"))
 
 # =========================
 # LANCEMENT
