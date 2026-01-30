@@ -1,3 +1,5 @@
+raise Exception("TEST_RENDER_OK")
+
 import json
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
