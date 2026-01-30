@@ -1,102 +1,87 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Gestion du matériel nautique</title>
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matériel Nautique SDIS 55</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-    <!-- ===== EN-TÊTE ===== -->
-    <header class="header">
-        <div class="header-left">
-            <img src="{{ url_for('static', filename='images/logo_nautique.png') }}"
-                 alt="Logo Nautique"
-                 class="logo">
-            <h1>Matériel Nautique SDIS 55</h1>
-        </div>
-    </header>
+<header class="topbar">
+  <div class="brand">
+    <img class="brand-logo" src="{{ url_for('static', filename='images/logo_nautique.png') }}" alt="Nautique SDIS 55">
+    <div class="brand-text">
+      <div class="brand-title">Matériel Nautique</div>
+      <div class="brand-subtitle">SDIS 55 — Application interne</div>
+    </div>
+  </div>
 
-    <!-- ===== MENU ===== -->
-    <nav class="menu">
-        <a href="{{ url_for('index') }}">🏠 Accueil</a>
-        <a href="{{ url_for('echanges') }}">🔁 Échanges</a>
-        <a href="{{ url_for('changer_profil') }}">👤 Changer de profil</a>
-    </nav>
+  <div class="userchip">
+    Profil : <strong>{{ role }}</strong>
+    <a class="link" href="{{ url_for('changer_profil') }}">Changer</a>
+  </div>
+</header>
 
-    <!-- ===== CONTENU PRINCIPAL ===== -->
-    <main class="container">
+<nav class="tabs">
+  <a class="tab active" href="{{ url_for('index') }}">Accueil</a>
+  <a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
+</nav>
 
-        <h2>Bienvenue</h2>
-        <p>
-            Profil connecté :
-            <strong>{{ role }}</strong>
-        </p>
+<main class="wrap">
 
-        <!-- ===== AJOUT MATÉRIEL ===== -->
-        <section class="card">
-            <h3>➕ Ajouter un matériel</h3>
+  <section class="card">
+    <h2>Ajouter un matériel</h2>
+    <form class="formgrid" method="POST" action="{{ url_for('ajouter') }}">
+      <label>
+        Nom du matériel
+        <input type="text" name="nom" required>
+      </label>
 
-            <form method="POST" action="{{ url_for('ajouter') }}" class="form">
-                <label>
-                    Nom du matériel
-                    <input type="text" name="nom" required>
-                </label>
+      <label>
+        Type
+        <input type="text" name="type" required>
+      </label>
 
-                <label>
-                    Type
-                    <input type="text" name="type" required>
-                </label>
+      <label>
+        Périodicité de contrôle (mois)
+        <input type="number" name="controle" min="1" required>
+      </label>
 
-                <label>
-                    Prochain contrôle (en mois)
-                    <input type="number" name="controle" min="1" required>
-                </label>
+      <button type="submit">Ajouter</button>
+    </form>
+  </section>
 
-                <button type="submit">Ajouter</button>
-            </form>
-        </section>
+  <section class="card">
+    <h2>Stock</h2>
 
-        <!-- ===== LISTE MATÉRIEL ===== -->
-        <section class="card">
-            <h3>📦 Matériel en stock</h3>
+    {% if materiels %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Type</th>
+            <th>Contrôle (mois)</th>
+            <th>Ajouté par</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in materiels %}
+          <tr>
+            <td>{{ m.nom }}</td>
+            <td>{{ m.type }}</td>
+            <td>{{ m.controle }}</td>
+            <td>{{ m.ajoute_par }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="muted">Aucun matériel enregistré.</p>
+    {% endif %}
+  </section>
 
-            {% if materiels %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>Type</th>
-                            <th>Contrôle (mois)</th>
-                            <th>Ajouté par</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for m in materiels %}
-                        <tr>
-                            <td>{{ m.nom }}</td>
-                            <td>{{ m.type }}</td>
-                            <td>{{ m.controle }}</td>
-                            <td>{{ m.ajoute_par }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>Aucun matériel enregistré.</p>
-            {% endif %}
-        </section>
-
-    </main>
-
-    <!-- ===== PIED DE PAGE ===== -->
-    <footer class="footer">
-        <p>Équipe nautique SDIS 55 — Application interne</p>
-    </footer>
+</main>
 
 </body>
 </html>
