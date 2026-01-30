@@ -211,3 +211,18 @@ button:hover {
     flex-direction: column;
   }
 }
+/* ===== LOGO PLUS GRAND ===== */
+.brand-logo.big {
+  height: 90px;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  margin-top: 40px;
+  padding: 15px;
+  text-align: center;
+  background: #081e2e;
+  border-top: 3px solid #e30613;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
