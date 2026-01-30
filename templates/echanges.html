@@ -32,36 +32,61 @@
 </nav>
 
 <main class="wrap">
-  <section class="card">
-    <h2>Demandes d’échanges</h2>
 
-    {% if echanges|length == 0 %}
-      <p class="muted">Aucune demande pour le moment.</p>
-    {% else %}
-      <table class="table">
-        <tr>
-          <th>Agent</th>
-          <th>Profil</th>
-          <th>Matériel</th>
-          <th>Motif</th>
-          <th>Statut</th>
-        </tr>
-        {% for e in echanges %}
-        <tr>
-          <td>{{ e.agent }}</td>
-          <td>{{ e.profil }}</td>
-          <td>{{ e.materiel }}</td>
-          <td>{{ e.motif }}</td>
-          <td>
-            <span class="badge {{ e.statut|lower }}">
-              {{ e.statut }}
-            </span>
-          </td>
-        </tr>
-        {% endfor %}
-      </table>
-    {% endif %}
-  </section>
+<section class="card">
+  <h2>Nouvelle demande</h2>
+
+  <form method="POST" class="formgrid">
+    <input name="materiel" placeholder="Matériel concerné" required>
+    <input name="motif" placeholder="Motif de la demande" required>
+    <button type="submit">Envoyer la demande</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Historique des demandes</h2>
+
+  {% if echanges|length == 0 %}
+    <p class="muted">Aucune demande enregistrée.</p>
+  {% else %}
+  <table class="table">
+    <tr>
+      <th>Date</th>
+      <th>Agent</th>
+      <th>Profil</th>
+      <th>Matériel</th>
+      <th>Motif</th>
+      <th>Statut</th>
+      {% if role == "Admin" %}
+        <th>Action</th>
+      {% endif %}
+    </tr>
+    {% for e in echanges %}
+    <tr>
+      <td>{{ e.date }}</td>
+      <td>{{ e.agent }}</td>
+      <td>{{ e.profil }}</td>
+      <td>{{ e.materiel }}</td>
+      <td>{{ e.motif }}</td>
+      <td>
+        <span class="badge {{ e.statut|lower }}">
+          {{ e.statut }}
+        </span>
+      </td>
+      {% if role == "Admin" %}
+      <td>
+        {% if e.statut == "En attente" %}
+          <a class="link success" href="{{ url_for('changer_statut', id=e.id, action='valider') }}">Valider</a>
+          <a class="link danger" href="{{ url_for('changer_statut', id=e.id, action='refuser') }}">Refuser</a>
+        {% endif %}
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+</section>
+
 </main>
 
 <footer class="footer">
