@@ -2,55 +2,96 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Demandes d’échange</title>
+    <title>Échanges de matériel</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
 <header class="header">
-    <img src="{{ url_for('static', filename='logo-nautique.png') }}" class="logo">
-    <h1>Demandes d’échange de matériel</h1>
+    <h1>🔁 Échanges de matériel</h1>
 </header>
 
-<div class="container">
+<nav class="menu">
+    <a href="{{ url_for('index') }}">🏠 Accueil</a>
+    <a href="{{ url_for('echanges') }}">🔁 Échanges</a>
+    <a href="{{ url_for('changer_profil') }}">👤 Changer profil</a>
+</nav>
 
-<form method="post" class="card">
-    <h2>Nouvelle demande</h2>
+<main class="container">
 
-    <select name="agent" required>
-        <option value="">Agent</option>
-        {% for p in profils %}
-            <option value="{{ p.prenom }} {{ p.nom }}">
-                {{ p.prenom }} {{ p.nom }} ({{ p.role }})
-            </option>
-        {% endfor %}
-    </select>
+    <!-- ===== NOUVELLE DEMANDE ===== -->
+    <section class="card">
+        <h2>➕ Nouvelle demande</h2>
 
-    <input type="text" name="materiel" placeholder="Matériel concerné" required>
+        <form method="POST" class="form">
+            <label>
+                Agent demandeur
+                <input type="text" name="agent" required>
+            </label>
 
-    <textarea name="motif" placeholder="Motif de l’échange" required></textarea>
+            <label>
+                Matériel concerné
+                <input type="text" name="materiel" required>
+            </label>
 
-    <button type="submit">Envoyer la demande</button>
-</form>
+            <label>
+                Motif
+                <textarea name="motif" required></textarea>
+            </label>
 
-<div class="card">
-    <h2>Demandes existantes</h2>
+            <button type="submit">Envoyer la demande</button>
+        </form>
+    </section>
 
-    <ul>
-    {% for e in echanges %}
-        <li>
-            <strong>{{ e.agent }}</strong> — {{ e.materiel }}<br>
-            Motif : {{ e.motif }}<br>
-            Statut : <b>{{ e.statut }}</b>
-        </li>
-    {% else %}
-        <li>Aucune demande</li>
-    {% endfor %}
-    </ul>
-</div>
+    <!-- ===== LISTE DES ÉCHANGES ===== -->
+    <section class="card">
+        <h2>📋 Suivi des échanges</h2>
 
-</div>
+        {% if echanges %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Agent</th>
+                    <th>Matériel</th>
+                    <th>Motif</th>
+                    <th>Statut</th>
+                    {% if role == "chef" %}
+                    <th>Action</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in echanges %}
+                <tr>
+                    <td>{{ e.agent }}</td>
+                    <td>{{ e.materiel }}</td>
+                    <td>{{ e.motif }}</td>
+                    <td>
+                        <span class="badge {{ e.statut|lower }}">
+                            {{ e.statut }}
+                        </span>
+                    </td>
+
+                    {% if role == "chef" %}
+                    <td>
+                        {% if e.statut == "En attente" %}
+                        <a class="btn green" href="{{ url_for('changer_statut', id=e.id, action='valider') }}">✔</a>
+                        <a class="btn red" href="{{ url_for('changer_statut', id=e.id, action='refuser') }}">✖</a>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Aucune demande enregistrée.</p>
+        {% endif %}
+    </section>
+
+</main>
 
 </body>
 </html>
-
