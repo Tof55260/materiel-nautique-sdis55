@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import os
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__, template_folder="templates")
 app.secret_key = "sdis55-nautique"
