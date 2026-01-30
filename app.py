@@ -1,102 +1,98 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Gestion du matériel nautique</title>
+import json
+import os
+from flask import Flask, render_template, request, redirect, url_for, session
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+app = Flask(__name__, template_folder="templates")
+app.secret_key = "sdis55-nautique"
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
+FICHIER_ECHANGES = "echanges.json"
 
-    <!-- ===== EN-TÊTE ===== -->
-    <header class="header">
-        <div class="header-left">
-            <img src="{{ url_for('static', filename='images/logo_nautique.png') }}"
-                 alt="Logo Nautique"
-                 class="logo">
-            <h1>Matériel Nautique SDIS 55</h1>
-        </div>
-    </header>
+materiels = []
 
-    <!-- ===== MENU ===== -->
-    <nav class="menu">
-        <a href="{{ url_for('index') }}">🏠 Accueil</a>
-        <a href="{{ url_for('echanges') }}">🔁 Échanges</a>
-        <a href="{{ url_for('changer_profil') }}">👤 Changer de profil</a>
-    </nav>
+def charger_json(fichier):
+    if not os.path.exists(fichier):
+        return []
+    try:
+        with open(fichier, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        return []
 
-    <!-- ===== CONTENU PRINCIPAL ===== -->
-    <main class="container">
+def sauvegarder_json(fichier, data):
+    with open(fichier, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
 
-        <h2>Bienvenue</h2>
-        <p>
-            Profil connecté :
-            <strong>{{ role }}</strong>
-        </p>
+@app.route("/")
+def index():
+    role = session.get("role")
+    if not role:
+        return redirect(url_for("profil"))
+    return render_template("index.html", materiels=materiels, role=role)
 
-        <!-- ===== AJOUT MATÉRIEL ===== -->
-        <section class="card">
-            <h3>➕ Ajouter un matériel</h3>
+@app.route("/profil", methods=["GET", "POST"])
+def profil():
+    if request.method == "POST":
+        session["role"] = request.form["role"]
+        return redirect(url_for("index"))
+    return render_template("profil.html")
 
-            <form method="POST" action="{{ url_for('ajouter') }}" class="form">
-                <label>
-                    Nom du matériel
-                    <input type="text" name="nom" required>
-                </label>
+@app.route("/changer_profil")
+def changer_profil():
+    session.pop("role", None)
+    return redirect(url_for("profil"))
 
-                <label>
-                    Type
-                    <input type="text" name="type" required>
-                </label>
+@app.route("/ajouter", methods=["POST"])
+def ajouter():
+    role = session.get("role")
+    if not role:
+        return redirect(url_for("profil"))
 
-                <label>
-                    Prochain contrôle (en mois)
-                    <input type="number" name="controle" min="1" required>
-                </label>
+    materiels.append({
+        "nom": request.form["nom"],
+        "type": request.form["type"],
+        "controle": request.form["controle"],
+        "ajoute_par": role
+    })
 
-                <button type="submit">Ajouter</button>
-            </form>
-        </section>
+    return redirect(url_for("index"))
 
-        <!-- ===== LISTE MATÉRIEL ===== -->
-        <section class="card">
-            <h3>📦 Matériel en stock</h3>
+@app.route("/echanges", methods=["GET", "POST"])
+def echanges():
+    role = session.get("role")
+    if not role:
+        return redirect(url_for("profil"))
 
-            {% if materiels %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>Type</th>
-                            <th>Contrôle (mois)</th>
-                            <th>Ajouté par</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for m in materiels %}
-                        <tr>
-                            <td>{{ m.nom }}</td>
-                            <td>{{ m.type }}</td>
-                            <td>{{ m.controle }}</td>
-                            <td>{{ m.ajoute_par }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>Aucun matériel enregistré.</p>
-            {% endif %}
-        </section>
+    echanges = charger_json(FICHIER_ECHANGES)
 
-    </main>
+    if request.method == "POST":
+        echanges.append({
+            "id": len(echanges) + 1,
+            "agent": request.form["agent"],
+            "materiel": request.form["materiel"],
+            "motif": request.form["motif"],
+            "statut": "En attente"
+        })
+        sauvegarder_json(FICHIER_ECHANGES, echanges)
 
-    <!-- ===== PIED DE PAGE ===== -->
-    <footer class="footer">
-        <p>Équipe nautique SDIS 55 — Application interne</p>
-    </footer>
+    return render_template("echanges.html", echanges=echanges, role=role)
 
-</body>
-</html>
+@app.route("/echanges/<int:id>/<action>")
+def changer_statut(id, action):
+    if session.get("role") != "chef":
+        return redirect(url_for("echanges"))
+
+    echanges = charger_json(FICHIER_ECHANGES)
+
+    for e in echanges:
+        if e["id"] == id:
+            if action == "valider":
+                e["statut"] = "Validé"
+            elif action == "refuser":
+                e["statut"] = "Refusé"
+
+    sauvegarder_json(FICHIER_ECHANGES, echanges)
+    return redirect(url_for("echanges"))
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
