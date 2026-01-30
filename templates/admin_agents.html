@@ -74,9 +74,9 @@
       <td>{{ a.prenom }}</td>
       <td>{{ a.role }}</td>
       <td>
-        {% if a.login != "admin" %}
-          <a class="link danger" href="{{ url_for('supprimer_agent', login=a.login) }}">Supprimer</a>
-        {% endif %}
+        <a class="link danger" href="{{ url_for('supprimer_agent', login=a.login) }}">
+          Supprimer
+        </a>
       </td>
     </tr>
     {% endfor %}
