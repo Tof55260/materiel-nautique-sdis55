@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Administration des agents</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
+    <div>
+      <div class="brand-title">Administration</div>
+      <div class="brand-subtitle">Gestion des agents</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card">
+    <h2>Créer un agent</h2>
+
+    <form method="POST" class="formgrid">
+      <input name="login" placeholder="Identifiant" required>
+      <input name="nom" placeholder="Nom" required>
+      <input name="prenom" placeholder="Prénom" required>
+
+      <select name="role">
+        <option value="Plongeur">Plongeur</option>
+        <option value="Sauveteur aquatique">Sauveteur aquatique</option>
+        <option value="Admin">Admin</option>
+      </select>
+
+      <input type="password" name="password" placeholder="Mot de passe" required>
+      <button type="submit">Créer</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Agents existants</h2>
+
+    <table class="table">
+      <tr>
+        <th>Login</th><th>Nom</th><th>Prénom</th><th>Profil</th>
+      </tr>
+      {% for a in agents %}
+      <tr>
+        <td>{{ a.login }}</td>
+        <td>{{ a.nom }}</td>
+        <td>{{ a.prenom }}</td>
+        <td>{{ a.role }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </section>
+</main>
+
+<footer class="footer">
+  Développé par <strong>Christophe BOUDOT</strong>
+</footer>
+
+</body>
+</html>
