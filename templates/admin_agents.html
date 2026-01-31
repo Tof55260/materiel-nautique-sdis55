@@ -38,15 +38,21 @@
 <h2>Agents</h2>
 
 <table class="table">
-<tr><th>Login</th><th>Nom</th><th>Prénom</th><th>Rôle</th><th>Reset</th></tr>
+<tr>
+<th>Login</th>
+<th>Nom</th>
+<th>Prénom</th>
+<th>Rôle</th>
+<th>Reset</th>
+</tr>
 
 {% for a in agents %}
 <tr>
-<td>{{a.login}}</td>
-<td>{{a.nom}}</td>
-<td>{{a.prenom}}</td>
-<td>{{a.role}}</td>
-<td><a href="/admin/reset/{{a.login}}">Reset</a></td>
+<td>{{ a.login }}</td>
+<td>{{ a.nom }}</td>
+<td>{{ a.prenom }}</td>
+<td>{{ a.role }}</td>
+<td><a href="/admin/reset/{{ a.login }}">Reset</a></td>
 </tr>
 {% endfor %}
 </table>
