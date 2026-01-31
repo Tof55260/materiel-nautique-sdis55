@@ -245,3 +245,7 @@ button:hover {
 .badge.refusé {
   background: #c0392b;
 }
+.badge.ok{background:#27ae60}
+.badge.bientot{background:#f39c12}
+.badge.retard{background:#c0392b}
+}
