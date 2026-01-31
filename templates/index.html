@@ -22,14 +22,19 @@
 <a class="tab active" href="{{ url_for('accueil') }}">Accueil</a>
 <a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
 <a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
+<a class="tab" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
 <a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
-{% if role=="Admin" %}<a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>{% endif %}
+
+{% if role=="Admin" %}
+<a class="tab" href="{{ url_for('fiches_agents') }}">Fiches agents</a>
+<a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
+{% endif %}
 </nav>
 
 <main class="wrap">
 <section class="card">
 <h2>Bienvenue</h2>
-<p>Application de gestion du matériel nautique.</p>
+<p>Gestion du matériel nautique SDIS.</p>
 </section>
 </main>
 
