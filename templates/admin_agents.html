@@ -1,9 +1,14 @@
-<h2>Administration</h2>
+{% include "header.html" %}
 
-<form method="POST">
-<input name="login" placeholder="login" required>
-<input name="nom" placeholder="nom" required>
-<input name="prenom" placeholder="prenom" required>
+<main class="wrap">
+
+<section class="card">
+<h2>Administration des agents</h2>
+
+<form method="POST" class="formgrid">
+<input name="login" placeholder="Login" required>
+<input name="nom" placeholder="Nom" required>
+<input name="prenom" placeholder="Prénom" required>
 
 <select name="role">
 <option>Admin</option>
@@ -11,14 +16,25 @@
 <option>Sauveteur</option>
 </select>
 
-<input name="password" placeholder="mot de passe" required>
-<button>Créer</button>
+<input name="password" placeholder="Mot de passe initial" required>
+<button>Créer agent</button>
 </form>
+</section>
 
-<hr>
+<section class="card">
+<table class="table">
+<tr><th>Login</th><th>Profil</th><th></th></tr>
 
 {% for a in agents %}
-{{a.login}} — {{a.role}}
-<a href="/admin/reset/{{a.login}}">Reset MDP</a>
-<br>
+<tr>
+<td>{{a.login}}</td>
+<td>{{a.role}}</td>
+<td><a class="link danger" href="/admin/reset/{{a.login}}">Reset</a></td>
+</tr>
 {% endfor %}
+</table>
+</section>
+
+</main>
+
+{% include "footer.html" %}
