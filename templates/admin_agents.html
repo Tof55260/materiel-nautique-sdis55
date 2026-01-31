@@ -26,43 +26,44 @@
 <a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
 <a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
 <a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
+<a class="tab" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
 <a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
+<a class="tab" href="{{ url_for('fiches_agents') }}">Fiches agents</a>
 <a class="tab active" href="{{ url_for('admin_agents') }}">Administration</a>
 </nav>
 
 <main class="wrap">
 
 <section class="card">
-<h2>Créer agent</h2>
+<h2>Agents</h2>
+
+<table class="table">
+<tr><th>Login</th><th>Nom</th><th>Prénom</th><th>Rôle</th><th>Reset</th></tr>
+
+{% for a in agents %}
+<tr>
+<td>{{a.login}}</td>
+<td>{{a.nom}}</td>
+<td>{{a.prenom}}</td>
+<td>{{a.role}}</td>
+<td><a href="/admin/reset/{{a.login}}">Reset</a></td>
+</tr>
+{% endfor %}
+</table>
+
+<h3>Ajouter agent</h3>
 
 <form method="POST" class="formgrid">
 <input name="login" placeholder="Login" required>
 <input name="nom" placeholder="Nom" required>
 <input name="prenom" placeholder="Prénom" required>
+<input name="password" placeholder="Mot de passe" required>
 <select name="role">
+<option>Agent</option>
 <option>Admin</option>
-<option>Plongeur</option>
-<option>Sauveteur</option>
 </select>
-<input name="password" placeholder="Mot de passe initial" required>
 <button>Créer</button>
 </form>
-</section>
-
-<section class="card">
-<h2>Agents</h2>
-
-<table class="table">
-<tr><th>Login</th><th>Profil</th><th></th></tr>
-
-{% for a in agents %}
-<tr>
-<td>{{ a.login }}</td>
-<td>{{ a.role }}</td>
-<td><a class="link danger" href="/admin/reset/{{ a.login }}">Reset</a></td>
-</tr>
-{% endfor %}
-</table>
 
 </section>
 
