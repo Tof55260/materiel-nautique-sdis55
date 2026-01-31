@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__, template_folder="templates")
@@ -10,32 +10,32 @@ app.secret_key = "sdis55-nautique"
 FICHIER_AGENTS = "agents.json"
 FICHIER_ECHANGES = "echanges.json"
 
-# =========================
+# =====================
 # OUTILS JSON
-# =========================
+# =====================
 
-def charger_json(fichier, default):
-    if not os.path.exists(fichier):
-        return default
+def load_json(path):
+    if not os.path.exists(path):
+        return []
     try:
-        with open(fichier, "r", encoding="utf-8") as f:
+        with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
-    except json.JSONDecodeError:
-        return default
+    except:
+        return []
 
-def sauvegarder_json(fichier, data):
-    with open(fichier, "w", encoding="utf-8") as f:
+def save_json(path, data):
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
-# =========================
+# =====================
 # AGENTS
-# =========================
+# =====================
 
 def charger_agents():
-    return charger_json(FICHIER_AGENTS, [])
+    return load_json(FICHIER_AGENTS)
 
-def sauvegarder_agents(agents):
-    sauvegarder_json(FICHIER_AGENTS, agents)
+def sauvegarder_agents(a):
+    save_json(FICHIER_AGENTS, a)
 
 def get_agent(login):
     for a in charger_agents():
@@ -43,30 +43,23 @@ def get_agent(login):
             return a
     return None
 
-def login_requis():
-    return "login" in session
+# =====================
+# LOGIN
+# =====================
 
-def admin_requis():
-    return session.get("role") == "Admin"
-
-# =========================
-# AUTHENTIFICATION
-# =========================
-
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET","POST"])
 def login():
     if request.method == "POST":
-        login = request.form["login"].strip()
-        password = request.form["password"].strip()
+        login = request.form["login"]
+        password = request.form["password"]
 
         agent = get_agent(login)
+
         if agent and check_password_hash(agent["password"], password):
-            session.update({
-                "login": agent["login"],
-                "nom": agent["nom"],
-                "prenom": agent["prenom"],
-                "role": agent["role"]
-            })
+            session["login"] = agent["login"]
+            session["nom"] = agent["nom"]
+            session["prenom"] = agent["prenom"]
+            session["role"] = agent["role"]
             return redirect(url_for("accueil"))
 
         return render_template("login.html", erreur="Identifiant ou mot de passe incorrect")
@@ -78,29 +71,24 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
-# =========================
+# =====================
 # ACCUEIL
-# =========================
+# =====================
 
 @app.route("/accueil")
 def accueil():
-    if not login_requis():
+    if "login" not in session:
         return redirect(url_for("login"))
 
-    return render_template(
-        "index.html",
-        nom=session["nom"],
-        prenom=session["prenom"],
-        role=session["role"]
-    )
+    return render_template("index.html", **session)
 
-# =========================
-# MON COMPTE (CHANGER MOT DE PASSE)
-# =========================
+# =====================
+# MON COMPTE
+# =====================
 
-@app.route("/mon-compte", methods=["GET", "POST"])
+@app.route("/mon-compte", methods=["GET","POST"])
 def mon_compte():
-    if not login_requis():
+    if "login" not in session:
         return redirect(url_for("login"))
 
     agents = charger_agents()
@@ -119,25 +107,20 @@ def mon_compte():
 
     return render_template("mon_compte.html")
 
-# =========================
-# ADMIN — GESTION DES AGENTS
-# =========================
+# =====================
+# ADMIN AGENTS
+# =====================
 
-@app.route("/admin/agents", methods=["GET", "POST"])
+@app.route("/admin/agents", methods=["GET","POST"])
 def admin_agents():
-    if not admin_requis():
+    if session.get("role") != "Admin":
         return redirect(url_for("accueil"))
 
     agents = charger_agents()
 
     if request.method == "POST":
-        login = request.form["login"]
-
-        if get_agent(login):
-            return render_template("admin_agents.html", agents=agents, erreur="Login existant")
-
         agents.append({
-            "login": login,
+            "login": request.form["login"],
             "nom": request.form["nom"],
             "prenom": request.form["prenom"],
             "role": request.form["role"],
@@ -148,48 +131,62 @@ def admin_agents():
 
     return render_template("admin_agents.html", agents=agents)
 
-@app.route("/admin/agents/reset/<login>")
-def reset_mdp_agent(login):
-    if not admin_requis():
+@app.route("/admin/reset/<login>")
+def reset_agent(login):
+    if session.get("role") != "Admin":
         return redirect(url_for("accueil"))
 
     agents = charger_agents()
     for a in agents:
         if a["login"] == login:
             a["password"] = generate_password_hash("changeme")
-            sauvegarder_agents(agents)
-            break
-
+    sauvegarder_agents(agents)
     return redirect(url_for("admin_agents"))
 
-# =========================
-# ÉCHANGES (inchangé)
-# =========================
+# =====================
+# ECHANGES
+# =====================
 
-@app.route("/echanges", methods=["GET", "POST"])
-def page_echanges():
-    if not login_requis():
+@app.route("/echanges", methods=["GET","POST"])
+def echanges():
+    if "login" not in session:
         return redirect(url_for("login"))
 
-    echanges = charger_json(FICHIER_ECHANGES, [])
+    data = load_json(FICHIER_ECHANGES)
 
     if request.method == "POST":
-        echanges.append({
+        data.append({
+            "id": len(data)+1,
             "date": datetime.now().strftime("%d/%m/%Y %H:%M"),
-            "agent": f"{session['prenom']} {session['nom']}",
+            "agent": session["prenom"]+" "+session["nom"],
             "profil": session["role"],
             "materiel": request.form["materiel"],
             "motif": request.form["motif"],
             "statut": "En attente"
         })
-        sauvegarder_json(FICHIER_ECHANGES, echanges)
+        save_json(FICHIER_ECHANGES,data)
+        return redirect(url_for("echanges"))
 
-    return render_template("echanges.html", echanges=echanges)
+    return render_template("echanges.html", echanges=data, **session)
 
-# =========================
-# LANCEMENT
-# =========================
+@app.route("/echanges/<int:id>/<action>")
+def statut(id,action):
+    if session.get("role")!="Admin":
+        return redirect(url_for("echanges"))
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    data = load_json(FICHIER_ECHANGES)
+
+    for e in data:
+        if e["id"]==id:
+            e["statut"]="Validé" if action=="valider" else "Refusé"
+
+    save_json(FICHIER_ECHANGES,data)
+    return redirect(url_for("echanges"))
+
+# =====================
+# RUN
+# =====================
+
+if __name__=="__main__":
+    port=int(os.environ.get("PORT",5000))
+    app.run(host="0.0.0.0",port=port)
