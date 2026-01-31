@@ -1,97 +1,20 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Échanges</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+<h2>Echanges</h2>
 
-<header class="topbar">
-  <div class="brand">
-    <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
-    <div>
-      <div class="brand-title">Échanges de matériel</div>
-      <div class="brand-subtitle">
-        {{ prenom }} {{ nom }} — {{ role }}
-      </div>
-    </div>
-  </div>
+<form method="POST">
+<input name="materiel" placeholder="materiel" required>
+<input name="motif" placeholder="motif" required>
+<button>Envoyer</button>
+</form>
 
-  <div class="userchip">
-    <a class="link" href="{{ url_for('logout') }}">Se déconnecter</a>
-  </div>
-</header>
+<hr>
 
-<nav class="tabs">
-  <a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
-  <a class="tab active" href="{{ url_for('page_echanges') }}">Échanges</a>
-  {% if role == "Admin" %}
-    <a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
-  {% endif %}
-</nav>
+{% for e in echanges %}
+{{e.date}} — {{e.agent}} — {{e.statut}}
 
-<main class="wrap">
+{% if role=="Admin" and e.statut=="En attente" %}
+<a href="/echanges/{{e.id}}/valider">Valider</a>
+<a href="/echanges/{{e.id}}/refuser">Refuser</a>
+{% endif %}
 
-<section class="card">
-  <h2>Nouvelle demande</h2>
-
-  <form method="POST" class="formgrid">
-    <input name="materiel" placeholder="Matériel concerné" required>
-    <input name="motif" placeholder="Motif de la demande" required>
-    <button type="submit">Envoyer la demande</button>
-  </form>
-</section>
-
-<section class="card">
-  <h2>Historique des demandes</h2>
-
-  {% if echanges|length == 0 %}
-    <p class="muted">Aucune demande enregistrée.</p>
-  {% else %}
-  <table class="table">
-    <tr>
-      <th>Date</th>
-      <th>Agent</th>
-      <th>Profil</th>
-      <th>Matériel</th>
-      <th>Motif</th>
-      <th>Statut</th>
-      {% if role == "Admin" %}
-        <th>Action</th>
-      {% endif %}
-    </tr>
-    {% for e in echanges %}
-    <tr>
-      <td>{{ e.date }}</td>
-      <td>{{ e.agent }}</td>
-      <td>{{ e.profil }}</td>
-      <td>{{ e.materiel }}</td>
-      <td>{{ e.motif }}</td>
-      <td>
-        <span class="badge {{ e.statut|lower }}">
-          {{ e.statut }}
-        </span>
-      </td>
-      {% if role == "Admin" %}
-      <td>
-        {% if e.statut == "En attente" %}
-          <a class="link success" href="{{ url_for('changer_statut', id=e.id, action='valider') }}">Valider</a>
-          <a class="link danger" href="{{ url_for('changer_statut', id=e.id, action='refuser') }}">Refuser</a>
-        {% endif %}
-      </td>
-      {% endif %}
-    </tr>
-    {% endfor %}
-  </table>
-  {% endif %}
-</section>
-
-</main>
-
-<footer class="footer">
-  Développé par <strong>Christophe BOUDOT</strong>
-</footer>
-
-</body>
-</html>
+<br>
+{% endfor %}
