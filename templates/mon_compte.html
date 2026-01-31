@@ -25,6 +25,8 @@
 <nav class="tabs">
 <a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
 <a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
+  <a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
+
 <a class="tab active" href="{{ url_for('mon_compte') }}">Mon compte</a>
 {% if role == "Admin" %}
 <a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
