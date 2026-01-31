@@ -25,10 +25,9 @@
 <nav class="tabs">
 <a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
 <a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
-  <a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
-
+<a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
 <a class="tab active" href="{{ url_for('mon_compte') }}">Mon compte</a>
-{% if role == "Admin" %}
+{% if role=="Admin" %}
 <a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
 {% endif %}
 </nav>
@@ -37,9 +36,6 @@
 
 <section class="card">
 <h2>Changer mon mot de passe</h2>
-
-{% if erreur %}<p style="color:red">{{ erreur }}</p>{% endif %}
-{% if succes %}<p style="color:green">{{ succes }}</p>{% endif %}
 
 <form method="POST" class="formgrid">
 <input type="password" name="ancien" placeholder="Ancien mot de passe" required>
