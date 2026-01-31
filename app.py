@@ -189,6 +189,7 @@ def page_echanges():
 # =========================
 # LANCEMENT
 # =========================
+print("HASH ADMIN =", generate_password_hash("admin55"))
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
