@@ -5,21 +5,17 @@
 <title>Inventaire</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
 
 <header class="topbar">
 <div class="brand">
 <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
 <div>
-<div class="brand-title">Inventaire Magasin</div>
+<div class="brand-title">Inventaire</div>
 <div class="brand-subtitle">{{ prenom }} {{ nom }} — {{ role }}</div>
 </div>
 </div>
-
-<div class="userchip">
-<a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
-</div>
+<div class="userchip"><a class="link" href="{{ url_for('logout') }}">Déconnexion</a></div>
 </header>
 
 <nav class="tabs">
@@ -27,9 +23,7 @@
 <a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
 <a class="tab active" href="{{ url_for('inventaire') }}">Inventaire</a>
 <a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
-{% if role=="Admin" %}
-<a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
-{% endif %}
+{% if role=="Admin" %}<a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>{% endif %}
 </nav>
 
 <main class="wrap">
@@ -37,30 +31,21 @@
 {% if role=="Admin" %}
 <section class="card">
 <h2>Ajouter matériel</h2>
-
 <form method="POST" class="formgrid">
 <input name="nom" placeholder="Nom" required>
 <input name="type" placeholder="Type" required>
-<input name="stock" type="number" placeholder="Quantité" required>
-<input name="controle" type="date">
-<input name="periodicite" type="number" placeholder="Périodicité (mois)" required>
+<input type="number" name="stock" placeholder="Stock" required>
+<input type="date" name="controle">
+<input type="number" name="periodicite" placeholder="Périodicité (mois)" required>
 <button>Ajouter</button>
 </form>
 </section>
 {% endif %}
 
 <section class="card">
-<h2>Stock actif</h2>
-
+<h2>Stock</h2>
 <table class="table">
-<tr>
-<th>Nom</th>
-<th>Type</th>
-<th>Stock</th>
-<th>Contrôle EPI</th>
-<th>Statut</th>
-{% if role=="Admin" %}<th></th>{% endif %}
-</tr>
+<tr><th>Nom</th><th>Type</th><th>Stock</th><th>Contrôle</th><th>Statut</th>{% if role=="Admin" %}<th></th>{% endif %}</tr>
 
 {% for m in materiels %}
 {% if m.etat=="Actif" %}
@@ -69,13 +54,7 @@
 <td>{{m.type}}</td>
 <td>{{m.stock}}</td>
 <td>{{m.controle}}</td>
-
-<td>
-<span class="badge {{m.statut}}">
-{{m.statut}}
-</span>
-</td>
-
+<td><span class="badge {{m.statut}}">{{m.statut}}</span></td>
 {% if role=="Admin" %}
 <td><a class="link danger" href="/inventaire/reforme/{{m.id}}">Réformer</a></td>
 {% endif %}
@@ -87,9 +66,6 @@
 
 </main>
 
-<footer class="footer">
-Développé par <strong>Christophe BOUDOT</strong>
-</footer>
-
+<footer class="footer">Développé par <strong>Christophe BOUDOT</strong></footer>
 </body>
 </html>
