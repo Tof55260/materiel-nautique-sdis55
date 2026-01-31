@@ -4,6 +4,6 @@
     "nom": "BOUDOT",
     "prenom": "Christophe",
     "role": "Admin",
-    "password": "pbkdf2:sha256:260000$INIT$2e6c9bfa8c7f3d0a9b5e1f2d3a4c6b7d8e9f0a1b2c3d4e5f6a7b8c9d"
+    "password": "pbkdf2:sha256:260000$reset$1e9c1c0a2cdbf6dbe1d52d5cfa7c0b27f9e4bb3e7e6ad52c4bbd7a4df77d7c2c"
   }
 ]
