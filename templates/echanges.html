@@ -2,26 +2,30 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Inventaire</title>
+<title>Échanges</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
 <header class="topbar">
 <div class="brand">
 <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
 <div>
-<div class="brand-title">Inventaire</div>
+<div class="brand-title">Échanges</div>
 <div class="brand-subtitle">{{ prenom }} {{ nom }} — {{ role }}</div>
 </div>
 </div>
-<div class="userchip"><a class="link" href="{{ url_for('logout') }}">Déconnexion</a></div>
+
+<div class="userchip">
+<a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
+</div>
 </header>
 
 <nav class="tabs">
 <a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
-<a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
-<a class="tab active" href="{{ url_for('inventaire') }}">Inventaire</a>
+<a class="tab active" href="{{ url_for('echanges') }}">Échanges</a>
+<a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
 <a class="tab" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
 <a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
 
@@ -34,16 +38,42 @@
 <main class="wrap">
 
 <section class="card">
-<h2>Stock magasin</h2>
+<h2>Nouvelle demande</h2>
+
+<form method="POST" class="formgrid">
+<input name="materiel" placeholder="Matériel" required>
+<input name="motif" placeholder="Motif" required>
+<button>Envoyer</button>
+</form>
+</section>
+
+<section class="card">
+<h2>Historique</h2>
 
 <table class="table">
-<tr><th>Nom</th><th>Type</th><th>Stock</th></tr>
-
-{% for m in materiels %}
 <tr>
-<td>{{m.nom}}</td>
-<td>{{m.type}}</td>
-<td>{{m.stock}}</td>
+<th>Date</th>
+<th>Agent</th>
+<th>Matériel</th>
+<th>Motif</th>
+<th>Statut</th>
+{% if role=="Admin" %}<th>Action</th>{% endif %}
+</tr>
+
+{% for e in echanges %}
+<tr>
+<td>{{ e.date }}</td>
+<td>{{ e.agent }}</td>
+<td>{{ e.materiel }}</td>
+<td>{{ e.motif }}</td>
+<td>{{ e.statut }}</td>
+
+{% if role=="Admin" and e.statut=="En attente" %}
+<td>
+<a href="/echanges/{{ e.id }}/valider">Valider</a>
+<a href="/echanges/{{ e.id }}/refuser">Refuser</a>
+</td>
+{% endif %}
 </tr>
 {% endfor %}
 </table>
@@ -52,6 +82,9 @@
 
 </main>
 
-<footer class="footer">Développé par <strong>Christophe BOUDOT</strong></footer>
+<footer class="footer">
+Développé par <strong>Christophe BOUDOT</strong>
+</footer>
+
 </body>
 </html>
