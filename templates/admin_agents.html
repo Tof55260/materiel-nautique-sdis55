@@ -1,9 +1,40 @@
-{% include "header.html" %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Administration</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
+    <div>
+      <div class="brand-title">Administration</div>
+      <div class="brand-subtitle">
+        {{ prenom }} {{ nom }} — {{ role }}
+      </div>
+    </div>
+  </div>
+
+  <div class="userchip">
+    <a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
+  </div>
+</header>
+
+<nav class="tabs">
+  <a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
+  <a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
+  <a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
+  <a class="tab active" href="{{ url_for('admin_agents') }}">Administration</a>
+</nav>
 
 <main class="wrap">
 
 <section class="card">
-<h2>Administration des agents</h2>
+<h2>Créer un agent</h2>
 
 <form method="POST" class="formgrid">
 <input name="login" placeholder="Login" required>
@@ -22,14 +53,22 @@
 </section>
 
 <section class="card">
+<h2>Agents existants</h2>
+
 <table class="table">
-<tr><th>Login</th><th>Profil</th><th></th></tr>
+<tr>
+<th>Login</th>
+<th>Profil</th>
+<th>Action</th>
+</tr>
 
 {% for a in agents %}
 <tr>
-<td>{{a.login}}</td>
-<td>{{a.role}}</td>
-<td><a class="link danger" href="/admin/reset/{{a.login}}">Reset</a></td>
+<td>{{ a.login }}</td>
+<td>{{ a.role }}</td>
+<td>
+<a class="link danger" href="/admin/reset/{{ a.login }}">Reset mot de passe</a>
+</td>
 </tr>
 {% endfor %}
 </table>
@@ -37,4 +76,9 @@
 
 </main>
 
-{% include "footer.html" %}
+<footer class="footer">
+Développé par <strong>Christophe BOUDOT</strong>
+</footer>
+
+</body>
+</html>
