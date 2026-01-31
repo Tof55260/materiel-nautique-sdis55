@@ -5,7 +5,6 @@
 <title>Mon compte</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
 
 <header class="topbar">
@@ -16,10 +15,7 @@
 <div class="brand-subtitle">{{ prenom }} {{ nom }} — {{ role }}</div>
 </div>
 </div>
-
-<div class="userchip">
-<a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
-</div>
+<div class="userchip"><a class="link" href="{{ url_for('logout') }}">Déconnexion</a></div>
 </header>
 
 <nav class="tabs">
@@ -27,29 +23,20 @@
 <a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
 <a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
 <a class="tab active" href="{{ url_for('mon_compte') }}">Mon compte</a>
-{% if role=="Admin" %}
-<a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
-{% endif %}
+{% if role=="Admin" %}<a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>{% endif %}
 </nav>
 
 <main class="wrap">
-
 <section class="card">
-<h2>Changer mon mot de passe</h2>
-
+<h2>Changer mot de passe</h2>
 <form method="POST" class="formgrid">
 <input type="password" name="ancien" placeholder="Ancien mot de passe" required>
 <input type="password" name="nouveau" placeholder="Nouveau mot de passe" required>
 <button>Changer</button>
 </form>
-
 </section>
-
 </main>
 
-<footer class="footer">
-Développé par <strong>Christophe BOUDOT</strong>
-</footer>
-
+<footer class="footer">Développé par <strong>Christophe BOUDOT</strong></footer>
 </body>
 </html>
