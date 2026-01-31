@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Accueil</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<meta charset="UTF-8">
+<title>Accueil</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
 <header class="topbar">
   <div class="brand">
     <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
     <div>
-      <div class="brand-title">Matériel Nautique</div>
+      <div class="brand-title">Gestion Nautique SDIS</div>
       <div class="brand-subtitle">
         {{ prenom }} {{ nom }} — {{ role }}
       </div>
@@ -19,32 +20,36 @@
   </div>
 
   <div class="userchip">
-    <a class="link" href="{{ url_for('logout') }}">Se déconnecter</a>
+    <a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
   </div>
 </header>
-<a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
 
 <nav class="tabs">
   <a class="tab active" href="{{ url_for('accueil') }}">Accueil</a>
-  <a class="tab" href="{{ url_for('page_echanges') }}">Échanges</a>
+  <a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
+  <a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
+
   {% if role == "Admin" %}
     <a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
   {% endif %}
 </nav>
 
 <main class="wrap">
-  <section class="card">
-    <h2>Bienvenue</h2>
-    <p class="muted">
-      Vous êtes connecté à l’application de gestion du matériel nautique du SDIS 55.
-    </p>
 
-    <ul>
-      <li>✔ Gestion des échanges</li>
-      <li>✔ Traçabilité des agents</li>
-      <li>✔ Accès sécurisé par profil</li>
-    </ul>
-  </section>
+<section class="card">
+  <h2>Bienvenue</h2>
+
+  <p>
+    Vous êtes connecté en tant que :
+    <strong>{{ prenom }} {{ nom }}</strong>
+    ({{ role }})
+  </p>
+
+  <p>
+    Utilisez les onglets ci-dessus pour accéder aux fonctionnalités.
+  </p>
+</section>
+
 </main>
 
 <footer class="footer">
