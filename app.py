@@ -1,5 +1,5 @@
 import os, json
-from datetime import datetime, date
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -10,6 +10,7 @@ FICHIER_AGENTS="agents.json"
 FICHIER_ECHANGES="echanges.json"
 FICHIER_MATERIELS="materiels.json"
 FICHIER_AFFECTATIONS="affectations.json"
+FICHIER_RETOURS="retours.json"
 
 def load_json(p):
     if not os.path.exists(p): return []
@@ -29,13 +30,18 @@ def charger_materiels(): return load_json(FICHIER_MATERIELS)
 def sauvegarder_materiels(m): save_json(FICHIER_MATERIELS,m)
 def charger_affectations(): return load_json(FICHIER_AFFECTATIONS)
 def sauvegarder_affectations(a): save_json(FICHIER_AFFECTATIONS,a)
+def charger_retours(): return load_json(FICHIER_RETOURS)
+def sauvegarder_retours(r): save_json(FICHIER_RETOURS,r)
 
 def get_agent(login):
     for a in charger_agents():
         if a["login"]==login: return a
     return None
 
-# LOGIN
+@app.context_processor
+def inject():
+    return dict(charger_retours=charger_retours)
+
 @app.route("/",methods=["GET","POST"])
 def login():
     if request.method=="POST":
@@ -51,13 +57,11 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
-# ACCUEIL
 @app.route("/accueil")
 def accueil():
     if "login" not in session: return redirect(url_for("login"))
     return render_template("index.html",**session)
 
-# MON COMPTE
 @app.route("/mon-compte",methods=["GET","POST"])
 def mon_compte():
     if "login" not in session: return redirect(url_for("login"))
@@ -74,7 +78,6 @@ def mon_compte():
 
     return render_template("mon_compte.html",**session)
 
-# ADMIN AGENTS
 @app.route("/admin/agents",methods=["GET","POST"])
 def admin_agents():
     if session.get("role")!="Admin": return redirect(url_for("accueil"))
@@ -102,7 +105,6 @@ def reset_agent(login):
     sauvegarder_agents(agents)
     return redirect(url_for("admin_agents"))
 
-# ECHANGES + AFFECTATION AUTO
 @app.route("/echanges",methods=["GET","POST"])
 def echanges():
     if "login" not in session: return redirect(url_for("login"))
@@ -150,7 +152,6 @@ def statut(id,action):
     sauvegarder_affectations(a)
     return redirect(url_for("echanges"))
 
-# INVENTAIRE
 @app.route("/inventaire",methods=["GET","POST"])
 def inventaire():
     if "login" not in session: return redirect(url_for("login"))
@@ -179,18 +180,57 @@ def reformer(id):
     sauvegarder_materiels(m)
     return redirect(url_for("inventaire"))
 
-# MA FICHE
 @app.route("/ma-fiche")
 def ma_fiche():
     nom=session["prenom"]+" "+session["nom"]
     aff=[x for x in charger_affectations() if x["agent"]==nom]
     return render_template("ma_fiche.html",materiels=aff,**session)
 
-# FICHES AGENTS ADMIN
 @app.route("/fiches-agents")
 def fiches_agents():
     if session.get("role")!="Admin": return redirect(url_for("accueil"))
     return render_template("fiches_agents.html",affectations=charger_affectations(),**session)
+
+@app.route("/retour/<int:i>/<action>")
+def retour(i,action):
+    aff=charger_affectations()
+    r=charger_retours()
+
+    mat=aff[i]
+
+    r.append({
+        "agent":mat["agent"],
+        "materiel":mat["materiel"],
+        "date":datetime.now().strftime("%d/%m/%Y %H:%M"),
+        "action":action,
+        "statut":"En attente"
+    })
+
+    del aff[i]
+
+    sauvegarder_affectations(aff)
+    sauvegarder_retours(r)
+
+    return redirect(url_for("ma_fiche"))
+
+@app.route("/admin/retours/<int:i>/<decision>")
+def admin_retour(i,decision):
+    if session.get("role")!="Admin": return redirect(url_for("accueil"))
+
+    r=charger_retours()
+    m=charger_materiels()
+
+    if decision=="valider" and r[i]["action"]=="retour":
+        for x in m:
+            if x["nom"]==r[i]["materiel"]:
+                x["stock"]+=1
+
+    r[i]["statut"]="Traité"
+
+    sauvegarder_retours(r)
+    sauvegarder_materiels(m)
+
+    return redirect(url_for("fiches_agents"))
 
 if __name__=="__main__":
     port=int(os.environ.get("PORT",5000))
