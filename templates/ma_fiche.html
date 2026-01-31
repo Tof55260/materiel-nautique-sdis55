@@ -38,8 +38,7 @@
 <main class="wrap">
 
 <section class="card">
-
-<h2>Matériel actuellement affecté</h2>
+<h2>Matériel affecté</h2>
 
 {% if materiels|length == 0 %}
 <p>Aucun matériel affecté.</p>
@@ -47,7 +46,7 @@
 
 <table class="table">
 <tr>
-<th>Date affectation</th>
+<th>Date</th>
 <th>Matériel</th>
 <th>Contrôle EPI</th>
 <th>Actions</th>
@@ -59,17 +58,9 @@
 <td>{{ m.materiel }}</td>
 <td>{{ m.controle }}</td>
 <td>
-
-<a class="link" href="/retour/{{ loop.index0 }}/retour">
-⬅ Retour
-</a>
-
+<a class="link" href="/retour/{{ loop.index0 }}/retour">Retour</a>
 &nbsp;|&nbsp;
-
-<a class="link danger" href="/retour/{{ loop.index0 }}/reforme">
-🗑 Réforme
-</a>
-
+<a class="link danger" href="/retour/{{ loop.index0 }}/reforme">Réforme</a>
 </td>
 </tr>
 {% endfor %}
