@@ -1,14 +1,89 @@
-<h2>Demandes retour / réforme</h2>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Fiches agents</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header class="topbar">
+<div class="brand">
+<img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
+<div>
+<div class="brand-title">Fiches agents</div>
+<div class="brand-subtitle">{{ prenom }} {{ nom }} — {{ role }}</div>
+</div>
+</div>
+
+<div class="userchip">
+<a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
+</div>
+</header>
+
+<nav class="tabs">
+<a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
+<a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
+<a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
+<a class="tab" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
+<a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
+<a class="tab active" href="{{ url_for('fiches_agents') }}">Fiches agents</a>
+<a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
+</nav>
+
+<main class="wrap">
+
+<section class="card">
+<h2>Affectations matériel</h2>
 
 <table class="table">
-<tr><th>Agent</th><th>Matériel</th><th>Action</th><th>Valider</th></tr>
-
-{% for r in charger_retours() %}
 <tr>
-<td>{{r.agent}}</td>
-<td>{{r.materiel}}</td>
-<td>{{r.action}}</td>
-<td><a href="/admin/retours/{{loop.index0}}/valider">OK</a></td>
+<th>Agent</th>
+<th>Matériel</th>
+<th>Date</th>
+<th>Contrôle</th>
+</tr>
+
+{% for a in affectations %}
+<tr>
+<td>{{ a.agent }}</td>
+<td>{{ a.materiel }}</td>
+<td>{{ a.date }}</td>
+<td>{{ a.controle }}</td>
 </tr>
 {% endfor %}
 </table>
+
+<h2>Demandes retour / réforme</h2>
+
+<table class="table">
+<tr>
+<th>Agent</th>
+<th>Matériel</th>
+<th>Action</th>
+<th>Valider</th>
+</tr>
+
+{% for r in charger_retours() %}
+<tr>
+<td>{{ r.agent }}</td>
+<td>{{ r.materiel }}</td>
+<td>{{ r.action }}</td>
+<td>
+<a href="/admin/retours/{{ loop.index0 }}/valider">OK</a>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+</section>
+
+</main>
+
+<footer class="footer">
+Développé par <strong>Christophe BOUDOT</strong>
+</footer>
+
+</body>
+</html>
