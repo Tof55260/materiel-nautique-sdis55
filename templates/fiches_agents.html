@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h2>Fiches agents</h2>
+
+<table class="table">
+<tr><th>Agent</th><th>Matériel</th><th>Date</th><th>Contrôle</th></tr>
+{% for a in affectations %}
+<tr>
+<td>{{a.agent}}</td>
+<td>{{a.materiel}}</td>
+<td>{{a.date}}</td>
+<td>{{a.controle}}</td>
+</tr>
+{% endfor %}
+</table>
+
+</body>
+</html>
