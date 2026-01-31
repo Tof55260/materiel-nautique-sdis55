@@ -1,94 +1,24 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Administration — Agents</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+<h2>Administration</h2>
 
-<header class="topbar">
-  <div class="brand">
-    <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
-    <div>
-      <div class="brand-title">Administration</div>
-      <div class="brand-subtitle">Gestion des agents</div>
-    </div>
-  </div>
+<form method="POST">
+<input name="login" placeholder="login" required>
+<input name="nom" placeholder="nom" required>
+<input name="prenom" placeholder="prenom" required>
 
-  <div class="userchip">
-    <a class="link" href="{{ url_for('logout') }}">Se déconnecter</a>
-  </div>
-</header>
+<select name="role">
+<option>Admin</option>
+<option>Plongeur</option>
+<option>Sauveteur</option>
+</select>
 
-<nav class="tabs">
-  <a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
-  <a class="tab" href="{{ url_for('page_echanges') }}">Échanges</a>
-  <a class="tab active" href="{{ url_for('admin_agents') }}">Administration</a>
-</nav>
+<input name="password" placeholder="mot de passe" required>
+<button>Créer</button>
+</form>
 
-<main class="wrap">
+<hr>
 
-<section class="card">
-  <h2>Ajouter un agent</h2>
-
-  {% if erreur %}
-    <p style="color:red">{{ erreur }}</p>
-  {% endif %}
-
-  <form method="POST" class="formgrid">
-    <input name="login" placeholder="Login" required>
-    <input name="nom" placeholder="Nom" required>
-    <input name="prenom" placeholder="Prénom" required>
-
-    <select name="role">
-      <option>Plongeur</option>
-      <option>Sauveteur</option>
-      <option>Admin</option>
-    </select>
-
-    <input type="password" name="password" placeholder="Mot de passe" required>
-
-    <button type="submit">Créer l’agent</button>
-  </form>
-</section>
-
-<section class="card">
-  <h2>Agents existants</h2>
-
-  {% if agents|length == 0 %}
-    <p class="muted">Aucun agent enregistré.</p>
-  {% else %}
-  <table class="table">
-    <tr>
-      <th>Login</th>
-      <th>Nom</th>
-      <th>Prénom</th>
-      <th>Profil</th>
-      <th></th>
-    </tr>
-    {% for a in agents %}
-    <tr>
-      <td>{{ a.login }}</td>
-      <td>{{ a.nom }}</td>
-      <td>{{ a.prenom }}</td>
-      <td>{{ a.role }}</td>
-      <td>
-        <a class="link danger" href="{{ url_for('supprimer_agent', login=a.login) }}">
-          Supprimer
-        </a>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
-  {% endif %}
-</section>
-
-</main>
-
-<footer class="footer">
-  Développé par <strong>Christophe BOUDOT</strong>
-</footer>
-
-</body>
-</html>
+{% for a in agents %}
+{{a.login}} — {{a.role}}
+<a href="/admin/reset/{{a.login}}">Reset MDP</a>
+<br>
+{% endfor %}
