@@ -9,6 +9,8 @@ app.secret_key = "sdis55-nautique"
 
 FICHIER_AGENTS = "agents.json"
 FICHIER_ECHANGES = "echanges.json"
+FICHIER_MATERIELS = "materiels.json"
+
 
 # =====================
 # JSON helpers
