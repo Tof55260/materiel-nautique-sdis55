@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h2>Ma fiche</h2>
+
+<table class="table">
+<tr><th>Date</th><th>Matériel</th><th>Contrôle EPI</th></tr>
+{% for m in materiels %}
+<tr>
+<td>{{m.date}}</td>
+<td>{{m.materiel}}</td>
+<td>{{m.controle}}</td>
+</tr>
+{% endfor %}
+</table>
+
+</body>
+</html>
