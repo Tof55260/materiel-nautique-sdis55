@@ -1,15 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Ma fiche</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header class="topbar">
+<div class="brand">
+<img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
+<div>
+<div class="brand-title">Ma fiche agent</div>
+<div class="brand-subtitle">{{ prenom }} {{ nom }} — {{ role }}</div>
+</div>
+</div>
+
+<div class="userchip">
+<a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
+</div>
+</header>
+
+<nav class="tabs">
+<a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
+<a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
+<a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
+<a class="tab active" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
+<a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
+
+{% if role=="Admin" %}
+<a class="tab" href="{{ url_for('fiches_agents') }}">Fiches agents</a>
+<a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
+{% endif %}
+</nav>
+
+<main class="wrap">
+
+<section class="card">
+
+<h2>Matériel actuellement affecté</h2>
+
+{% if materiels|length == 0 %}
+<p>Aucun matériel affecté.</p>
+{% endif %}
+
 <table class="table">
-<tr><th>Date</th><th>Matériel</th><th>Contrôle</th><th>Action</th></tr>
+<tr>
+<th>Date affectation</th>
+<th>Matériel</th>
+<th>Contrôle EPI</th>
+<th>Actions</th>
+</tr>
 
 {% for m in materiels %}
 <tr>
-<td>{{m.date}}</td>
-<td>{{m.materiel}}</td>
-<td>{{m.controle}}</td>
+<td>{{ m.date }}</td>
+<td>{{ m.materiel }}</td>
+<td>{{ m.controle }}</td>
 <td>
-<a href="/retour/{{loop.index0}}/retour">Retour</a> |
-<a href="/retour/{{loop.index0}}/reforme">Réforme</a>
+
+<a class="link" href="/retour/{{ loop.index0 }}/retour">
+⬅ Retour
+</a>
+
+&nbsp;|&nbsp;
+
+<a class="link danger" href="/retour/{{ loop.index0 }}/reforme">
+🗑 Réforme
+</a>
+
 </td>
 </tr>
 {% endfor %}
 </table>
+
+</section>
+
+</main>
+
+<footer class="footer">
+Développé par <strong>Christophe BOUDOT</strong>
+</footer>
+
+</body>
+</html>
