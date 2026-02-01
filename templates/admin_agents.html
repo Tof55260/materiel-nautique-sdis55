@@ -35,7 +35,14 @@
 <main class="wrap">
 
 <section class="card">
-<h2>Agents</h2>
+
+<h2>Gestion des agents</h2>
+
+<p>
+<a href="/export/inventaire">📥 Export inventaire</a> |
+<a href="/export/affectations">📥 Export affectations</a> |
+<a href="/export/retours">📥 Export historique</a>
+</p>
 
 <table class="table">
 <tr>
@@ -43,7 +50,7 @@
 <th>Nom</th>
 <th>Prénom</th>
 <th>Rôle</th>
-<th>Reset</th>
+<th>Reset MDP</th>
 </tr>
 
 {% for a in agents %}
@@ -52,23 +59,31 @@
 <td>{{ a.nom }}</td>
 <td>{{ a.prenom }}</td>
 <td>{{ a.role }}</td>
-<td><a href="/admin/reset/{{ a.login }}">Reset</a></td>
+<td>
+<a href="/admin/reset/{{ a.login }}">Reset</a>
+</td>
 </tr>
 {% endfor %}
 </table>
 
-<h3>Ajouter agent</h3>
+<hr>
+
+<h3>Ajouter un agent</h3>
 
 <form method="POST" class="formgrid">
+
 <input name="login" placeholder="Login" required>
 <input name="nom" placeholder="Nom" required>
 <input name="prenom" placeholder="Prénom" required>
-<input name="password" placeholder="Mot de passe" required>
+<input name="password" placeholder="Mot de passe initial" required>
+
 <select name="role">
-<option>Agent</option>
-<option>Admin</option>
+<option value="Agent">Agent</option>
+<option value="Admin">Admin</option>
 </select>
-<button>Créer</button>
+
+<button>Créer l’agent</button>
+
 </form>
 
 </section>
