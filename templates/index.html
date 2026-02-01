@@ -1,56 +1,40 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <title>Accueil</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
 <header class="topbar">
-<div class="brand">
-<img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
-<div>
-<div class="brand-title">Gestion Nautique SDIS</div>
-<div class="brand-subtitle">{{ prenom }} {{ nom }} — {{ role }}</div>
-</div>
-</div>
-<div class="userchip"><a class="link" href="{{ url_for('logout') }}">Déconnexion</a></div>
+  <div class="brand">
+    <img src="/static/images/logo_nautique.jpeg" class="logo">
+    <span>Gestion Nautique</span>
+  </div>
+  <nav class="tabs">
+    <a class="tab active" href="/accueil">Accueil</a>
+    <a class="tab" href="/interventions">Interventions</a>
+    {% if role == "Admin" %}
+    <a class="tab" href="/admin/agents">Administration</a>
+    {% endif %}
+    <a class="tab" href="/logout">Déconnexion</a>
+  </nav>
 </header>
 
-<nav class="tabs">
-<a class="tab active" href="{{ url_for('accueil') }}">Accueil</a>
-<a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
-<a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
-<a class="tab" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
-<a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
+<main class="container">
 
-{% if role=="Admin" %}
-<a class="tab" href="{{ url_for('fiches_agents') }}">Fiches agents</a>
-<a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
-{% endif %}
-</nav>
+  <div class="card compteur">
+    <h2>Interventions {{ now().year if false else "" }}</h2>
+    <div class="count">{{ compteur }}</div>
+    <p>Du 1er janvier au 31 décembre</p>
+  </div>
 
-<main class="wrap">
-<section class="card">
-<h2>Bienvenue</h2>
-  {% if alertes|length>0 %}
-<section class="card">
-<h2>⚠ Alertes contrôle EPI</h2>
-<ul>
-{% for a in alertes %}
-<li style="color:{% if a[1]=='depasse' %}red{% else %}orange{% endif %}">
-{{a[0].nom}} — {{a[0].controle}}
-</li>
-{% endfor %}
-</ul>
-</section>
-{% endif %}
-
-<p>Gestion du matériel nautique SDIS.</p>
-</section>
 </main>
 
-<footer class="footer">Développé par <strong>Christophe BOUDOT</strong></footer>
+<footer class="footer">
+  Développé par Christophe BOUDOT
+</footer>
+
 </body>
 </html>
