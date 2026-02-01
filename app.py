@@ -9,6 +9,7 @@ app.secret_key = "sdis55"
 
 SUPABASE_URL = "https://vylcvdfgrcikppxfpztj.supabase.co"
 SUPABASE_KEY = "sb_publishable_aDwaBA4DNt4gjIy0ODE23g_eGWA3Az3"
+
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 EXPORT_DIR = "exports"
@@ -25,9 +26,6 @@ def get_agent(login):
 
 def materiels():
     return supabase.table("materiels").select("*").execute().data
-
-def affectations():
-    return supabase.table("affectations").select("*").execute().data
 
 def echanges_list():
     return supabase.table("echanges").select("*").execute().data
@@ -67,6 +65,14 @@ def accueil():
         return redirect("/")
     return render_template("index.html", **session)
 
+# ---------------- MON COMPTE ----------------
+
+@app.route("/mon-compte")
+def mon_compte():
+    if "login" not in session:
+        return redirect("/")
+    return render_template("mon_compte.html", **session)
+
 # ---------------- ADMIN AGENTS ----------------
 
 @app.route("/admin/agents", methods=["GET","POST"])
@@ -87,6 +93,9 @@ def admin_agents():
 
 @app.route("/admin/supprimer/<login>")
 def supprimer_agent(login):
+    if session.get("role")!="Admin":
+        return redirect("/accueil")
+
     supabase.table("agents").delete().eq("login", login).execute()
     return redirect("/admin/agents")
 
@@ -100,11 +109,15 @@ def fiches_agents():
 
 @app.route("/fiche-agent/<login>")
 def fiche_agent(login):
+    if session.get("role")!="Admin":
+        return redirect("/accueil")
+
     a=get_agent(login)
     nom=a["prenom"]+" "+a["nom"]
     mats=supabase.table("affectations").select("*").eq("agent",nom).execute().data
     for m in mats:
         m["epi"]=epi_status(m.get("controle",""))
+
     return render_template("fiche_agent.html", agent=a, materiels=mats, **session)
 
 # ---------------- INVENTAIRE ----------------
@@ -171,7 +184,7 @@ def export_excel(table):
     df.to_excel(fname,index=False)
     return send_file(fname, as_attachment=True)
 
-# ---------------- SAUVEGARDE AUTO ----------------
+# ---------------- BACKUP ----------------
 
 @app.route("/backup")
 def backup():
@@ -179,6 +192,8 @@ def backup():
         data=supabase.table(t).select("*").execute().data
         pd.DataFrame(data).to_csv(f"{EXPORT_DIR}/{t}.csv",index=False)
     return "Backup OK"
+
+# ---------------- MAIN ----------------
 
 if __name__=="__main__":
     app.run(host="0.0.0.0",port=5000)
