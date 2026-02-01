@@ -1,110 +1,98 @@
-body {
-    margin: 0;
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: linear-gradient(135deg,#0b2c3d,#123f56);
-    color: #fff;
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f2f5f8;
 }
 
-header {
-    background:#081f2d;
-    padding:15px 30px;
+header{
+    background:#003c5f;
+    padding:10px 25px;
     display:flex;
     align-items:center;
-    justify-content:space-between;
 }
 
-header img {
-    height:70px;
+header img{
+    height:60px;
 }
 
-nav a {
+nav{
+    margin-left:30px;
+}
+
+nav a{
     color:white;
     text-decoration:none;
-    margin-left:25px;
-    font-weight:600;
+    margin-right:20px;
+    font-weight:bold;
 }
 
-nav a:hover {
-    color:#ffd000;
+nav a:hover{
+    text-decoration:underline;
 }
 
-.container {
-    padding:30px;
+.container{
+    padding:25px;
 }
 
-.hero {
-    background:linear-gradient(135deg,#0e4a68,#12709b);
-    border-radius:12px;
-    padding:40px;
-    margin-bottom:30px;
+/* compteur */
+
+.compteur-box{
+    background:white;
+    border-radius:10px;
+    padding:20px;
+    margin-bottom:25px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    box-shadow:0 10px 30px rgba(0,0,0,.3);
+    box-shadow:0 2px 6px rgba(0,0,0,.15);
 }
 
-.compteur {
-    text-align:center;
+.compteur-num{
+    font-size:52px;
+    color:#c62828;
+    font-weight:bold;
 }
 
-.compteur h1 {
-    font-size:64px;
-    margin:0;
-    color:#ffd000;
+.card{
+    background:white;
+    border-radius:8px;
+    padding:15px;
+    margin-bottom:20px;
+    box-shadow:0 2px 6px rgba(0,0,0,.1);
 }
 
-.compteur p {
-    margin:5px 0 0;
-    letter-spacing:2px;
-}
-
-.cards {
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:20px;
-}
-
-.card {
-    background:#0c344a;
-    border-radius:10px;
-    padding:20px;
-    box-shadow:0 5px 15px rgba(0,0,0,.3);
-}
-
-.card h3 {
-    margin-top:0;
-    color:#ffd000;
-}
-
-table {
+table{
     width:100%;
     border-collapse:collapse;
-    margin-top:15px;
 }
 
-th,td {
-    padding:10px;
-    border-bottom:1px solid #2b556d;
-}
-
-input,select,button {
+th,td{
     padding:8px;
-    border-radius:5px;
-    border:none;
+    border-bottom:1px solid #ddd;
 }
 
-button {
-    background:#ffd000;
-    font-weight:bold;
+th{
+    background:#e6eef4;
+}
+
+input,select{
+    padding:6px;
+}
+
+button{
+    background:#003c5f;
+    color:white;
+    border:none;
+    padding:6px 12px;
     cursor:pointer;
 }
 
-button:hover {
-    background:#ffea61;
+button:hover{
+    background:#005b8c;
 }
 
-footer {
-    margin-top:40px;
+footer{
     text-align:center;
-    opacity:.6;
+    margin-top:40px;
+    color:#777;
 }
