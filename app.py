@@ -1,3 +1,5 @@
+print("APP VERSION 02 FEB OK")
+
 from flask import Flask, render_template, request, redirect, session
 from werkzeug.security import check_password_hash, generate_password_hash
 from supabase import create_client
