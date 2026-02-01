@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Fiche agent</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header class="topbar">
+<div class="brand">
+<img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
+<div>
+<div class="brand-title">Fiche agent</div>
+<div class="brand-subtitle">{{ agent.prenom }} {{ agent.nom }}</div>
+</div>
+</div>
+
+<div class="userchip">
+<a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
+</div>
+</header>
+
+<nav class="tabs">
+<a class="tab" href="{{ url_for('fiches_agents') }}">⬅ Retour</a>
+</nav>
+
+<main class="wrap">
+
+<section class="card">
+
+<h2>Matériel affecté</h2>
+
+{% if materiels|length == 0 %}
+<p>Aucun matériel affecté.</p>
+{% endif %}
+
+<table class="table">
+<tr>
+<th>Matériel</th>
+<th>Numéro de série</th>
+<th>Contrôle EPI</th>
+<th>Date affectation</th>
+</tr>
+
+{% for m in materiels %}
+<tr>
+<td>{{ m.materiel }}</td>
+<td>{{ m.get("serie","—") }}</td>
+<td>{{ m.controle }}</td>
+<td>{{ m.date }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</section>
+
+</main>
+
+<footer class="footer">
+Développé par <strong>Christophe BOUDOT</strong>
+</footer>
+
+</body>
+</html>
