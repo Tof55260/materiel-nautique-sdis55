@@ -1,12 +1,9 @@
 from flask import Flask, render_template, request, redirect, session
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from supabase import create_client
 
 app = Flask(__name__)
 app.secret_key = "sdis55"
-
-# ---------------- SUPABASE ----------------
 
 SUPABASE_URL = "https://vylcvdfgrcikppxfpztj.supabase.co"
 SUPABASE_KEY = "sb_publishable_aDwaBA4DNt4gjIy0ODE23g_eGWA3Az3"
@@ -37,9 +34,12 @@ def echanges():
 def login():
     if request.method=="POST":
         a = get_agent(request.form["login"])
-        if a and check_password_hash(a["password"], request.form["password"]):
+
+        # LOGIN EN CLAIR (TEMPORAIRE)
+        if a and a["password"] == request.form["password"]:
             session.update(a)
             return redirect("/accueil")
+
     return render_template("login.html")
 
 @app.route("/logout")
@@ -74,7 +74,7 @@ def admin_agents():
             "nom":request.form["nom"],
             "prenom":request.form["prenom"],
             "role":request.form["role"],
-            "password":generate_password_hash(request.form["password"])
+            "password":request.form["password"]
         }).execute()
 
     return render_template("admin_agents.html", agents=agents(), **session)
@@ -127,7 +127,8 @@ def inventaire():
                     "controle":controle
                 }).execute()
 
-    return render_template("inventaire.html",
+    return render_template(
+        "inventaire.html",
         materiels=materiels(),
         agents=agents(),
         **session
@@ -148,8 +149,6 @@ def page_echanges():
     return render_template("echanges.html", echanges=echanges(), **session)
 
 # ---------------- MAIN ----------------
-from werkzeug.security import generate_password_hash
-print(generate_password_hash("admin55"))
 
 if __name__=="__main__":
     app.run(host="0.0.0.0", port=5000)
