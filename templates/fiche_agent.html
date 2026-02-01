@@ -1,94 +1,50 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Fiche agent</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
 </head>
-
 <body>
 
-<header class="topbar">
-<div class="brand">
-<img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
-<div>
-<div class="brand-title">{{ agent.prenom }} {{ agent.nom }}</div>
-<div class="brand-subtitle">Gestion matériel</div>
-</div>
-</div>
+<h2>{{ agent.prenom }} {{ agent.nom }}</h2>
 
-<div class="userchip">
-<a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
-</div>
-</header>
-
-<nav class="tabs">
-<a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
-<a class="tab" href="{{ url_for('fiches_agents') }}">Retour liste</a>
-</nav>
-
-<main class="wrap">
-
-<section class="card">
-
-<h2>Matériel affecté</h2>
-
-<table class="table">
-<tr>
-<th>Matériel</th>
-<th>Contrôle EPI</th>
-<th>Action</th>
-</tr>
+<table>
+<tr><th>Matériel</th><th>EPI</th><th>Action</th></tr>
 
 {% for m in materiels %}
 <tr>
 <td>{{ m.materiel }}</td>
 <td class="{{ m.epi }}">{{ m.controle }}</td>
+
 <td>
-
-<form method="POST" action="/materiel/action" class="inline">
-
+<form method="POST" action="/materiel/action">
 <input type="hidden" name="id" value="{{ m.id }}">
-<input type="hidden" name="agent" value="{{ agent.prenom }} {{ agent.nom }}">
+<input type="hidden" name="agent" value="{{ agent.login }}">
 <input type="hidden" name="materiel" value="{{ m.materiel }}">
 
 <select name="action">
-<option value="stock">Retour magasin</option>
-<option value="reforme">Réformer</option>
-<option value="echange">Échanger</option>
+<option value="stock">Retour stock</option>
+<option value="reforme">Réforme</option>
+<option value="echange">Échange</option>
 </select>
 
 <select name="remplace">
+<option></option>
 {% for x in magasin %}
 <option value="{{ x.nom }}">{{ x.nom }}</option>
 {% endfor %}
 </select>
 
-<input type="date" name="controle">
-
-<button>Valider</button>
-
+<button>OK</button>
 </form>
-
 </td>
 </tr>
 {% endfor %}
-
 </table>
 
-</section>
+<h3>Historique</h3>
 
-<section class="card">
-
-<h2>Historique</h2>
-
-<table class="table">
-<tr>
-<th>Date</th>
-<th>Matériel</th>
-<th>Action</th>
-</tr>
-
+<table>
+<tr><th>Date</th><th>Matériel</th><th>Action</th></tr>
 {% for h in hist %}
 <tr>
 <td>{{ h.date }}</td>
@@ -96,16 +52,7 @@
 <td>{{ h.action }}</td>
 </tr>
 {% endfor %}
-
 </table>
-
-</section>
-
-</main>
-
-<footer class="footer">
-Développé par <strong>Christophe BOUDOT</strong>
-</footer>
 
 </body>
 </html>
