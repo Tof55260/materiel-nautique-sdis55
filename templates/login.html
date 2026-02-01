@@ -1,49 +1,52 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Connexion</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<title>Connexion</title>
+<style>
+body{
+background:#0a2239;
+color:white;
+font-family:Arial;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+form{
+background:#132f4c;
+padding:40px;
+border-radius:10px;
+width:300px;
+}
+input,button{
+width:100%;
+margin-top:10px;
+padding:10px;
+}
+button{
+background:#ff6600;
+border:none;
+color:white;
+}
+</style>
 </head>
+
 <body>
 
-<header class="topbar">
-  <div class="brand">
-    <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
-    <div>
-      <div class="brand-title">Matériel Nautique</div>
-      <div class="brand-subtitle">Connexion agent</div>
-    </div>
-  </div>
-</header>
+<form method="POST">
 
-<main class="wrap">
-  <section class="card">
-    <h2>Connexion</h2>
+<h2 style="text-align:center">Connexion</h2>
 
-    {% if erreur %}
-      <p style="color:red">{{ erreur }}</p>
-    {% endif %}
+<input name="login" placeholder="Identifiant" required>
+<input type="password" name="password" placeholder="Mot de passe" required>
 
-    <form method="POST" class="formgrid">
-      <label>
-        Identifiant
-        <input type="text" name="login" required>
-      </label>
+<button>Connexion</button>
 
-      <label>
-        Mot de passe
-        <input type="password" name="password" required>
-      </label>
+{% if erreur %}
+<p style="color:red;text-align:center;margin-top:10px;">{{ erreur }}</p>
+{% endif %}
 
-      <button type="submit">Se connecter</button>
-    </form>
-  </section>
-</main>
-
-<footer class="footer">
-  Développé par <strong>Christophe BOUDOT</strong>
-</footer>
+</form>
 
 </body>
 </html>
