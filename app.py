@@ -32,15 +32,25 @@ def save(f,d):
 
 def agents(): return load("agents.json")
 def save_agents(x): save("agents.json",x)
+
 def mats(): return load("materiels.json")
 def save_mats(x): save("materiels.json",x)
+
 def aff(): return load("affectations.json")
 def save_aff(x): save("affectations.json",x)
+
+def ech(): return load("echanges.json")
+def save_ech(x): save("echanges.json",x)
+
+def ret(): return load("retours.json")
+def save_ret(x): save("retours.json",x)
 
 def get(login):
     for a in agents():
         if a["login"]==login:
             return a
+
+# ---------------- LOGIN ----------------
 
 @app.route("/",methods=["GET","POST"])
 def login():
@@ -56,11 +66,23 @@ def logout():
     session.clear()
     return redirect("/")
 
+# ---------------- ACCUEIL ----------------
+
 @app.route("/accueil")
 def accueil():
     if "login" not in session:
         return redirect("/")
     return render_template("index.html",**session)
+
+# ---------------- MON COMPTE ----------------
+
+@app.route("/mon-compte")
+def mon_compte():
+    if "login" not in session:
+        return redirect("/")
+    return render_template("mon_compte.html",**session)
+
+# ---------------- ADMIN AGENTS ----------------
 
 @app.route("/admin/agents",methods=["GET","POST"])
 def admin_agents():
@@ -81,11 +103,26 @@ def admin_agents():
 
     return render_template("admin_agents.html",agents=a,**session)
 
+# ---------------- FICHES AGENTS ----------------
+
 @app.route("/fiches-agents")
 def fiches_agents():
     if session.get("role")!="Admin":
         return redirect("/accueil")
     return render_template("fiches_agents.html",agents=agents(),**session)
+
+@app.route("/fiche-agent/<login>")
+def fiche_agent(login):
+    if session.get("role")!="Admin":
+        return redirect("/accueil")
+
+    a=get(login)
+    nom=a["prenom"]+" "+a["nom"]
+    lst=[x for x in aff() if x["agent"]==nom]
+
+    return render_template("fiche_agent.html",agent=a,materiels=lst,**session)
+
+# ---------------- INVENTAIRE ----------------
 
 @app.route("/inventaire",methods=["GET","POST"])
 def inventaire():
@@ -122,17 +159,23 @@ def inventaire():
 
     return render_template("inventaire.html",materiels=m,agents=a,**session)
 
+# ---------------- MA FICHE ----------------
+
 @app.route("/ma-fiche")
 def ma_fiche():
     nom=session["prenom"]+" "+session["nom"]
     lst=[x for x in aff() if x["agent"]==nom]
     return render_template("ma_fiche.html",materiels=lst,**session)
+
+# ---------------- ECHANGES ----------------
+
 @app.route("/echanges")
 def echanges():
     if "login" not in session:
         return redirect("/")
+    return render_template("echanges.html",echanges=ech(),**session)
 
-    return render_template("echanges.html",**session)
+# ---------------- MAIN ----------------
 
 if __name__=="__main__":
     app.run(host="0.0.0.0",port=int(os.environ.get("PORT",5000)))
