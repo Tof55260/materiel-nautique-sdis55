@@ -1,5 +1,4 @@
 from flask import Flask, request
-from werkzeug.security import check_password_hash
 from supabase import create_client
 
 SUPABASE_URL = "https://vylcvdfgrcikppxfpztj.supabase.co"
@@ -9,7 +8,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = Flask(__name__)
 
-print("APP DIAGNOSTIC OK")
+print("APP LOGIN SIMPLE OK")
 
 @app.route("/", methods=["GET","POST"])
 def login():
@@ -29,9 +28,7 @@ def login():
 
             if a["login"]==login:
 
-                print("MATCH LOGIN")
-
-                if check_password_hash(a["password"],pwd):
+                if a["password"] == pwd:
                     return "<h1>LOGIN OK</h1>"
 
                 else:
