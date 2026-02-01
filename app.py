@@ -145,8 +145,9 @@ def ma_fiche():
 # ---------------- ECHANGES ----------------
 
 @app.route("/echanges")
-def page_echanges():
+def echanges():
     return render_template("echanges.html", echanges=echanges(), **session)
+
 
 # ---------------- MAIN ----------------
 
