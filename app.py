@@ -67,6 +67,15 @@ def mon_compte():
 def admin_agents():
     if session.get("role")!="Admin":
         return redirect("/accueil")
+        @app.route("/admin/supprimer/<login>")
+def supprimer_agent(login):
+    if session.get("role")!="Admin":
+        return redirect("/accueil")
+
+    supabase.table("agents").delete().eq("login", login).execute()
+
+    return redirect("/admin/agents")
+
 
     if request.method=="POST":
         supabase.table("agents").insert({
