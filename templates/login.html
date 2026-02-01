@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Connexion</title>
+
 <style>
 body{
 background:#0a2239;
@@ -12,38 +13,44 @@ justify-content:center;
 align-items:center;
 height:100vh;
 }
+
 form{
 background:#132f4c;
 padding:40px;
 border-radius:10px;
 width:300px;
 }
+
 input,button{
 width:100%;
 margin-top:10px;
 padding:10px;
 }
+
 button{
 background:#ff6600;
 border:none;
 color:white;
+cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<form method="POST">
+<form method="POST" action="/">
 
 <h2 style="text-align:center">Connexion</h2>
 
 <input name="login" placeholder="Identifiant" required>
 <input type="password" name="password" placeholder="Mot de passe" required>
 
-<button>Connexion</button>
+<button type="submit">Connexion</button>
 
 {% if erreur %}
-<p style="color:red;text-align:center;margin-top:10px;">{{ erreur }}</p>
+<p style="color:red;text-align:center;margin-top:10px;">
+{{ erreur }}
+</p>
 {% endif %}
 
 </form>
