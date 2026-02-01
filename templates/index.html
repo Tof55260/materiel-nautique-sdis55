@@ -1,39 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Accueil</title>
-<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
 </head>
+
 <body>
 
-<header class="topbar">
-  <div class="brand">
-    <img src="/static/images/logo_nautique.jpeg" class="logo">
-    <span>Gestion Nautique</span>
-  </div>
-  <nav class="tabs">
-    <a class="tab active" href="/accueil">Accueil</a>
-    <a class="tab" href="/interventions">Interventions</a>
-    {% if role == "Admin" %}
-    <a class="tab" href="/admin/agents">Administration</a>
-    {% endif %}
-    <a class="tab" href="/logout">Déconnexion</a>
-  </nav>
+<header>
+    <img src="{{ url_for('static',filename='images/logo_nautique.jpeg') }}">
+
+    <nav>
+        <a href="{{ url_for('accueil') }}">Accueil</a>
+        <a href="{{ url_for('page_echanges') }}">Échanges</a>
+        <a href="{{ url_for('inventaire') }}">Inventaire</a>
+        <a href="{{ url_for('interventions') }}">Interventions</a>
+        <a href="{{ url_for('fiches_agents') }}">Fiches agents</a>
+        <a href="{{ url_for('ma_fiche') }}">Ma fiche</a>
+        {% if role=="Admin" %}
+        <a href="{{ url_for('admin_agents') }}">Administration</a>
+        {% endif %}
+        <a href="{{ url_for('deconnexion') }}">Déconnexion</a>
+    </nav>
 </header>
 
-<main class="container">
+<div class="container">
 
-  <div class="card compteur">
-    <h2>Interventions {{ now().year if false else "" }}</h2>
-    <div class="count">{{ compteur }}</div>
-    <p>Du 1er janvier au 31 décembre</p>
-  </div>
+<div class="hero">
+    <div>
+        <h2>Gestion Nautique SDIS 55</h2>
+        <p>Suivi EPI – Inventaire – Agents – Interventions</p>
+    </div>
 
-</main>
+    <div class="compteur">
+        <h1>{{ compteur }}</h1>
+        <p>INTERVENTIONS {{ now().year }}</p>
+    </div>
+</div>
 
-<footer class="footer">
-  Développé par Christophe BOUDOT
+<div class="cards">
+
+<div class="card">
+<h3>Magasin</h3>
+<p>Gestion du stock et affectations.</p>
+</div>
+
+<div class="card">
+<h3>Agents</h3>
+<p>Fiches individuelles + matériel.</p>
+</div>
+
+<div class="card">
+<h3>Échanges</h3>
+<p>Traçabilité complète.</p>
+</div>
+
+<div class="card">
+<h3>Interventions</h3>
+<p>Compteur annuel automatique.</p>
+</div>
+
+</div>
+
+</div>
+
+<footer>
+Développé par Christophe BOUDOT
 </footer>
 
 </body>
