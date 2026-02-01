@@ -34,6 +34,19 @@
 <main class="wrap">
 <section class="card">
 <h2>Bienvenue</h2>
+  {% if alertes|length>0 %}
+<section class="card">
+<h2>⚠ Alertes contrôle EPI</h2>
+<ul>
+{% for a in alertes %}
+<li style="color:{% if a[1]=='depasse' %}red{% else %}orange{% endif %}">
+{{a[0].nom}} — {{a[0].controle}}
+</li>
+{% endfor %}
+</ul>
+</section>
+{% endif %}
+
 <p>Gestion du matériel nautique SDIS.</p>
 </section>
 </main>
