@@ -7,58 +7,37 @@
 <body>
 
 <header>
-    <img src="{{ url_for('static',filename='images/logo_nautique.jpeg') }}">
+<img src="{{ url_for('static',filename='images/logo_nautique.jpeg') }}">
 
-    <nav>
-        <a href="{{ url_for('accueil') }}">Accueil</a>
-        <a href="{{ url_for('page_echanges') }}">Échanges</a>
-        <a href="{{ url_for('inventaire') }}">Inventaire</a>
-        <a href="{{ url_for('interventions') }}">Interventions</a>
-        <a href="{{ url_for('fiches_agents') }}">Fiches agents</a>
-        <a href="{{ url_for('ma_fiche') }}">Ma fiche</a>
-        {% if role=="Admin" %}
-        <a href="{{ url_for('admin_agents') }}">Administration</a>
-        {% endif %}
-        <a href="{{ url_for('deconnexion') }}">Déconnexion</a>
-    </nav>
+<nav>
+<a href="{{ url_for('accueil') }}">Accueil</a>
+<a href="{{ url_for('page_echanges') }}">Échanges</a>
+<a href="{{ url_for('inventaire') }}">Inventaire</a>
+<a href="{{ url_for('interventions') }}">Interventions</a>
+<a href="{{ url_for('fiches_agents') }}">Fiches agents</a>
+<a href="{{ url_for('ma_fiche') }}">Ma fiche</a>
+{% if role=="Admin" %}
+<a href="{{ url_for('admin_agents') }}">Administration</a>
+{% endif %}
+<a href="{{ url_for('deconnexion') }}">Déconnexion</a>
+</nav>
 </header>
 
 <div class="container">
 
-<div class="hero">
-    <div>
-        <h2>Gestion Nautique SDIS 55</h2>
-        <p>Suivi EPI – Inventaire – Agents – Interventions</p>
-    </div>
-
-    <div class="compteur">
-        <h1>{{ compteur }}</h1>
-        <p>INTERVENTIONS {{ now().year }}</p>
-    </div>
+<div class="compteur-box">
+<div>
+<h2>Compteur interventions {{ now().year }}</h2>
 </div>
 
-<div class="cards">
-
-<div class="card">
-<h3>Magasin</h3>
-<p>Gestion du stock et affectations.</p>
+<div class="compteur-num">
+{{ compteur }}
+</div>
 </div>
 
 <div class="card">
-<h3>Agents</h3>
-<p>Fiches individuelles + matériel.</p>
-</div>
-
-<div class="card">
-<h3>Échanges</h3>
-<p>Traçabilité complète.</p>
-</div>
-
-<div class="card">
-<h3>Interventions</h3>
-<p>Compteur annuel automatique.</p>
-</div>
-
+<h3>Bienvenue {{ prenom }} {{ nom }}</h3>
+<p>Gestion du matériel nautique – EPI – Agents – Interventions</p>
 </div>
 
 </div>
