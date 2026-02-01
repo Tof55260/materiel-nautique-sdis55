@@ -72,10 +72,15 @@
 <label>Affectation</label>
 <select name="agent">
 <option value="magasin">Magasin</option>
+
 {% for a in agents %}
-<option value="{{a.prenom}} {{a.nom}}">{{a.prenom}} {{a.nom}}</option>
+<option value="{{ a.prenom }} {{ a.nom }}">
+{{ a.prenom }} {{ a.nom }}
+</option>
 {% endfor %}
+
 </select>
+
 
 <button>Ajouter</button>
 
