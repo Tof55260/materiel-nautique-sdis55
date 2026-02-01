@@ -127,6 +127,12 @@ def ma_fiche():
     nom=session["prenom"]+" "+session["nom"]
     lst=[x for x in aff() if x["agent"]==nom]
     return render_template("ma_fiche.html",materiels=lst,**session)
+@app.route("/echanges")
+def echanges():
+    if "login" not in session:
+        return redirect("/")
+
+    return render_template("echanges.html",**session)
 
 if __name__=="__main__":
     app.run(host="0.0.0.0",port=int(os.environ.get("PORT",5000)))
