@@ -11,14 +11,16 @@
 
 <nav>
 <a href="{{ url_for('accueil') }}">Accueil</a>
-<a href="{{ url_for('page_echanges') }}">Échanges</a>
+<a href="{{ url_for('echanges') }}">Échanges</a>
 <a href="{{ url_for('inventaire') }}">Inventaire</a>
 <a href="{{ url_for('interventions') }}">Interventions</a>
 <a href="{{ url_for('fiches_agents') }}">Fiches agents</a>
 <a href="{{ url_for('ma_fiche') }}">Ma fiche</a>
+
 {% if role=="Admin" %}
 <a href="{{ url_for('admin_agents') }}">Administration</a>
 {% endif %}
+
 <a href="{{ url_for('deconnexion') }}">Déconnexion</a>
 </nav>
 </header>
@@ -27,7 +29,7 @@
 
 <div class="compteur-box">
 <div>
-<h2>Compteur interventions {{ now().year }}</h2>
+<h2>Interventions {{ now().year }}</h2>
 </div>
 
 <div class="compteur-num">
