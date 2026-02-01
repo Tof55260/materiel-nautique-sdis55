@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Fiche agent</title>
+<title>Fiches agents</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
@@ -12,8 +12,8 @@
 <div class="brand">
 <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
 <div>
-<div class="brand-title">Fiche agent</div>
-<div class="brand-subtitle">{{ agent.prenom }} {{ agent.nom }}</div>
+<div class="brand-title">Fiches agents</div>
+<div class="brand-subtitle">{{ prenom }} {{ nom }} — {{ role }}</div>
 </div>
 </div>
 
@@ -23,33 +23,37 @@
 </header>
 
 <nav class="tabs">
-<a class="tab" href="{{ url_for('fiches_agents') }}">⬅ Retour</a>
+<a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
+<a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
+<a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
+<a class="tab" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
+<a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
+<a class="tab active" href="{{ url_for('fiches_agents') }}">Fiches agents</a>
+<a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
 </nav>
 
 <main class="wrap">
 
 <section class="card">
 
-<h2>Matériel affecté</h2>
-
-{% if materiels|length == 0 %}
-<p>Aucun matériel affecté.</p>
-{% endif %}
+<h2>Liste des agents</h2>
 
 <table class="table">
 <tr>
-<th>Matériel</th>
-<th>Numéro de série</th>
-<th>Contrôle EPI</th>
-<th>Date affectation</th>
+<th>Nom</th>
+<th>Prénom</th>
+<th>Rôle</th>
+<th>Action</th>
 </tr>
 
-{% for m in materiels %}
+{% for a in agents %}
 <tr>
-<td>{{ m.materiel }}</td>
-<td>{{ m.get("serie","—") }}</td>
-<td>{{ m.controle }}</td>
-<td>{{ m.date }}</td>
+<td>{{ a.nom }}</td>
+<td>{{ a.prenom }}</td>
+<td>{{ a.role }}</td>
+<td>
+<a class="tab" href="/fiche-agent/{{ a.login }}">Ouvrir fiche</a>
+</td>
 </tr>
 {% endfor %}
 
