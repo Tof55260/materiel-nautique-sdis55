@@ -1,60 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
+<title>Fiches agents</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-<h2>{{ agent.prenom }} {{ agent.nom }}</h2>
+<header class="topbar">
+<div class="brand">
+<img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
+<div>
+<div class="brand-title">Fiches agents</div>
+<div class="brand-subtitle">{{ prenom }} {{ nom }} — {{ role }}</div>
+</div>
+</div>
+
+<div class="userchip">
+<a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
+</div>
+</header>
+
+<nav class="tabs">
+<a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
+<a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
+<a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
+<a class="tab" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
+<a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
+<a class="tab active" href="{{ url_for('fiches_agents') }}">Fiches agents</a>
+<a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
+</nav>
+
+<main class="wrap">
+
+<section class="card">
+
+<h2>Liste des agents</h2>
 
 <table class="table">
-<tr><th>Matériel</th><th>EPI</th><th>Action</th></tr>
-
-{% for m in materiels %}
 <tr>
-<td>{{ m.materiel }}</td>
-<td class="{{ m.epi }}">{{ m.controle }}</td>
+<th>Nom</th>
+<th>Prénom</th>
+<th>Rôle</th>
+<th>Action</th>
+</tr>
+
+{% for a in agents %}
+<tr>
+<td>{{ a.nom }}</td>
+<td>{{ a.prenom }}</td>
+<td>{{ a.role }}</td>
 <td>
-<form method="POST" action="/materiel/action">
-<input type="hidden" name="id" value="{{ m.id }}">
-<input type="hidden" name="agent" value="{{ agent.prenom }} {{ agent.nom }}">
-<input type="hidden" name="materiel" value="{{ m.materiel }}">
-
-<select name="action">
-<option value="stock">Retour magasin</option>
-<option value="reforme">Réformer</option>
-<option value="echange">Échanger</option>
-</select>
-
-<select name="remplace">
-{% for x in magasin %}
-<option value="{{ x.nom }}">{{ x.nom }}</option>
-{% endfor %}
-</select>
-
-<input type="date" name="controle">
-
-<button>Valider</button>
-</form>
+<a class="tab" href="/fiche-agent/{{ a.login }}">Ouvrir fiche</a>
 </td>
 </tr>
 {% endfor %}
+
 </table>
 
-<h3>Historique</h3>
+</section>
 
-<table class="table">
-<tr><th>Date</th><th>Matériel</th><th>Action</th></tr>
-{% for h in hist %}
-<tr>
-<td>{{ h.date }}</td>
-<td>{{ h.materiel }}</td>
-<td>{{ h.action }}</td>
-</tr>
-{% endfor %}
-</table>
+</main>
+
+<footer class="footer">
+Développé par <strong>Christophe BOUDOT</strong>
+</footer>
 
 </body>
 </html>
