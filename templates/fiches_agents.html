@@ -35,46 +35,28 @@
 <main class="wrap">
 
 <section class="card">
-<h2>Affectations matériel</h2>
+
+<h2>Liste des agents</h2>
 
 <table class="table">
 <tr>
-<th>Agent</th>
-<th>Matériel</th>
-<th>Date</th>
-<th>Contrôle</th>
+<th>Nom</th>
+<th>Prénom</th>
+<th>Rôle</th>
+<th>Voir fiche</th>
 </tr>
 
-{% for a in affectations %}
+{% for a in agents %}
 <tr>
-<td>{{ a.agent }}</td>
-<td>{{ a.materiel }}</td>
-<td>{{ a.date }}</td>
-<td>{{ a.controle }}</td>
-</tr>
-{% endfor %}
-</table>
-
-<h2>Demandes retour / réforme</h2>
-
-<table class="table">
-<tr>
-<th>Agent</th>
-<th>Matériel</th>
-<th>Action</th>
-<th>Valider</th>
-</tr>
-
-{% for r in charger_retours() %}
-<tr>
-<td>{{ r.agent }}</td>
-<td>{{ r.materiel }}</td>
-<td>{{ r.action }}</td>
+<td>{{ a.nom }}</td>
+<td>{{ a.prenom }}</td>
+<td>{{ a.role }}</td>
 <td>
-<a href="/admin/retours/{{ loop.index0 }}/valider">OK</a>
+<a class="link" href="/fiche-agent/{{ a.login }}">Ouvrir</a>
 </td>
 </tr>
 {% endfor %}
+
 </table>
 
 </section>
