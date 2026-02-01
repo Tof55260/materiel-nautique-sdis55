@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.secret_key = "sdis55"
 
 SUPABASE_URL = "https://vylcvdfgrcikppxfpztj.supabase.co"
-SUPABASE_KEY = "sb_publishable_aDwaBA4DNt4gjIy0ODE23g_eGWA3Az3"
+SUPABASE_KEY = "sb_publishable_kapa-lxDU6PiOVOjc6p5-Q_udDKR2c0"
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
