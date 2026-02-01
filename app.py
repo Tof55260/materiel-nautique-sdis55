@@ -153,7 +153,7 @@ def statut(id,action):
                         a.append({
                             "agent":x["agent"],
                             "materiel":x["materiel"],
-                            "date":datetime.now().strftime("%d/%m/%Y %H:%M"),
+                            "date":datetime.now().strftime("%d/%m/%Y"),
                             "controle":mat["controle"]
                         })
                         break
@@ -168,22 +168,35 @@ def statut(id,action):
 @app.route("/inventaire",methods=["GET","POST"])
 def inventaire():
     if "login" not in session: return redirect(url_for("login"))
-    m=charger_materiels()
 
-    if request.method=="POST" and session.get("role")=="Admin":
-        m.append({
+    m=charger_materiels()
+    agents=charger_agents()
+    aff=charger_affectations()
+
+    if request.method=="POST" and session["role"]=="Admin":
+        mat={
             "id":len(m)+1,
             "nom":request.form["nom"],
             "type":request.form["type"],
             "stock":int(request.form["stock"]),
-            "controle":request.form["controle"],
-            "periodicite":int(request.form["periodicite"]),
-            "etat":"Actif"
-        })
+            "controle":request.form["controle"]
+        }
+
+        if request.form["agent"]=="magasin":
+            m.append(mat)
+        else:
+            aff.append({
+                "agent":request.form["agent"],
+                "materiel":mat["nom"],
+                "date":datetime.now().strftime("%d/%m/%Y"),
+                "controle":mat["controle"]
+            })
+
         sauvegarder_materiels(m)
+        sauvegarder_affectations(aff)
         return redirect(url_for("inventaire"))
 
-    return render_template("inventaire.html",materiels=m,**session)
+    return render_template("inventaire.html",materiels=m,agents=agents,**session)
 
 @app.route("/ma-fiche")
 def ma_fiche():
@@ -200,22 +213,19 @@ def fiches_agents():
 def retour(i,action):
     aff=charger_affectations()
     r=charger_retours()
-
     mat=aff[i]
 
     r.append({
         "agent":mat["agent"],
         "materiel":mat["materiel"],
-        "date":datetime.now().strftime("%d/%m/%Y %H:%M"),
+        "date":datetime.now().strftime("%d/%m/%Y"),
         "action":action,
         "statut":"En attente"
     })
 
     del aff[i]
-
     sauvegarder_affectations(aff)
     sauvegarder_retours(r)
-
     return redirect(url_for("ma_fiche"))
 
 @app.route("/admin/retours/<int:i>/<decision>")
@@ -231,10 +241,8 @@ def admin_retour(i,decision):
                 x["stock"]+=1
 
     r[i]["statut"]="Traité"
-
     sauvegarder_retours(r)
     sauvegarder_materiels(m)
-
     return redirect(url_for("fiches_agents"))
 
 @app.route("/export/<quoi>")
