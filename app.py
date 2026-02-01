@@ -3,6 +3,8 @@ from supabase import create_client
 from datetime import datetime
 import os
 
+# ================= CONFIG =================
+
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
@@ -11,36 +13,39 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 app = Flask(__name__)
 app.secret_key = "sdis55"
 
-print("APP OK")
+print("APP VERSION STABLE OK")
 
-# ---------------- UTIL ----------------
-
-def compteur_annee():
-    an = datetime.now().year
-    res = supabase.table("interventions").select("*").eq("année", an).execute().data
-    return len(res)
+# ================= UTILS =================
 
 def agents():
     return supabase.table("agents").select("*").execute().data
 
-# ---------------- LOGIN ----------------
+def compteur_annee():
+    an = datetime.now().year
+    res = supabase.table("interventions").select("*").eq("annee", an).execute().data
+    return len(res)
+
+# ================= LOGIN =================
 
 @app.route("/", methods=["GET","POST"])
 def login():
-    if request.method=="POST":
-        login=request.form["login"]
-        pwd=request.form["password"]
 
-        a=supabase.table("agents").select("*").eq("login",login).execute().data
+    if request.method == "POST":
+        login = request.form["login"]
+        password = request.form["password"]
 
-        if a and a[0]["password"]==pwd:
-            session["login"]=login
-            session["nom"]=a[0]["nom"]
-            session["prenom"]=a[0]["prenom"]
-            session["role"]=a[0]["role"]
+        a = supabase.table("agents").select("*").eq("login", login).execute().data
+
+        if a and a[0]["password"] == password:
+
+            session["login"] = login
+            session["nom"] = a[0]["nom"]
+            session["prenom"] = a[0]["prenom"]
+            session["role"] = a[0]["role"]
+
             return redirect(url_for("accueil"))
 
-        return render_template("login.html",erreur="Identifiant ou mot de passe incorrect")
+        return render_template("login.html", erreur="Identifiant ou mot de passe incorrect")
 
     return render_template("login.html")
 
@@ -49,47 +54,61 @@ def deconnexion():
     session.clear()
     return redirect("/")
 
-# ---------------- ACCUEIL ----------------
+# ================= ACCUEIL =================
 
 @app.route("/accueil")
 def accueil():
-    if "login" not in session: return redirect("/")
-    return render_template("index.html", compteur=compteur_annee(), now=datetime.now, **session)
+    if "login" not in session:
+        return redirect("/")
+    return render_template(
+        "index.html",
+        compteur=compteur_annee(),
+        now=datetime.now,
+        **session
+    )
 
-# ---------------- ONGLES ----------------
+# ================= ONGLET =================
 
 @app.route("/echanges")
 def echanges():
-    if "login" not in session: return redirect("/")
-    return render_template("echanges.html",**session)
+    if "login" not in session:
+        return redirect("/")
+    return render_template("echanges.html", **session)
 
 @app.route("/inventaire")
 def inventaire():
-    if "login" not in session: return redirect("/")
-    return render_template("inventaire.html",**session)
+    if "login" not in session:
+        return redirect("/")
+    return render_template("inventaire.html", **session)
 
 @app.route("/interventions")
 def interventions():
-    if "login" not in session: return redirect("/")
-    data=supabase.table("interventions").select("*").execute().data
+    if "login" not in session:
+        return redirect("/")
+
+    data = supabase.table("interventions").select("*").order("date", desc=True).execute().data
     return render_template("interventions.html", inter=data, **session)
 
 @app.route("/fiches-agents")
 def fiches_agents():
-    if "login" not in session: return redirect("/")
+    if "login" not in session:
+        return redirect("/")
     return render_template("fiches_agents.html", agents=agents(), **session)
 
 @app.route("/ma-fiche")
 def ma_fiche():
-    if "login" not in session: return redirect("/")
-    return render_template("ma_fiche.html",**session)
+    if "login" not in session:
+        return redirect("/")
+    return render_template("ma_fiche.html", **session)
 
 @app.route("/admin/agents")
 def admin_agents():
-    if session.get("role")!="Admin": return redirect("/accueil")
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
     return render_template("admin_agents.html", agents=agents(), **session)
 
-# ---------------- RUN ----------------
+# ================= RUN =================
 
-if __name__=="__main__":
-    app.run(host="0.0.0.0",port=int(os.environ.get("PORT",5000)))
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
