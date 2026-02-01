@@ -167,36 +167,49 @@ def statut(id,action):
 
 @app.route("/inventaire",methods=["GET","POST"])
 def inventaire():
-    if "login" not in session: return redirect(url_for("login"))
+    if "login" not in session:
+        return redirect(url_for("login"))
 
-    m=charger_materiels()
-    agents=charger_agents()
-    aff=charger_affectations()
+    materiels = charger_materiels()
+    agents = charger_agents()
+    affectations = charger_affectations()
 
-    if request.method=="POST" and session["role"]=="Admin":
-        mat={
-            "id":len(m)+1,
-            "nom":request.form["nom"],
-            "type":request.form["type"],
-            "stock":int(request.form["stock"]),
-            "controle":request.form["controle"]
-        }
+    if request.method == "POST" and session["role"] == "Admin":
 
-        if request.form["agent"]=="magasin":
-            m.append(mat)
-        else:
-            aff.append({
-                "agent":request.form["agent"],
-                "materiel":mat["nom"],
-                "date":datetime.now().strftime("%d/%m/%Y"),
-                "controle":mat["controle"]
+        nom = request.form["nom"]
+        type_m = request.form["type"]
+        stock = int(request.form["stock"])
+        controle = request.form["controle"]
+        agent = request.form["agent"]
+
+        if agent == "magasin":
+            materiels.append({
+                "nom": nom,
+                "type": type_m,
+                "stock": stock,
+                "controle": controle
             })
 
-        sauvegarder_materiels(m)
-        sauvegarder_affectations(aff)
+        else:
+            for i in range(stock):
+                affectations.append({
+                    "agent": agent,
+                    "materiel": nom,
+                    "date": datetime.now().strftime("%d/%m/%Y"),
+                    "controle": controle
+                })
+
+        sauvegarder_materiels(materiels)
+        sauvegarder_affectations(affectations)
+
         return redirect(url_for("inventaire"))
 
-    return render_template("inventaire.html",materiels=m,agents=agents,**session)
+    return render_template(
+        "inventaire.html",
+        materiels=materiels,
+        agents=agents,
+        **session
+    )
 
 @app.route("/ma-fiche")
 def ma_fiche():
