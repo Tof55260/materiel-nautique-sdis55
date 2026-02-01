@@ -1,10 +1,10 @@
-import os, json
-from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, session
+import os, json, csv
+from datetime import datetime, timedelta
+from flask import Flask, render_template, request, redirect, url_for, session, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.secret_key = "sdis55-nautique"
+app.secret_key="sdis55-nautique"
 
 FICHIER_AGENTS="agents.json"
 FICHIER_ECHANGES="echanges.json"
@@ -33,14 +33,27 @@ def sauvegarder_affectations(a): save_json(FICHIER_AFFECTATIONS,a)
 def charger_retours(): return load_json(FICHIER_RETOURS)
 def sauvegarder_retours(r): save_json(FICHIER_RETOURS,r)
 
+@app.context_processor
+def inject():
+    return dict(charger_retours=charger_retours)
+
+def epi_alertes():
+    alertes=[]
+    aujourd=datetime.now().date()
+    for m in charger_materiels():
+        try:
+            d=datetime.strptime(m["controle"],"%Y-%m-%d").date()
+            if d<aujourd:
+                alertes.append((m,"depasse"))
+            elif d-aujourd<=timedelta(days=30):
+                alertes.append((m,"bientot"))
+        except: pass
+    return alertes
+
 def get_agent(login):
     for a in charger_agents():
         if a["login"]==login: return a
     return None
-
-@app.context_processor
-def inject():
-    return dict(charger_retours=charger_retours)
 
 @app.route("/",methods=["GET","POST"])
 def login():
@@ -60,7 +73,7 @@ def logout():
 @app.route("/accueil")
 def accueil():
     if "login" not in session: return redirect(url_for("login"))
-    return render_template("index.html",**session)
+    return render_template("index.html",alertes=epi_alertes(),**session)
 
 @app.route("/mon-compte",methods=["GET","POST"])
 def mon_compte():
@@ -172,14 +185,6 @@ def inventaire():
 
     return render_template("inventaire.html",materiels=m,**session)
 
-@app.route("/inventaire/reforme/<int:id>")
-def reformer(id):
-    m=charger_materiels()
-    for x in m:
-        if x["id"]==id: x["etat"]="Réformé"
-    sauvegarder_materiels(m)
-    return redirect(url_for("inventaire"))
-
 @app.route("/ma-fiche")
 def ma_fiche():
     nom=session["prenom"]+" "+session["nom"]
@@ -231,6 +236,27 @@ def admin_retour(i,decision):
     sauvegarder_materiels(m)
 
     return redirect(url_for("fiches_agents"))
+
+@app.route("/export/<quoi>")
+def export(quoi):
+    if session.get("role")!="Admin": return redirect(url_for("accueil"))
+
+    fichiers={
+        "inventaire":charger_materiels(),
+        "affectations":charger_affectations(),
+        "retours":charger_retours()
+    }
+
+    data=fichiers.get(quoi,[])
+    nom=f"{quoi}.csv"
+
+    with open(nom,"w",newline="",encoding="utf-8") as f:
+        if len(data)>0:
+            w=csv.DictWriter(f,data[0].keys())
+            w.writeheader()
+            w.writerows(data)
+
+    return send_file(nom,as_attachment=True)
 
 if __name__=="__main__":
     port=int(os.environ.get("PORT",5000))
