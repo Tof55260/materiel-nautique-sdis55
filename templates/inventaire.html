@@ -13,13 +13,11 @@
 <img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
 <div>
 <div class="brand-title">Inventaire</div>
-<div class="brand-subtitle">{{ prenom }} {{ nom }} — {{ role }}</div>
+<div class="brand-subtitle">{{ prenom }} {{ nom }}</div>
 </div>
 </div>
 
-<div class="userchip">
-<a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
-</div>
+<div class="userchip"><a class="link" href="{{ url_for('logout') }}">Déconnexion</a></div>
 </header>
 
 <nav class="tabs">
@@ -38,28 +36,58 @@
 <main class="wrap">
 
 <section class="card">
-<h2>Stock magasin</h2>
+
+<h2>Magasin</h2>
 
 <table class="table">
 <tr><th>Nom</th><th>Type</th><th>Stock</th><th>Contrôle EPI</th></tr>
 
 {% for m in materiels %}
 <tr>
-<td>{{ m.nom }}</td>
-<td>{{ m.type }}</td>
-<td>{{ m.stock }}</td>
-<td>{{ m.controle }}</td>
+<td>{{m.nom}}</td>
+<td>{{m.type}}</td>
+<td>{{m.stock}}</td>
+<td>{{m.controle}}</td>
 </tr>
 {% endfor %}
 </table>
 
 </section>
 
+{% if role=="Admin" %}
+
+<section class="card">
+
+<h2>Ajouter matériel</h2>
+
+<form method="POST" class="formgrid">
+
+<input name="nom" placeholder="Nom matériel" required>
+<input name="type" placeholder="Type" required>
+<input type="number" name="stock" placeholder="Stock" required>
+
+<label>Contrôle EPI</label>
+<input type="date" name="controle" required>
+
+<label>Affectation</label>
+<select name="agent">
+<option value="magasin">Magasin</option>
+{% for a in agents %}
+<option value="{{a.prenom}} {{a.nom}}">{{a.prenom}} {{a.nom}}</option>
+{% endfor %}
+</select>
+
+<button>Ajouter</button>
+
+</form>
+
+</section>
+
+{% endif %}
+
 </main>
 
-<footer class="footer">
-Développé par <strong>Christophe BOUDOT</strong>
-</footer>
+<footer class="footer">Développé par <b>Christophe BOUDOT</b></footer>
 
 </body>
 </html>
