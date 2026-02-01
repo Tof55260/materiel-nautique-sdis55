@@ -12,11 +12,15 @@ FICHIER_MATERIELS="materiels.json"
 FICHIER_AFFECTATIONS="affectations.json"
 FICHIER_RETOURS="retours.json"
 
+# ---------------- UTILITAIRES JSON ----------------
+
 def load_json(p):
     if not os.path.exists(p): return []
     try:
-        with open(p,"r",encoding="utf-8") as f: return json.load(f)
-    except: return []
+        with open(p,"r",encoding="utf-8") as f:
+            return json.load(f)
+    except:
+        return []
 
 def save_json(p,d):
     with open(p,"w",encoding="utf-8") as f:
@@ -37,6 +41,8 @@ def sauvegarder_retours(r): save_json(FICHIER_RETOURS,r)
 def inject():
     return dict(charger_retours=charger_retours)
 
+# ---------------- ALERTES EPI ----------------
+
 def epi_alertes():
     alertes=[]
     aujourd=datetime.now().date()
@@ -47,12 +53,16 @@ def epi_alertes():
                 alertes.append((m,"depasse"))
             elif d-aujourd<=timedelta(days=30):
                 alertes.append((m,"bientot"))
-        except: pass
+        except:
+            pass
     return alertes
+
+# ---------------- AUTH ----------------
 
 def get_agent(login):
     for a in charger_agents():
-        if a["login"]==login: return a
+        if a["login"]==login:
+            return a
     return None
 
 @app.route("/",methods=["GET","POST"])
@@ -70,14 +80,21 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
+# ---------------- ACCUEIL ----------------
+
 @app.route("/accueil")
 def accueil():
-    if "login" not in session: return redirect(url_for("login"))
+    if "login" not in session:
+        return redirect(url_for("login"))
     return render_template("index.html",alertes=epi_alertes(),**session)
+
+# ---------------- MON COMPTE ----------------
 
 @app.route("/mon-compte",methods=["GET","POST"])
 def mon_compte():
-    if "login" not in session: return redirect(url_for("login"))
+    if "login" not in session:
+        return redirect(url_for("login"))
+
     agents=charger_agents()
 
     if request.method=="POST":
@@ -91,9 +108,13 @@ def mon_compte():
 
     return render_template("mon_compte.html",**session)
 
+# ---------------- ADMIN AGENTS ----------------
+
 @app.route("/admin/agents",methods=["GET","POST"])
 def admin_agents():
-    if session.get("role")!="Admin": return redirect(url_for("accueil"))
+    if session.get("role")!="Admin":
+        return redirect(url_for("accueil"))
+
     agents=charger_agents()
 
     if request.method=="POST":
@@ -118,9 +139,13 @@ def reset_agent(login):
     sauvegarder_agents(agents)
     return redirect(url_for("admin_agents"))
 
+# ---------------- ECHANGES ----------------
+
 @app.route("/echanges",methods=["GET","POST"])
 def echanges():
-    if "login" not in session: return redirect(url_for("login"))
+    if "login" not in session:
+        return redirect(url_for("login"))
+
     e=charger_echanges()
 
     if request.method=="POST":
@@ -165,6 +190,8 @@ def statut(id,action):
     sauvegarder_affectations(a)
     return redirect(url_for("echanges"))
 
+# ---------------- INVENTAIRE ----------------
+
 @app.route("/inventaire",methods=["GET","POST"])
 def inventaire():
     if "login" not in session:
@@ -174,42 +201,37 @@ def inventaire():
     agents = charger_agents()
     affectations = charger_affectations()
 
-    if request.method == "POST" and session["role"] == "Admin":
+    if request.method=="POST" and session["role"]=="Admin":
 
-        nom = request.form["nom"]
-        type_m = request.form["type"]
-        stock = int(request.form["stock"])
-        controle = request.form["controle"]
-        agent = request.form["agent"]
+        nom=request.form["nom"]
+        type_m=request.form["type"]
+        stock=int(request.form["stock"])
+        controle=request.form["controle"]
+        agent=request.form["agent"]
 
-        if agent == "magasin":
+        if agent=="magasin":
             materiels.append({
-                "nom": nom,
-                "type": type_m,
-                "stock": stock,
-                "controle": controle
+                "nom":nom,
+                "type":type_m,
+                "stock":stock,
+                "controle":controle
             })
-
         else:
             for i in range(stock):
                 affectations.append({
-                    "agent": agent,
-                    "materiel": nom,
-                    "date": datetime.now().strftime("%d/%m/%Y"),
-                    "controle": controle
+                    "agent":agent,
+                    "materiel":nom,
+                    "date":datetime.now().strftime("%d/%m/%Y"),
+                    "controle":controle
                 })
 
         sauvegarder_materiels(materiels)
         sauvegarder_affectations(affectations)
-
         return redirect(url_for("inventaire"))
 
-    return render_template(
-        "inventaire.html",
-        materiels=materiels,
-        agents=agents,
-        **session
-    )
+    return render_template("inventaire.html",materiels=materiels,agents=agents,**session)
+
+# ---------------- MA FICHE ----------------
 
 @app.route("/ma-fiche")
 def ma_fiche():
@@ -217,15 +239,44 @@ def ma_fiche():
     aff=[x for x in charger_affectations() if x["agent"]==nom]
     return render_template("ma_fiche.html",materiels=aff,**session)
 
+# ---------------- FICHES AGENTS ----------------
+
 @app.route("/fiches-agents")
 def fiches_agents():
-    if session.get("role")!="Admin": return redirect(url_for("accueil"))
-    return render_template("fiches_agents.html",affectations=charger_affectations(),**session)
+    if session.get("role")!="Admin":
+        return redirect(url_for("accueil"))
+
+    agents=charger_agents()
+    return render_template("fiches_agents.html",agents=agents,**session)
+
+@app.route("/fiche-agent/<login>")
+def fiche_agent(login):
+    if session.get("role")!="Admin":
+        return redirect(url_for("accueil"))
+
+    agents=charger_agents()
+    aff=charger_affectations()
+
+    agent=None
+    for a in agents:
+        if a["login"]==login:
+            agent=a
+
+    if not agent:
+        return redirect(url_for("fiches_agents"))
+
+    nom_complet=agent["prenom"]+" "+agent["nom"]
+    materiels=[x for x in aff if x["agent"]==nom_complet]
+
+    return render_template("fiche_agent.html",agent=agent,materiels=materiels,**session)
+
+# ---------------- RETOURS / REFORME ----------------
 
 @app.route("/retour/<int:i>/<action>")
 def retour(i,action):
     aff=charger_affectations()
     r=charger_retours()
+
     mat=aff[i]
 
     r.append({
@@ -239,11 +290,13 @@ def retour(i,action):
     del aff[i]
     sauvegarder_affectations(aff)
     sauvegarder_retours(r)
+
     return redirect(url_for("ma_fiche"))
 
 @app.route("/admin/retours/<int:i>/<decision>")
 def admin_retour(i,decision):
-    if session.get("role")!="Admin": return redirect(url_for("accueil"))
+    if session.get("role")!="Admin":
+        return redirect(url_for("accueil"))
 
     r=charger_retours()
     m=charger_materiels()
@@ -256,11 +309,15 @@ def admin_retour(i,decision):
     r[i]["statut"]="Traité"
     sauvegarder_retours(r)
     sauvegarder_materiels(m)
+
     return redirect(url_for("fiches_agents"))
+
+# ---------------- EXPORT CSV ----------------
 
 @app.route("/export/<quoi>")
 def export(quoi):
-    if session.get("role")!="Admin": return redirect(url_for("accueil"))
+    if session.get("role")!="Admin":
+        return redirect(url_for("accueil"))
 
     fichiers={
         "inventaire":charger_materiels(),
@@ -278,6 +335,8 @@ def export(quoi):
             w.writerows(data)
 
     return send_file(nom,as_attachment=True)
+
+# ---------------- MAIN ----------------
 
 if __name__=="__main__":
     port=int(os.environ.get("PORT",5000))
