@@ -148,6 +148,8 @@ def page_echanges():
     return render_template("echanges.html", echanges=echanges(), **session)
 
 # ---------------- MAIN ----------------
+from werkzeug.security import generate_password_hash
+print(generate_password_hash("admin55"))
 
 if __name__=="__main__":
     app.run(host="0.0.0.0", port=5000)
