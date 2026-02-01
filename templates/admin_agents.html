@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <title>Administration</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<style>
+.btn {padding:8px 14px;border-radius:6px;background:#d32f2f;color:white;text-decoration:none;margin-right:8px}
+.btn-blue{background:#1976d2}
+.btn-green{background:#2e7d32}
+</style>
 </head>
 
 <body>
@@ -36,31 +41,29 @@
 
 <section class="card">
 
-<h2>Gestion des agents</h2>
+<h2>Exports</h2>
 
-<p>
-<a href="/export/inventaire">📥 Export inventaire</a> |
-<a href="/export/affectations">📥 Export affectations</a> |
-<a href="/export/retours">📥 Export historique</a>
-</p>
+<a class="btn btn-blue" href="/export/inventaire">Inventaire</a>
+<a class="btn btn-blue" href="/export/affectations">Affectations</a>
+<a class="btn btn-blue" href="/export/retours">Historique</a>
+
+<hr>
+
+<h2>Agents</h2>
 
 <table class="table">
 <tr>
-<th>Login</th>
-<th>Nom</th>
-<th>Prénom</th>
-<th>Rôle</th>
-<th>Reset MDP</th>
+<th>Login</th><th>Nom</th><th>Prénom</th><th>Rôle</th><th>MDP</th>
 </tr>
 
 {% for a in agents %}
 <tr>
-<td>{{ a.login }}</td>
-<td>{{ a.nom }}</td>
-<td>{{ a.prenom }}</td>
-<td>{{ a.role }}</td>
+<td>{{a.login}}</td>
+<td>{{a.nom}}</td>
+<td>{{a.prenom}}</td>
+<td>{{a.role}}</td>
 <td>
-<a href="/admin/reset/{{ a.login }}">Reset</a>
+<a class="btn btn-green" href="/admin/reset/{{a.login}}">Reset</a>
 </td>
 </tr>
 {% endfor %}
@@ -68,7 +71,7 @@
 
 <hr>
 
-<h3>Ajouter un agent</h3>
+<h3>Créer agent</h3>
 
 <form method="POST" class="formgrid">
 
@@ -78,11 +81,11 @@
 <input name="password" placeholder="Mot de passe initial" required>
 
 <select name="role">
-<option value="Agent">Agent</option>
-<option value="Admin">Admin</option>
+<option>Agent</option>
+<option>Admin</option>
 </select>
 
-<button>Créer l’agent</button>
+<button class="btn">Créer</button>
 
 </form>
 
@@ -90,9 +93,7 @@
 
 </main>
 
-<footer class="footer">
-Développé par <strong>Christophe BOUDOT</strong>
-</footer>
+<footer class="footer">Développé par <b>Christophe BOUDOT</b></footer>
 
 </body>
 </html>
