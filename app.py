@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.secret_key = "sdis55"
 
 SUPABASE_URL = "https://vylcvdfgrcikppxfpztj.supabase.co"
-SUPABASE_KEY = "sb_publishable_kapa-lxDU6PiOVOjc6p5-Q_udDKR2c0"
+SUPABASE_KEY = "sb_publishable_aDwaBA4DNt4gjIy0ODE23g_eGWA3Az3"
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
@@ -25,7 +25,7 @@ def materiels():
 def affectations():
     return supabase.table("affectations").select("*").execute().data
 
-def echanges():
+def echanges_list():
     return supabase.table("echanges").select("*").execute().data
 
 # ---------------- LOGIN ----------------
@@ -35,7 +35,6 @@ def login():
     if request.method=="POST":
         a = get_agent(request.form["login"])
 
-        # LOGIN EN CLAIR (TEMPORAIRE)
         if a and a["password"] == request.form["password"]:
             session.update(a)
             return redirect("/accueil")
@@ -67,15 +66,6 @@ def mon_compte():
 def admin_agents():
     if session.get("role")!="Admin":
         return redirect("/accueil")
-        @app.route("/admin/supprimer/<login>")
-def supprimer_agent(login):
-    if session.get("role")!="Admin":
-        return redirect("/accueil")
-
-    supabase.table("agents").delete().eq("login", login).execute()
-
-    return redirect("/admin/agents")
-
 
     if request.method=="POST":
         supabase.table("agents").insert({
@@ -87,6 +77,15 @@ def supprimer_agent(login):
         }).execute()
 
     return render_template("admin_agents.html", agents=agents(), **session)
+
+@app.route("/admin/supprimer/<login>")
+def supprimer_agent(login):
+    if session.get("role")!="Admin":
+        return redirect("/accueil")
+
+    supabase.table("agents").delete().eq("login", login).execute()
+
+    return redirect("/admin/agents")
 
 # ---------------- FICHES AGENTS ----------------
 
@@ -155,8 +154,7 @@ def ma_fiche():
 
 @app.route("/echanges")
 def echanges():
-    return render_template("echanges.html", echanges=echanges(), **session)
-
+    return render_template("echanges.html", echanges=echanges_list(), **session)
 
 # ---------------- MAIN ----------------
 
