@@ -1,36 +1,34 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Ma fiche</h2>
+<h2>Ma fiche personnelle</h2>
 
-<p>
-<b>{{ agent.prenom }} {{ agent.nom }}</b><br>
-Rôle : {{ agent.role }}
-</p>
+<div class="card">
+    <p><strong>Nom :</strong> {{ agent.nom }}</p>
+    <p><strong>Prénom :</strong> {{ agent.prenom }}</p>
+    <p><strong>Profil :</strong> {{ agent.role }}</p>
+</div>
 
-<hr>
-
-<h3>Mon matériel</h3>
+<h3>Matériel affecté</h3>
 
 <table>
-<tr>
-    <th>Matériel</th>
-    <th>N° Série</th>
-    <th>Contrôle EPI</th>
-</tr>
+    <tr>
+        <th>Matériel</th>
+        <th>Numéro de série</th>
+        <th>Contrôle EPI</th>
+    </tr>
 
-{% for m in materiel %}
-<tr>
-    <td>{{ m.materiel }}</td>
-    <td>{{ m.serie }}</td>
-    <td>{{ m.controle_epi }}</td>
-</tr>
-{% else %}
-<tr>
-    <td colspan="3">Aucun matériel affecté</td>
-</tr>
-{% endfor %}
-
+    {% for m in materiel %}
+    <tr>
+        <td>{{ m.materiel }}</td>
+        <td>{{ m.serial }}</td>
+        <td>{{ m.controle_epi or "" }}</td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="3" style="text-align:center">Aucun matériel affecté</td>
+    </tr>
+    {% endfor %}
 </table>
 
 {% endblock %}
