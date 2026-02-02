@@ -62,3 +62,25 @@ color:white;
 border:none;
 cursor:pointer;
 }
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #003b6f;
+    color: white;
+}
+
+td, th {
+    padding: 8px;
+    border: 1px solid #ccc;
+}
