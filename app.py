@@ -52,7 +52,8 @@ def accueil():
     if "login" not in session:
         return redirect(url_for("login"))
 
-    return render_template("index.html", **session)
+    from datetime import datetime
+
 
 # ---------------- INVENTAIRE ----------------
 
