@@ -70,16 +70,25 @@ def ma_fiche():
 
     agent = session["login"]
 
+    print("SESSION LOGIN =", agent)
+
+    rows = supabase.table("affectations").select("*").execute().data
+
+    print("AFFECTATIONS =", rows)
+
     materiel = supabase.table("affectations")\
         .select("*")\
         .eq("agent", agent)\
         .execute().data
+
+    print("MATCH =", materiel)
 
     return render_template(
         "ma_fiche.html",
         materiel=materiel,
         agent=session
     )
+
 
 
 @app.route("/admin/agents")
