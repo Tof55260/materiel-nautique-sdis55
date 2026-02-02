@@ -8,7 +8,7 @@
 
 <body>
 
-{% if session.login %}
+{% if session.get("login") %}
     {% include "header.html" %}
 {% endif %}
 
@@ -17,7 +17,7 @@
 </div>
 
 <footer>
-    Développé par Christophe BOUDOT
+Développé par Christophe BOUDOT
 </footer>
 
 </body>
