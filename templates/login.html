@@ -1,23 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="login-box">
-
 <h2>Connexion</h2>
 
 <form method="POST">
-
-<input name="login" placeholder="Identifiant" required><br><br>
-<input type="password" name="password" placeholder="Mot de passe" required><br><br>
-
-<button>Connexion</button>
-
-{% if erreur %}
-<p style="color:red">{{ erreur }}</p>
-{% endif %}
-
+    <input name="login" placeholder="Identifiant" required>
+    <input type="password" name="password" placeholder="Mot de passe" required>
+    <button type="submit">Connexion</button>
 </form>
-
-</div>
 
 {% endblock %}
