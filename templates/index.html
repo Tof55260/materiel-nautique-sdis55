@@ -13,7 +13,8 @@
 
     <nav>
         <a href="{{ url_for('accueil') }}">Accueil</a>
-        <a href="{{ url_for('inventaire_page') }}">Inventaire</a>
+       <a href="{{ url_for('inventaire') }}">Inventaire</a>
+
         <a href="{{ url_for('echanges') }}">Échanges</a>
 
         {% if session.role == "Admin" %}
