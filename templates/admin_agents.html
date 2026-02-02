@@ -9,51 +9,30 @@
 <body>
 
 <header class="topbar">
-<div class="brand">
-<img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
-<div>
-<div class="brand-title">Administration</div>
-<div class="brand-subtitle">{{ prenom }} {{ nom }} — {{ role }}</div>
-</div>
-</div>
+<img src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}" class="logo">
 
-<div class="userchip">
-<a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
-</div>
-</header>
-
-<nav class="tabs">
+<nav>
 <a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
 <a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
 <a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
+<a class="tab" href="{{ url_for('interventions') }}">Interventions</a>
 <a class="tab" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
-<a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
-<a class="tab" href="{{ url_for('fiches_agents') }}">Fiches agents</a>
 <a class="tab active" href="{{ url_for('admin_agents') }}">Administration</a>
+
+<a class="tab logout" href="{{ url_for('deconnexion') }}">Déconnexion</a>
 </nav>
+</header>
 
-<main class="wrap">
-
-<section class="card">
+<main class="container">
 
 <h2>Gestion des agents</h2>
 
-<!-- EXPORTS -->
-
-<div class="exportbar">
-<a class="export" href="/export/agents">📥 Agents</a>
-<a class="export" href="/export/materiels">📥 Inventaire</a>
-<a class="export" href="/export/affectations">📥 Affectations</a>
-<a class="export" href="/export/echanges">📥 Échanges</a>
-</div>
-
-<table class="table">
+<table>
 <tr>
 <th>Login</th>
 <th>Nom</th>
 <th>Prénom</th>
 <th>Rôle</th>
-<th>Action</th>
 </tr>
 
 {% for a in agents %}
@@ -62,43 +41,15 @@
 <td>{{ a.nom }}</td>
 <td>{{ a.prenom }}</td>
 <td>{{ a.role }}</td>
-<td>
-<a class="danger"
-href="/admin/supprimer/{{ a.login }}"
-onclick="return confirm('Supprimer définitivement cet agent ?')">
-Supprimer
-</a>
-</td>
 </tr>
 {% endfor %}
+
 </table>
-
-<hr>
-
-<h3>Ajouter un agent</h3>
-
-<form method="POST" class="formgrid">
-
-<input name="login" placeholder="Login" required>
-<input name="nom" placeholder="Nom" required>
-<input name="prenom" placeholder="Prénom" required>
-<input name="password" placeholder="Mot de passe" required>
-
-<select name="role">
-<option value="Agent">Agent</option>
-<option value="Admin">Admin</option>
-</select>
-
-<button>Créer l’agent</button>
-
-</form>
-
-</section>
 
 </main>
 
 <footer class="footer">
-Développé par <strong>Christophe BOUDOT</strong>
+Développé par Christophe BOUDOT
 </footer>
 
 </body>
