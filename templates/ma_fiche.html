@@ -9,69 +9,30 @@
 <body>
 
 <header class="topbar">
-<div class="brand">
-<img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
-<div>
-<div class="brand-title">Ma fiche agent</div>
-<div class="brand-subtitle">{{ prenom }} {{ nom }} — {{ role }}</div>
-</div>
-</div>
+<img src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}" class="logo">
 
-<div class="userchip">
-<a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
-</div>
-</header>
-
-<nav class="tabs">
+<nav>
 <a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
 <a class="tab" href="{{ url_for('echanges') }}">Échanges</a>
 <a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
+<a class="tab" href="{{ url_for('interventions') }}">Interventions</a>
 <a class="tab active" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
-<a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
 
 {% if role=="Admin" %}
-<a class="tab" href="{{ url_for('fiches_agents') }}">Fiches agents</a>
 <a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
 {% endif %}
+
+<a class="tab logout" href="{{ url_for('deconnexion') }}">Déconnexion</a>
 </nav>
+</header>
 
-<main class="wrap">
-
-<section class="card">
-<h2>Matériel affecté</h2>
-
-{% if materiels|length == 0 %}
-<p>Aucun matériel affecté.</p>
-{% endif %}
-
-<table class="table">
-<tr>
-<th>Date</th>
-<th>Matériel</th>
-<th>Contrôle EPI</th>
-<th>Actions</th>
-</tr>
-
-{% for m in materiels %}
-<tr>
-<td>{{ m.date }}</td>
-<td>{{ m.materiel }}</td>
-<td>{{ m.controle }}</td>
-<td>
-<a class="link" href="/retour/{{ loop.index0 }}/retour">Retour</a>
-&nbsp;|&nbsp;
-<a class="link danger" href="/retour/{{ loop.index0 }}/reforme">Réforme</a>
-</td>
-</tr>
-{% endfor %}
-</table>
-
-</section>
-
+<main class="container">
+<h2>{{ prenom }} {{ nom }}</h2>
+<p>Profil : {{ role }}</p>
 </main>
 
 <footer class="footer">
-Développé par <strong>Christophe BOUDOT</strong>
+Développé par Christophe BOUDOT
 </footer>
 
 </body>
