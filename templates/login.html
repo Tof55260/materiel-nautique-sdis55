@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html>
+<head>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
 <body>
 
-<h2>Connexion</h2>
+<div class="login-box">
+<img src="/static/images/logo_nautique.jpeg" style="height:80px"><br><br>
 
-<form method="post">
-<input name="login" placeholder="Login">
-<input name="password" type="password">
+<form method="POST">
+<input name="login" placeholder="Identifiant" required>
+<input name="password" type="password" placeholder="Mot de passe" required>
+
 <button>Connexion</button>
-</form>
 
 {% if erreur %}
 <p style="color:red">{{ erreur }}</p>
 {% endif %}
+</form>
+</div>
 
 </body>
 </html>
-
