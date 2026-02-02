@@ -1,9 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from supabase import create_client
-from datetime import datetime
 import os
-
-# ================= CONFIG =================
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
@@ -13,23 +10,15 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 app = Flask(__name__)
 app.secret_key = "sdis55"
 
-print("APP VERSION STABLE OK")
-
-# ================= UTILS =================
+print("APP BASE STABLE OK")
 
 def agents():
     return supabase.table("agents").select("*").execute().data
-
-def compteur_annee():
-    an = datetime.now().year
-    res = supabase.table("interventions").select("*").eq("annee", an).execute().data
-    return len(res)
 
 # ================= LOGIN =================
 
 @app.route("/", methods=["GET","POST"])
 def login():
-
     if request.method == "POST":
         login = request.form["login"]
         password = request.form["password"]
@@ -37,12 +26,10 @@ def login():
         a = supabase.table("agents").select("*").eq("login", login).execute().data
 
         if a and a[0]["password"] == password:
-
             session["login"] = login
             session["nom"] = a[0]["nom"]
             session["prenom"] = a[0]["prenom"]
             session["role"] = a[0]["role"]
-
             return redirect(url_for("accueil"))
 
         return render_template("login.html", erreur="Identifiant ou mot de passe incorrect")
@@ -54,20 +41,13 @@ def deconnexion():
     session.clear()
     return redirect("/")
 
-# ================= ACCUEIL =================
+# ================= PAGES =================
 
 @app.route("/accueil")
 def accueil():
     if "login" not in session:
         return redirect("/")
-    return render_template(
-        "index.html",
-        compteur=compteur_annee(),
-        now=datetime.now,
-        **session
-    )
-
-# ================= ONGLET =================
+    return render_template("index.html", **session)
 
 @app.route("/echanges")
 def echanges():
@@ -80,14 +60,6 @@ def inventaire():
     if "login" not in session:
         return redirect("/")
     return render_template("inventaire.html", **session)
-
-@app.route("/interventions")
-def interventions():
-    if "login" not in session:
-        return redirect("/")
-
-    data = supabase.table("interventions").select("*").order("date", desc=True).execute().data
-    return render_template("interventions.html", inter=data, **session)
 
 @app.route("/fiches-agents")
 def fiches_agents():
@@ -105,10 +77,7 @@ def ma_fiche():
 def admin_agents():
     if session.get("role") != "Admin":
         return redirect("/accueil")
-
     return render_template("admin_agents.html", agents=agents(), **session)
-
-# ================= RUN =================
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
