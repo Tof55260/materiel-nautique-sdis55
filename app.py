@@ -65,8 +65,22 @@ def fiches_agents():
 
 @app.route("/ma-fiche")
 def ma_fiche():
-    if "login" not in session: return redirect("/")
-    return render_template("ma_fiche.html", **session)
+    if "login" not in session:
+        return redirect(url_for("connexion"))
+
+    agent = session["login"]
+
+    materiel = supabase.table("affectations")\
+        .select("*")\
+        .eq("agent", agent)\
+        .execute().data
+
+    return render_template(
+        "ma_fiche.html",
+        materiel=materiel,
+        agent=session
+    )
+
 
 @app.route("/admin/agents")
 def admin_agents():
