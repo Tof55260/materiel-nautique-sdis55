@@ -62,7 +62,6 @@ def inventaire():
 def fiches_agents():
     if "login" not in session: return redirect("/")
     return render_template("fiches_agents.html", agents=get_agents(), **session)
-
 @app.route("/ma-fiche")
 def ma_fiche():
     if "login" not in session:
@@ -70,18 +69,16 @@ def ma_fiche():
 
     agent = session["login"]
 
-    print("SESSION LOGIN =", agent)
-
     rows = supabase.table("affectations").select("*").execute().data
-
-    print("AFFECTATIONS =", rows)
 
     materiel = supabase.table("affectations")\
         .select("*")\
         .eq("agent", agent)\
         .execute().data
 
-    print("MATCH =", materiel)
+    logging.warning("SESSION LOGIN = %s", agent)
+    logging.warning("AFFECTATIONS = %s", rows)
+    logging.warning("MATCH = %s", materiel)
 
     return render_template(
         "ma_fiche.html",
