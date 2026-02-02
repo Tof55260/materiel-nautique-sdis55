@@ -10,7 +10,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 app = Flask(__name__)
 app.secret_key = "sdis55"
 
-print("APP BASE STABLE OK")
+print("APP BASE AVANT COMPTEUR OK")
 
 def agents():
     return supabase.table("agents").select("*").execute().data
