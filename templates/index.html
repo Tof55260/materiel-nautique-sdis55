@@ -1,7 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Accueil</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
 
+<body>
+
+<header>
+    <img src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}" class="logo">
+
+    <nav>
+        <a href="{{ url_for('accueil') }}">Accueil</a>
+        <a href="{{ url_for('inventaire_page') }}">Inventaire</a>
+        <a href="{{ url_for('echanges') }}">Échanges</a>
+
+        {% if session.role == "Admin" %}
+            <a href="{{ url_for('fiches_agents') }}">Fiches agents</a>
+            <a href="{{ url_for('admin_agents') }}">Administration</a>
+        {% endif %}
+
+        <a href="{{ url_for('ma_fiche') }}">Ma fiche</a>
+        <a href="{{ url_for('logout') }}">Déconnexion</a>
+    </nav>
+</header>
+
+<div class="container">
 
 <h1>Bienvenue {{ session.prenom }}</h1>
 
+<div class="dashboard">
 
+    <div class="card">
+        <h3>Interventions {{ now().year }}</h3>
+        <div class="big">{{ compteur }}</div>
+    </div>
+
+</div>
+
+</div>
+
+<footer>
+Développé par Christophe BOUDOT
+</footer>
+
+</body>
+</html>
