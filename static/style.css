@@ -83,3 +83,47 @@ footer {
     box-shadow:0 3px 8px rgba(0,0,0,.2);
     text-align:center;
 }
+body {
+    background: linear-gradient(180deg,#f2f6fb 0%,#ffffff 60%);
+}
+
+/* conteneur principal */
+.container {
+    max-width:1100px;
+    margin:auto;
+    padding:25px;
+}
+
+/* cartes */
+.card {
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom:25px;
+}
+
+/* tableaux */
+table {
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    box-shadow:0 3px 10px rgba(0,0,0,0.06);
+    margin-bottom:25px;
+}
+
+th {
+    background:#b30000;
+    color:white;
+    padding:10px;
+}
+
+td {
+    padding:8px;
+    border-bottom:1px solid #ddd;
+}
+
+/* titres */
+h2,h3 {
+    color:#003366;
+}
