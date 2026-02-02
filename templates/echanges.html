@@ -1,64 +1,69 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Échanges</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <title>Échanges matériel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
 <header class="topbar">
-<div class="brand">
-<img class="brand-logo big" src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
-<div>
-<div class="brand-title">Échanges</div>
-<div class="brand-subtitle">{{ prenom }} {{ nom }} — {{ role }}</div>
-</div>
-</div>
+    <img src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}" class="logo">
 
-<div class="userchip">
-<a class="link" href="{{ url_for('logout') }}">Déconnexion</a>
-</div>
+    <nav>
+        <a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
+        <a class="tab active" href="{{ url_for('echanges') }}">Échanges</a>
+        <a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
+        <a class="tab" href="{{ url_for('interventions') }}">Interventions</a>
+        <a class="tab" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
+
+        {% if role == "Admin" %}
+        <a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
+        {% endif %}
+
+        <a class="tab logout" href="{{ url_for('deconnexion') }}">Déconnexion</a>
+    </nav>
 </header>
 
-<nav class="tabs">
-<a class="tab" href="{{ url_for('accueil') }}">Accueil</a>
-<a class="tab active" href="{{ url_for('echanges') }}">Échanges</a>
-<a class="tab" href="{{ url_for('inventaire') }}">Inventaire</a>
-<a class="tab" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
-<a class="tab" href="{{ url_for('mon_compte') }}">Mon compte</a>
+<main class="container">
 
-{% if role=="Admin" %}
-<a class="tab" href="{{ url_for('fiches_agents') }}">Fiches agents</a>
-<a class="tab" href="{{ url_for('admin_agents') }}">Administration</a>
-{% endif %}
-</nav>
+<h2>Demandes d’échanges de matériel</h2>
 
-<main class="wrap">
+<p>
+Connecté : <strong>{{ prenom }} {{ nom }}</strong> ({{ role }})
+</p>
 
-<section class="card">
-<h2>Nouvelle demande</h2>
+<hr>
 
-<form method="POST" class="formgrid">
-<input name="materiel" placeholder="Matériel" required>
-<input name="motif" placeholder="Motif" required>
-<button>Envoyer</button>
+<h3>Nouvelle demande</h3>
+
+<form method="post">
+
+    <input name="materiel" placeholder="Matériel concerné" required>
+
+    <input name="motif" placeholder="Motif" required>
+
+    <button type="submit">Envoyer</button>
+
 </form>
-</section>
 
-<section class="card">
-<h2>Historique</h2>
+<hr>
 
-<table class="table">
+<h3>Historique</h3>
+
+<table>
+<thead>
 <tr>
 <th>Date</th>
 <th>Agent</th>
 <th>Matériel</th>
 <th>Motif</th>
 <th>Statut</th>
-{% if role=="Admin" %}<th>Action</th>{% endif %}
 </tr>
+</thead>
+
+<tbody>
 
 {% for e in echanges %}
 <tr>
@@ -67,23 +72,16 @@
 <td>{{ e.materiel }}</td>
 <td>{{ e.motif }}</td>
 <td>{{ e.statut }}</td>
-
-{% if role=="Admin" and e.statut=="En attente" %}
-<td>
-<a href="/echanges/{{ e.id }}/valider">Valider</a>
-<a href="/echanges/{{ e.id }}/refuser">Refuser</a>
-</td>
-{% endif %}
 </tr>
 {% endfor %}
-</table>
 
-</section>
+</tbody>
+</table>
 
 </main>
 
 <footer class="footer">
-Développé par <strong>Christophe BOUDOT</strong>
+Développé par Christophe BOUDOT
 </footer>
 
 </body>
