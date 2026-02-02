@@ -127,3 +127,28 @@ td {
 h2,h3 {
     color:#003366;
 }
+.topbar {
+    background:#003366;
+    display:flex;
+    align-items:center;
+    padding:10px 25px;
+}
+
+.logo {
+    height:55px;
+}
+
+.menu {
+    margin-left:auto;
+}
+
+.menu a {
+    color:white;
+    margin-left:18px;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.menu a:hover {
+    color:#ffcccc;
+}
