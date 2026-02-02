@@ -1,98 +1,79 @@
 body{
     margin:0;
-    font-family:Arial,Helvetica,sans-serif;
-    background:#f2f5f8;
+    font-family:Arial;
+    background:#f4f6f8;
 }
 
-header{
-    background:#003c5f;
-    padding:10px 25px;
+.topbar{
+    background:#0b3c5d;
+    padding:10px;
     display:flex;
     align-items:center;
 }
 
-header img{
+.logo{
     height:60px;
+    margin-right:20px;
 }
 
-nav{
-    margin-left:30px;
-}
-
-nav a{
+nav .tab{
     color:white;
     text-decoration:none;
-    margin-right:20px;
-    font-weight:bold;
+    padding:10px 15px;
+    margin-right:5px;
+    background:#1c6ea4;
+    border-radius:5px;
 }
 
-nav a:hover{
-    text-decoration:underline;
+nav .tab:hover{
+    background:#e63946;
+}
+
+nav .active{
+    background:#e63946;
+}
+
+.logout{
+    background:#333!important;
 }
 
 .container{
-    padding:25px;
-}
-
-/* compteur */
-
-.compteur-box{
-    background:white;
-    border-radius:10px;
     padding:20px;
-    margin-bottom:25px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    box-shadow:0 2px 6px rgba(0,0,0,.15);
-}
-
-.compteur-num{
-    font-size:52px;
-    color:#c62828;
-    font-weight:bold;
-}
-
-.card{
-    background:white;
-    border-radius:8px;
-    padding:15px;
-    margin-bottom:20px;
-    box-shadow:0 2px 6px rgba(0,0,0,.1);
 }
 
 table{
     width:100%;
     border-collapse:collapse;
-}
-
-th,td{
-    padding:8px;
-    border-bottom:1px solid #ddd;
+    background:white;
 }
 
 th{
-    background:#e6eef4;
+    background:#0b3c5d;
+    color:white;
 }
 
-input,select{
-    padding:6px;
+td,th{
+    padding:8px;
+    border:1px solid #ccc;
 }
 
 button{
-    background:#003c5f;
+    background:#e63946;
     color:white;
     border:none;
-    padding:6px 12px;
+    padding:8px 12px;
+    border-radius:5px;
     cursor:pointer;
 }
 
 button:hover{
-    background:#005b8c;
+    opacity:0.8;
 }
 
-footer{
+.footer{
+    background:#0b3c5d;
+    color:white;
     text-align:center;
+    padding:10px;
     margin-top:40px;
-    color:#777;
 }
