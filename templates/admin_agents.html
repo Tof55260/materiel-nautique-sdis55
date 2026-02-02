@@ -1,22 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
-
-<div class="container">
 <h2>Administration</h2>
 
-<table>
-<tr><th>Login</th><th>Nom</th><th>Prénom</th><th>Role</th></tr>
-
 {% for a in agents %}
-<tr>
-<td>{{ a.login }}</td>
-<td>{{ a.nom }}</td>
-<td>{{ a.prenom }}</td>
-<td>{{ a.role }}</td>
-</tr>
+<p>{{ a.login }}</p>
 {% endfor %}
-</table>
-</div>
-{% endblock %}
 
+{% endblock %}
