@@ -75,10 +75,12 @@ def accueil():
 # ================= INVENTAIRE =================
 
 @app.route("/inventaire")
-def inventaire_page():
+def inventaire():
+
     if "login" not in session:
         return redirect(url_for("connexion"))
-    return render_template("inventaire.html", items=inventaire(), **session)
+   return render_template("inventaire.html", items=inventaire(), **session)
+
 
 # ================= ECHANGES =================
 
