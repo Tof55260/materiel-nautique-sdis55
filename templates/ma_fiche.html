@@ -3,4 +3,34 @@
 
 <h2>Ma fiche</h2>
 
+<p>
+<b>{{ agent.prenom }} {{ agent.nom }}</b><br>
+Rôle : {{ agent.role }}
+</p>
+
+<hr>
+
+<h3>Mon matériel</h3>
+
+<table>
+<tr>
+    <th>Matériel</th>
+    <th>N° Série</th>
+    <th>Contrôle EPI</th>
+</tr>
+
+{% for m in materiel %}
+<tr>
+    <td>{{ m.materiel }}</td>
+    <td>{{ m.serie }}</td>
+    <td>{{ m.controle_epi }}</td>
+</tr>
+{% else %}
+<tr>
+    <td colspan="3">Aucun matériel affecté</td>
+</tr>
+{% endfor %}
+
+</table>
+
 {% endblock %}
