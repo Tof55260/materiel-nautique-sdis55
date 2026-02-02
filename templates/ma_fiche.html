@@ -1,1 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ma fiche</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+{% include "header.html" %}
+
+<div class="container">
+
+<h2>👤 Ma fiche personnelle</h2>
+
+<div class="card">
+
+<p><b>Nom :</b> {{ nom }}</p>
+<p><b>Prénom :</b> {{ prenom }}</p>
+<p><b>Profil :</b> {{ role }}</p>
+
+</div>
+
+<h3>🧰 Mon matériel affecté</h3>
+
+<table>
+<tr>
+    <th>Matériel</th>
+    <th>N° série</th>
+    <th>Contrôle EPI</th>
+</tr>
+
+{% for m in materiel %}
+<tr>
+    <td>{{ m.nom }}</td>
+    <td>{{ m.serie }}</td>
+    <td>{{ m.controle }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<h3>📜 Historique</h3>
+
+<table>
+<tr>
+    <th>Date</th>
+    <th>Action</th>
+</tr>
+
+{% for h in historique %}
+<tr>
+    <td>{{ h.date }}</td>
+    <td>{{ h.action }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+</body>
+</html>
 
