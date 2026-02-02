@@ -1,34 +1,28 @@
 <!DOCTYPE html>
 <html>
-<head>
-<link rel="stylesheet" href="/static/style.css">
-</head>
+<head><link rel="stylesheet" href="/static/style.css"></head>
 
 <body>
 
 <header>
 <img src="/static/images/logo_nautique.jpeg" class="logo">
-
 <nav>
 <a href="/accueil">Accueil</a>
 <a href="/echanges">Échanges</a>
 <a href="/inventaire">Inventaire</a>
 <a href="/fiches-agents">Fiches agents</a>
 <a href="/ma-fiche">Ma fiche</a>
-
-{% if role=="Admin" %}
-<a href="/admin/agents">Administration</a>
-{% endif %}
-
+{% if role=="Admin" %}<a href="/admin/agents">Administration</a>{% endif %}
 <a href="/deconnexion">Déconnexion</a>
 </nav>
 </header>
 
 <div class="container">
+<div class="card">
 <h2>Échanges</h2>
 </div>
+</div>
 
-<footer>SDIS55 — Gestion matériel nautique</footer>
-
+<footer>SDIS55</footer>
 </body>
 </html>
