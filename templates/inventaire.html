@@ -1,32 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!DOCTYPE html>
-<html>
-<head><link rel="stylesheet" href="/static/style.css"></head>
+<h2>Inventaire</h2>
 
-<body>
-
-<header>
-<img src="/static/images/logo_nautique.jpeg" class="logo">
-<nav>
-<a href="/accueil">Accueil</a>
-<a href="/echanges">Échanges</a>
-<a href="/inventaire">Inventaire</a>
-<a href="/fiches-agents">Fiches agents</a>
-<a href="/ma-fiche">Ma fiche</a>
-{% if role=="Admin" %}<a href="/admin/agents">Administration</a>{% endif %}
-<a href="/deconnexion">Déconnexion</a>
-</nav>
-</header>
-
-<div class="container">
-<div class="card">
-<h2>Inventaire magasin</h2>
-</div>
-</div>
-
-<footer>SDIS55</footer>
-</body>
-</html>
 {% endblock %}
