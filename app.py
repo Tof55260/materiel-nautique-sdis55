@@ -76,10 +76,13 @@ def accueil():
 
 @app.route("/inventaire")
 def inventaire():
-
     if "login" not in session:
         return redirect(url_for("connexion"))
-   return render_template("inventaire.html", items=inventaire(), **session)
+
+    items = supabase.table("inventaire").select("*").execute().data
+
+    return render_template("inventaire.html", items=items, **session)
+
 
 
 # ================= ECHANGES =================
