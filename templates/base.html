@@ -8,15 +8,31 @@
 
 <body>
 
-{% if session.get("login") %}
-    
+{% if session.login %}
+<header class="topbar">
+    <img src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}" class="logo">
+
+    <nav>
+        <a href="{{ url_for('accueil') }}">Accueil</a>
+        <a href="{{ url_for('inventaire') }}">Inventaire</a>
+        <a href="{{ url_for('echanges') }}">Échanges</a>
+
+        {% if session.role == "Admin" %}
+        <a href="{{ url_for('fiches_agents') }}">Fiches agents</a>
+        <a href="{{ url_for('admin_agents') }}">Administration</a>
+        {% endif %}
+
+        <a href="{{ url_for('ma_fiche') }}">Ma fiche</a>
+        <a href="{{ url_for('login') }}">Déconnexion</a>
+    </nav>
+</header>
 {% endif %}
 
 <div class="container">
-    {% block content %}{% endblock %}
+{% block content %}{% endblock %}
 </div>
 
-<footer class="footer">
+<footer>
 Développé par Christophe BOUDOT
 </footer>
 
