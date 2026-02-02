@@ -1,79 +1,37 @@
-body{
-    margin:0;
-    font-family:Arial;
-    background:#f4f6f8;
-}
+body{margin:0;font-family:Arial;background:#f4f6f8}
 
 .topbar{
-    background:#0b3c5d;
-    padding:10px;
-    display:flex;
-    align-items:center;
+background:#0b3c5d;
+padding:10px;
+display:flex;
+align-items:center
 }
 
-.logo{
-    height:60px;
-    margin-right:20px;
+.logo{height:50px;margin-right:20px}
+
+.tab{
+color:white;
+text-decoration:none;
+padding:8px 12px;
+background:#1c6ea4;
+border-radius:5px;
+margin-right:5px
 }
 
-nav .tab{
-    color:white;
-    text-decoration:none;
-    padding:10px 15px;
-    margin-right:5px;
-    background:#1c6ea4;
-    border-radius:5px;
-}
+.tab:hover{background:#e63946}
+.active{background:#e63946}
+.logout{background:#333}
 
-nav .tab:hover{
-    background:#e63946;
-}
+.container{padding:20px}
 
-nav .active{
-    background:#e63946;
-}
-
-.logout{
-    background:#333!important;
-}
-
-.container{
-    padding:20px;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    background:white;
-}
-
-th{
-    background:#0b3c5d;
-    color:white;
-}
-
-td,th{
-    padding:8px;
-    border:1px solid #ccc;
-}
-
-button{
-    background:#e63946;
-    color:white;
-    border:none;
-    padding:8px 12px;
-    border-radius:5px;
-    cursor:pointer;
-}
-
-button:hover{
-    opacity:0.8;
-}
+table{width:100%;border-collapse:collapse;background:white}
+th{background:#0b3c5d;color:white}
+td,th{border:1px solid #ccc;padding:6px}
 
 .footer{
-    background:#0b3c5d;
-    color:white;
-    text-align:center;
-    padding:10px;
-    margin-top:40px;
+background:#0b3c5d;
+color:white;
+text-align:center;
+padding:10px;
+margin-top:40px
 }
