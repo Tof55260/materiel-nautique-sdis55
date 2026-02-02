@@ -1,13 +1,17 @@
 {% extends "base.html" %}
-
 {% block content %}
+
+<div class="login-box">
 
 <h2>Connexion</h2>
 
-<form method="POST" class="login-form">
-    <input name="login" placeholder="Identifiant" required>
-    <input type="password" name="password" placeholder="Mot de passe" required>
-    <button type="submit">Connexion</button>
+<form method="POST">
+<input name="login" placeholder="Identifiant" required>
+<input type="password" name="password" placeholder="Mot de passe" required>
+
+<button>Connexion</button>
 </form>
+
+</div>
 
 {% endblock %}
