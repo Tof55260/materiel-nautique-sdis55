@@ -3,6 +3,11 @@ from supabase import create_client
 import os
 
 app = Flask(__name__)
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("connecter"))
+
 app.secret_key = "sdis55"
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
