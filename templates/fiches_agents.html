@@ -1,1 +1,18 @@
+{% include "index.html" %}
+
+<div class="container">
+<h2>Agents</h2>
+
+<table>
+<tr><th>Login</th><th>Nom</th><th>Prénom</th></tr>
+
+{% for a in agents %}
+<tr>
+<td>{{ a.login }}</td>
+<td>{{ a.nom }}</td>
+<td>{{ a.prenom }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
 
