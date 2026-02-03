@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from datetime import datetime
 from supabase import create_client
 from werkzeug.security import check_password_hash
 import os
@@ -49,10 +50,17 @@ def logout():
 
 @app.route("/accueil")
 def accueil():
-    if "login" not in session:
+    if not session.get("login"):
         return redirect(url_for("login"))
 
     from datetime import datetime
+
+    return render_template(
+        "index.html",
+        now=datetime.now,
+        **session
+    )
+
 
 
 # ---------------- INVENTAIRE ----------------
