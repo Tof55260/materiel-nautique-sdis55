@@ -1,36 +1,23 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<title>Connexion</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+{% extends "base.html" %}
+{% block content %}
 
-<body>
-
-<div class="login-box">
-
-    <center>
-        <img src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}" style="height:80px;">
-    </center>
-
-    <h2>Connexion agent</h2>
-
-    {% if erreur %}
-        <p style="color:red">{{ erreur }}</p>
+<div class="auth">
+  <div class="card auth__card">
+    <h1 class="h1">Connexion</h1>
+    {% if error %}
+      <div class="alert alert--danger">{{ error }}</div>
     {% endif %}
 
-    <form method="POST">
-        <input name="login" placeholder="Identifiant" required>
-        <input type="password" name="password" placeholder="Mot de passe" required>
-        <button type="submit">Connexion</button>
-    </form>
+    <form method="POST" class="form">
+      <label class="label">Identifiant</label>
+      <input class="input" name="login" placeholder="ex: admin" required>
 
+      <label class="label">Mot de passe</label>
+      <input class="input" type="password" name="password" placeholder="••••••••" required>
+
+      <button class="btn btn--primary" type="submit">Connexion</button>
+    </form>
+  </div>
 </div>
 
-<footer>
-Développé par Christophe BOUDOT
-</footer>
-
-</body>
-</html>
+{% endblock %}
