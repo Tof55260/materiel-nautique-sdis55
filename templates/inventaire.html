@@ -1,40 +1,61 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="pagehead">
-  <h1 class="h1">Inventaire</h1>
-  <p class="muted">Vue magasin / stock</p>
-</div>
+<h2>Inventaire</h2>
 
-<div class="card">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Matériel</th>
-        <th>Type</th>
-        <th>N° série</th>
-        <th>Contrôle EPI</th>
-        <th>Statut</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for m in items %}
-      <tr>
-        <td>{{ m.get("nom","") }}</td>
-        <td>{{ m.get("type","") }}</td>
-        <td>{{ m.get("serie","") }}</td>
-        <td>{{ m.get("controle_epi","") }}</td>
-        <td>
-          <span class="badge">{{ m.get("statut","") }}</span>
-        </td>
-      </tr>
-      {% else %}
-      <tr>
-        <td colspan="5" class="muted">Aucun matériel à afficher.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+<h3>Ajouter matériel</h3>
+
+<form method="POST">
+<input name="nom" placeholder="Nom matériel" required>
+<input name="numero" placeholder="N° série">
+<input name="type" placeholder="Type">
+<input type="date" name="date">
+<button>Ajouter</button>
+</form>
+
+<hr>
+
+<table>
+<tr>
+<th>Nom</th>
+<th>Série</th>
+<th>Type</th>
+<th>Statut</th>
+<th>Agent</th>
+<th>Action</th>
+</tr>
+
+{% for m in items %}
+<tr>
+<td>{{ m.nom }}</td>
+<td>{{ m.numero_serie }}</td>
+<td>{{ m.type }}</td>
+<td>{{ m.statut }}</td>
+<td>{{ m.agent }}</td>
+
+<td>
+<form method="POST" action="/action_materiel">
+
+<input type="hidden" name="id" value="{{ m.id }}">
+
+{% if m.statut != "reforme" %}
+
+<select name="agent">
+<option value="">-- agent --</option>
+{% for a in agents %}
+<option value="{{ a.nom }} {{ a.prenom }}">{{ a.nom }} {{ a.prenom }}</option>
+{% endfor %}
+</select>
+
+<button name="action" value="affecter">Affecter</button>
+<button name="action" value="reforme">Réformer</button>
+
+{% endif %}
+
+</form>
+</td>
+</tr>
+{% endfor %}
+</table>
 
 {% endblock %}
