@@ -35,27 +35,26 @@
 
 <td>
 
-<form method="POST" action="/action_materiel">
+<form method="POST" action="{{ url_for('action_materiel') }}">
 
-<input type="hidden" name="materiel_id" value="{{ m.id }}">
+<input type="hidden" name="id" value="{{ m.id }}">
 
 {% if m.statut != "reforme" %}
 
 <select name="agent">
-<option value="">-- agent --</option>
-
-{% for a in agents %}
-<option value="{{ a.login }}">{{ a.prenom }} {{ a.nom }}</option>
-{% endfor %}
-
+    <option value="">-- choisir agent --</option>
+    {% for a in agents %}
+        <option value="{{ a.login }}">{{ a.nom }} {{ a.prenom }}</option>
+    {% endfor %}
 </select>
 
 <button type="submit" name="action" value="affecter">Affecter</button>
-<button type="submit" name="action" value="reformer">Réformer</button>
+<button type="submit" name="action" value="reforme">Réformer</button>
 
 {% endif %}
 
 </form>
+
 
 </td>
 </tr>
