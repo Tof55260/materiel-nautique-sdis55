@@ -6,11 +6,11 @@
 <h3>Ajouter matériel</h3>
 
 <form method="POST">
-<input name="nom" placeholder="Nom matériel" required>
-<input name="numero" placeholder="N° série">
-<input name="type" placeholder="Type">
-<input type="date" name="date">
-<button>Ajouter</button>
+    <input name="nom" placeholder="Nom matériel" required>
+    <input name="numero" placeholder="N° série">
+    <input name="type" placeholder="Type">
+    <input type="date" name="date">
+    <button>Ajouter</button>
 </form>
 
 <hr>
@@ -34,25 +34,29 @@
 <td>{{ m.agent }}</td>
 
 <td>
+
 <form method="POST" action="/action_materiel">
 
-<input type="hidden" name="id" value="{{ m.id }}">
+<input type="hidden" name="materiel_id" value="{{ m.id }}">
 
 {% if m.statut != "reforme" %}
 
 <select name="agent">
 <option value="">-- agent --</option>
+
 {% for a in agents %}
-<option value="{{ a.nom }} {{ a.prenom }}">{{ a.nom }} {{ a.prenom }}</option>
+<option value="{{ a.login }}">{{ a.prenom }} {{ a.nom }}</option>
 {% endfor %}
+
 </select>
 
-<button name="action" value="affecter">Affecter</button>
-<button name="action" value="reforme">Réformer</button>
+<button type="submit" name="action" value="affecter">Affecter</button>
+<button type="submit" name="action" value="reformer">Réformer</button>
 
 {% endif %}
 
 </form>
+
 </td>
 </tr>
 {% endfor %}
