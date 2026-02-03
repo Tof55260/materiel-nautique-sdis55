@@ -29,9 +29,11 @@ def logout():
 
 # ---------------- ACCUEIL ----------------
 
+from datetime import datetime
+
 @app.route("/accueil")
 def accueil():
-    return render_template("index.html",**session)
+    return render_template("index.html", now=datetime.now, **session)
 
 # ---------------- INVENTAIRE ----------------
 
