@@ -64,6 +64,27 @@ def inventaire():
         agents=agents,
         **session
     )
+@app.route("/action_materiel", methods=["POST"])
+def action_materiel():
+
+    mid = request.form["id"]
+    action = request.form["action"]
+
+    if action == "affecter":
+        agent = request.form["agent"]
+
+        supabase.table("materiels").update({
+            "statut": "affecte",
+            "agent": agent
+        }).eq("id", mid).execute()
+
+    if action == "reforme":
+        supabase.table("materiels").update({
+            "statut": "reforme",
+            "agent": None
+        }).eq("id", mid).execute()
+
+    return redirect(url_for("inventaire"))
 
 
 # ---------------- DEMANDE AGENT ----------------
@@ -134,10 +155,6 @@ def admin_agents():
 
     agents = supabase.table("agents").select("*").execute().data
     return render_template("admin_agents.html", agents=agents, **session)
-@app.route("/action_materiel", methods=["POST"])
-def action_materiel():
-    if "login" not in session:
-        return redirect(url_for("connexion"))
 
     materiel_id = request.form.get("materiel_id")
     action = request.form.get("action")
