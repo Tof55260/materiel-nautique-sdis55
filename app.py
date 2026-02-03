@@ -104,6 +104,10 @@ def valider(id):
 def ma_fiche():
     m=supabase.table("materiels").select("*").eq("agent",session["login"]).execute().data
     return render_template("ma_fiche.html",materiels=m,**session)
+@app.route("/fiches-agents")
+def fiches_agents():
+    agents = supabase.table("agents").select("*").execute().data
+    return render_template("fiches_agents.html", agents=agents, **session)
 
 if __name__=="__main__":
     app.run(host="0.0.0.0",port=10000)
