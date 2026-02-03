@@ -70,6 +70,17 @@ def inventaire():
         **session
     )
 
+@app.route("/inventaire")
+def inventaire():
+    ...
+
+@app.route("/action_materiel", methods=["POST"])
+def action_materiel():
+    ...
+
+@app.route("/echanges")
+def echanges():
+    ...
 
 # ---------------- DEMANDE AGENT ----------------
 
