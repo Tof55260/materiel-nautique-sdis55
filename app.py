@@ -144,18 +144,36 @@ def accueil():
 
 # ---- ECHANGES (plusieurs endpoints pour compat templates) ----
 @app.route("/echanges", endpoint="echanges")
-@app.route("/page-echanges", endpoint="page_echanges")  # alias
+@app.route("/page-echanges", endpoint="page_echanges")
 @login_required
 def echanges():
-    # Si ton echanges.html attend d'autres variables plus tard, tu pourras les ajouter ici
-    return render_template("echanges.html", now=datetime.now, **session)
+
+    items = supabase.table("materiels").select("*").execute().data or []
+
+    return render_template(
+        "echanges.html",
+        items=items,
+        now=datetime.now,
+        **session
+    )
+
 
 
 # ---- INVENTAIRE (plusieurs endpoints pour compat templates) ----
 @app.route("/inventaire", endpoint="inventaire")
-@app.route("/inventaire-page", endpoint="inventaire_page")  # alias
+@app.route("/inventaire-page", endpoint="inventaire_page")
 @login_required
 def inventaire():
+
+    items = supabase.table("materiels").select("*").execute().data or []
+
+    return render_template(
+        "inventaire.html",
+        items=items,
+        now=datetime.now,
+        **session
+    )
+
     err = supa_ok_or_error_page()
     if err:
         return err
