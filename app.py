@@ -150,6 +150,33 @@ def admin_agents():
 
     agents = supabase.table("agents").select("*").execute().data
     return render_template("admin_agents.html", agents=agents, **session)
+@app.route("/action_materiel", methods=["POST"])
+def action_materiel():
+    if "login" not in session:
+        return redirect(url_for("connexion"))
+
+    materiel_id = request.form.get("materiel_id")
+    action = request.form.get("action")
+    agent = request.form.get("agent")
+
+    if not materiel_id or not action:
+        return redirect(url_for("inventaire"))
+
+    # Réformer
+    if action == "reformer":
+        supabase.table("materiels").update({
+            "statut": "reforme",
+            "agent": None
+        }).eq("id", materiel_id).execute()
+
+    # Affecter
+    if action == "affecter" and agent:
+        supabase.table("materiels").update({
+            "statut": "affecte",
+            "agent": agent
+        }).eq("id", materiel_id).execute()
+
+    return redirect(url_for("inventaire"))
 
 if __name__=="__main__":
     app.run(host="0.0.0.0",port=10000)
