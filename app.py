@@ -58,16 +58,20 @@ def inventaire():
 @app.route("/action_materiel", methods=["POST"])
 def action_materiel():
 
-    mid = request.form["id"]
-    action = request.form["action"]
+    mid = request.form.get("id")
+    action = request.form.get("action")
+
+    if not mid or not action:
+        return redirect(url_for("inventaire"))
 
     if action == "affecter":
-        agent = request.form["agent"]
+        agent = request.form.get("agent")
 
-        supabase.table("materiels").update({
-            "statut": "affecte",
-            "agent": agent
-        }).eq("id", mid).execute()
+        if agent:
+            supabase.table("materiels").update({
+                "statut": "affecte",
+                "agent": agent
+            }).eq("id", mid).execute()
 
     if action == "reforme":
         supabase.table("materiels").update({
@@ -76,6 +80,7 @@ def action_materiel():
         }).eq("id", mid).execute()
 
     return redirect(url_for("inventaire"))
+
 
 # ================= DEMANDE AGENT =================
 
