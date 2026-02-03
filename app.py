@@ -43,21 +43,33 @@ def accueil():
 
 # ---------------- INVENTAIRE ----------------
 
-@app.route("/inventaire")
+@app.route("/inventaire", methods=["GET","POST"])
 def inventaire():
-    items=supabase.table("materiels").select("*").execute().data
-    return render_template("inventaire.html",items=items,**session)
+    if "login" not in session:
+        return redirect("/")
 
-@app.route("/ajouter_materiel",methods=["POST"])
-def ajouter_materiel():
-    supabase.table("materiels").insert({
-        "nom":request.form["nom"],
-        "type":request.form["type"],
-        "serie":request.form["serie"],
-        "controle_epi":request.form["controle"],
-        "statut":"stock"
-    }).execute()
-    return redirect("/inventaire")
+    # ajout matériel
+    if request.method == "POST":
+        supabase.table("materiels").insert({
+            "nom": request.form["nom"],
+            "numero_serie": request.form["numero"],
+            "type": request.form["type"],
+            "date_controle": request.form["date"],
+            "statut": "stock",
+            "agent": None
+        }).execute()
+
+    items = supabase.table("materiels").select("*").order("id", desc=True).execute().data
+
+    agents = supabase.table("agents").select("nom","prenom").execute().data
+
+    return render_template(
+        "inventaire.html",
+        items=items,
+        agents=agents,
+        **session
+    )
+
 
 # ---------------- DEMANDE AGENT ----------------
 
