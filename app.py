@@ -108,6 +108,13 @@ def ma_fiche():
 def fiches_agents():
     agents = supabase.table("agents").select("*").execute().data
     return render_template("fiches_agents.html", agents=agents, **session)
+@app.route("/admin/agents")
+def admin_agents():
+    if session.get("role") != "Admin":
+        return redirect(url_for("accueil"))
+
+    agents = supabase.table("agents").select("*").execute().data
+    return render_template("admin_agents.html", agents=agents, **session)
 
 if __name__=="__main__":
     app.run(host="0.0.0.0",port=10000)
