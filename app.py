@@ -209,6 +209,33 @@ def fiches_agents():
 
     agents = supabase.table("agents").select("*").execute().data
     return render_template("fiches_agents.html", agents=agents, **session)
+@app.route("/admin/agent/<login>")
+def fiche_agent_admin(login):
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    agent = supabase.table("agents").select("*").eq("login", login).execute().data
+    if not agent:
+        return redirect("/fiches-agents")
+
+    agent = agent[0]
+
+    materiels = supabase.table("materiels").select("*").eq("agent", login).execute().data
+
+    historique = supabase.table("historique") \
+        .select("*") \
+        .eq("agent", login) \
+        .order("date", desc=True) \
+        .execute().data
+
+    return render_template(
+        "fiche_agent_admin.html",
+        agent=agent,
+        materiels=materiels,
+        historique=historique,
+        **session
+    )
 
 # ================= ADMIN =================
 
