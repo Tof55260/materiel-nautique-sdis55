@@ -48,16 +48,19 @@ def accueil():
 @app.route("/inventaire", methods=["GET", "POST"])
 def inventaire():
 
-    if request.method == "POST":
-        supabase.table("materiels").insert({
-            "nom": request.form["nom"],
-            "numero_serie": request.form["numero"],
-            "type": request.form["type"],
-            "date_controle": request.form["date"],
-            "statut": "stock",
-"quantite": int(request.form["quantite"])
+  if request.method == "POST":
 
-        }).execute()
+    date = request.form["date"] or None
+
+    supabase.table("materiels").insert({
+        "nom": request.form["nom"],
+        "numero_serie": request.form["numero"],
+        "type": request.form["type"],
+        "date_controle": date,
+        "quantite": int(request.form["quantite"]),
+        "statut": "stock"
+    }).execute()
+
 
     items = supabase.table("materiels").select("*").eq("statut","stock").execute().data
 
