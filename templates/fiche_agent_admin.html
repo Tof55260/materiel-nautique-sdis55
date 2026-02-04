@@ -24,15 +24,22 @@
 <td>
 
 <!-- STOCK / RÉFORME -->
-<form method="POST" action="/action_materiel" style="display:inline">
+<form method="POST" action="/action_materiel">
 
-    <input type="hidden" name="id" value="{{ m.id }}">
+<input type="hidden" name="id" value="{{ m.id }}">
 
-    <button name="action" value="stock">Remettre stock</button>
+<input type="number"
+       name="qte"
+       min="1"
+       max="{{ m.quantite }}"
+       value="1"
+       style="width:70px">
 
-    <button name="action" value="reforme">Réformer</button>
+<button name="action" value="stock">Stock</button>
+<button name="action" value="reforme">Réformer</button>
 
 </form>
+
 
 <!-- ÉCHANGE ADMIN -->
 <form method="POST" action="/admin/demande_echange" style="display:inline">
