@@ -157,6 +157,31 @@ def demande_echange():
     }).execute()
 
     return redirect("/echanges")
+@app.route("/admin/demande_echange", methods=["POST"])
+def admin_demande_echange():
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    agent = request.form["agent"]
+    materiel = request.form["materiel"]
+
+    supabase.table("echanges").insert({
+        "agent": agent,
+        "ancien_materiel": materiel,
+        "statut": "en_attente",
+        "date": datetime.now().isoformat()
+    }).execute()
+
+    supabase.table("notifications").insert({
+        "message": f"Admin a initié un échange pour {agent}",
+        "lu": False,
+        "date": datetime.now().isoformat()
+    }).execute()
+
+    add_historique(agent, "demande échange (admin)", materiel)
+
+    return redirect(f"/admin/agent/{agent}")
 
 # ================= ECHANGES =================
 
