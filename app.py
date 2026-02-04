@@ -119,6 +119,11 @@ def action_materiel():
             "agent": agent,
             "quantite": qte
         }).execute()
+if action == "stock":
+    supabase.table("materiels").update({
+        "statut": "stock",
+        "agent": None
+    }).eq("id", mid).execute()
 
     # -------- REFORME --------
     if action == "reforme":
