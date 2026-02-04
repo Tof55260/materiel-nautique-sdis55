@@ -153,8 +153,11 @@ def valider(id):
 @app.route("/ma-fiche")
 def ma_fiche():
 
-    m = supabase.table("materiels").select("*").eq("agent", session["login"]).execute().data
-    return render_template("ma_fiche.html", materiels=m, **session)
+    mats = supabase.table("materiels").select("*").eq("agent", session["login"]).execute().data
+
+    hist = supabase.table("historique").select("*").eq("agent", session["login"]).order("date", desc=True).execute().data
+
+    return render_template("ma_fiche.html", materiels=mats, historique=hist, **session)
 
 # ================= FICHES AGENTS =================
 
