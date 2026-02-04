@@ -1,23 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="auth">
-  <div class="card auth__card">
-    <h1 class="h1">Connexion</h1>
-    {% if error %}
-      <div class="alert alert--danger">{{ error }}</div>
-    {% endif %}
+<div class="login-wrapper">
 
-    <form method="POST" class="form">
-      <label class="label">Identifiant</label>
-      <input class="input" name="login" placeholder="ex: admin" required>
+    <div class="login-card">
 
-      <label class="label">Mot de passe</label>
-      <input class="input" type="password" name="password" placeholder="••••••••" required>
+        <h2>Connexion</h2>
 
-      <button class="btn btn--primary" type="submit">Connexion</button>
-    </form>
-  </div>
+        <form method="POST">
+            <input name="login" placeholder="Identifiant" required>
+            <input type="password" name="password" placeholder="Mot de passe" required>
+
+            <button type="submit">Connexion</button>
+        </form>
+
+    </div>
+
 </div>
 
 {% endblock %}
