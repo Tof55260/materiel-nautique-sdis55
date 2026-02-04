@@ -1,6 +1,12 @@
-<header>
+<header class="topbar">
 
-<img src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}" class="logo">
+<div class="brand">
+    <img src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}">
+    <div class="titles">
+        <div class="main-title">MATÉRIEL NAUTIQUE</div>
+        <div class="sub-title">SDIS 55 — Équipe spécialisée</div>
+    </div>
+</div>
 
 <nav>
 <a href="{{ url_for('accueil') }}">Accueil</a>
