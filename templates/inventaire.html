@@ -3,14 +3,17 @@
 
 <h2>Inventaire</h2>
 
-<h3>Ajouter matériel</h3>
+<h3>Ajouter matériel au stock</h3>
 
 <form method="POST">
     <input name="nom" placeholder="Nom matériel" required>
-    <input name="quantite" type="number" value="1" min="1" required placeholder="Quantité">
     <input name="numero" placeholder="N° série">
     <input name="type" placeholder="Type">
     <input type="date" name="date">
+
+    <!-- Quantité ajout -->
+    <input name="quantite" type="number" value="1" min="1" required placeholder="Quantité">
+
     <button>Ajouter</button>
 </form>
 
@@ -18,46 +21,48 @@
 
 <table>
 <tr>
-<th>Nom</th>
-<th>Série</th>
-<th>Type</th>
-<th>Statut</th>
-<th>Agent</th>
-<th>Action</th>
+    <th>Nom</th>
+    <th>Série</th>
+    <th>Type</th>
+    <th>Qté</th>
+    <th>Statut</th>
+    <th>Agent</th>
+    <th>Action</th>
 </tr>
 
 {% for m in items %}
 <tr>
-<td>{{ m.nom }}</td>
-<td>{{ m.numero_serie }}</td>
-<td>{{ m.type }}</td>
-<td>{{ m.statut }}</td>
-<td>{{ m.agent }}</td>
+    <td>{{ m.nom }}</td>
+    <td>{{ m.numero_serie }}</td>
+    <td>{{ m.type }}</td>
+    <td>{{ m.quantite }}</td>
+    <td>{{ m.statut }}</td>
+    <td>{{ m.agent or "" }}</td>
 
-<td>
+    <td>
+        <form method="POST" action="/action_materiel" style="display:flex;gap:6px;align-items:center">
 
-<form method="POST" action="{{ url_for('action_materiel') }}">
+            <input type="hidden" name="id" value="{{ m.id }}">
 
-<input type="hidden" name="id" value="{{ m.id }}">
+            {% if m.statut != "reforme" %}
 
-{% if m.statut != "reforme" %}
+                <!-- Quantité à traiter -->
+                <input type="number" name="qte" min="1" value="1" style="width:60px">
 
-<select name="agent">
-    <option value="">-- choisir agent --</option>
-    {% for a in agents %}
-        <option value="{{ a.login }}">{{ a.nom }} {{ a.prenom }}</option>
-    {% endfor %}
-</select>
+                <select name="agent">
+                    <option value="">-- agent --</option>
+                    {% for a in agents %}
+                        <option value="{{ a.nom }} {{ a.prenom }}">{{ a.nom }} {{ a.prenom }}</option>
+                    {% endfor %}
+                </select>
 
-<button type="submit" name="action" value="affecter">Affecter</button>
-<button type="submit" name="action" value="reforme">Réformer</button>
+                <button name="action" value="affecter">Affecter</button>
+                <button name="action" value="reforme">Réformer</button>
 
-{% endif %}
+            {% endif %}
 
-</form>
-
-
-</td>
+        </form>
+    </td>
 </tr>
 {% endfor %}
 </table>
