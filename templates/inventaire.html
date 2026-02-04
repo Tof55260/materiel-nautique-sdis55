@@ -18,54 +18,47 @@
 </form>
 
 <hr>
+<h3>Stock magasin</h3>
 
 <table>
 <tr>
-    <th>Nom</th>
-    <th>Série</th>
-    <th>Type</th>
-    <th>Qté</th>
-    <th>Statut</th>
-    <th>Agent</th>
-    <th>Action</th>
+<th>Nom</th>
+<th>Série</th>
+<th>Type</th>
+<th>Quantité</th>
+<th>Affecter</th>
+<th>Action</th>
 </tr>
 
-{% for m in items %}
+{% for m in items if m.statut == "stock" and (m.quantite or 0) > 0 %}
 <tr>
-    <td>{{ m.nom }}</td>
-    <td>{{ m.numero_serie }}</td>
-    <td>{{ m.type }}</td>
-    <td>{{ m.quantite }}</td>
-    <td>{{ m.statut }}</td>
-    <td>{{ m.agent or "" }}</td>
+<td>{{ m.nom }}</td>
+<td>{{ m.numero_serie }}</td>
+<td>{{ m.type }}</td>
+<td>{{ m.quantite }}</td>
 
-    <td>
-<form method="POST" action="/action_materiel">
-
+<td>
+<form method="POST" action="/action_materiel" style="display:flex;gap:5px">
 <input type="hidden" name="id" value="{{ m.id }}">
 
-<input type="number"
-       name="qte"
-       min="1"
-       max="{{ m.quantite }}"
-       value="1"
-       style="width:60px">
-
-{% if m.statut != "reforme" and (m.quantite or 0) > 0 %}
-
-
-<select name="agent">
-<option value="">-- agent --</option>
+<select name="agent" required>
+<option value="">Agent</option>
 {% for a in agents %}
 <option value="{{ a.login }}">{{ a.nom }} {{ a.prenom }}</option>
 {% endfor %}
 </select>
 
+<input type="number" name="qte" min="1" max="{{ m.quantite }}" value="1" style="width:60px">
+
 <button name="action" value="affecter">Affecter</button>
+</form>
+</td>
+
+<td>
+<form method="POST" action="/action_materiel">
+<input type="hidden" name="id" value="{{ m.id }}">
+<input type="number" name="qte" min="1" max="{{ m.quantite }}" value="1" style="width:60px">
 <button name="action" value="reforme">Réformer</button>
-
-{% endif %}
-
 </form>
 </td>
 
@@ -73,4 +66,26 @@
 {% endfor %}
 </table>
 
-{% endblock %}
+<hr>
+
+<h3>Matériel affecté aux agents</h3>
+
+<table>
+<tr>
+<th>Nom</th>
+<th>Série</th>
+<th>Type</th>
+<th>Quantité</th>
+<th>Agent</th>
+</tr>
+
+{% for m in items if m.statut == "affecte" %}
+<tr>
+<td>{{ m.nom }}</td>
+<td>{{ m.numero_serie }}</td>
+<td>{{ m.type }}</td>
+<td>{{ m.quantite }}</td>
+<td>{{ m.agent }}</td>
+</tr>
+{% endfor %}
+</table>
