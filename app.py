@@ -43,7 +43,12 @@ def logout():
 def accueil():
     if "login" not in session:
         return redirect("/")
-    return render_template("index.html", now=datetime.now, **session)
+    nb = supabase.table("notifications").select("*").eq("lu",False).execute().data
+
+session["nb_notifs"] = len(nb)
+
+return render_template("index.html", now=datetime.now, **session)
+
 
 # ================= INVENTAIRE =================
 
