@@ -92,22 +92,23 @@ def action_materiel():
     qte = int(request.form.get("qte", 1))
 
     mat = supabase.table("materiels").select("*").eq("id", mid).execute().data[0]
-
     stock = mat["quantite"]
 
-    # Sécurité
+    # sécurité
     if qte > stock or qte <= 0:
         return redirect("/inventaire")
 
-    # --- AFFECTER ---
+    # -------- AFFECTER --------
     if action == "affecter":
 
         agent = request.form["agent"]
 
+        # on retire du stock
         supabase.table("materiels").update({
             "quantite": stock - qte
         }).eq("id", mid).execute()
 
+        # on crée ligne affectée
         supabase.table("materiels").insert({
             "nom": mat["nom"],
             "numero_serie": mat["numero_serie"],
@@ -118,7 +119,7 @@ def action_materiel():
             "quantite": qte
         }).execute()
 
-    # --- REFORME ---
+    # -------- REFORME --------
     if action == "reforme":
 
         supabase.table("materiels").update({
