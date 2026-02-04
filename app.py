@@ -92,7 +92,8 @@ def action_materiel():
     qte = int(request.form.get("qte", 1))
 
     mat = supabase.table("materiels").select("*").eq("id", mid).execute().data[0]
-    stock = mat["quantite"]
+    stock = mat.get("quantite") or 0
+
 
     # sécurité
     if qte > stock or qte <= 0:
