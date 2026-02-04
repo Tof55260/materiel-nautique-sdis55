@@ -54,7 +54,9 @@ def inventaire():
             "numero_serie": request.form["numero"],
             "type": request.form["type"],
             "date_controle": request.form["date"],
-            "statut": "stock"
+            "statut": "stock",
+"quantite": int(request.form["quantite"])
+
         }).execute()
 
     items = supabase.table("materiels").select("*").eq("statut","stock").execute().data
