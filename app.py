@@ -68,25 +68,30 @@ def action_materiel():
     mid = request.form.get("id")
     action = request.form.get("action")
 
-    if not mid or not action:
-        return redirect(url_for("inventaire"))
+    mat = supabase.table("materiels").select("*").eq("id", mid).execute().data[0]
+    nom_mat = f"{mat['nom']} ({mat['numero_serie']})"
 
     if action == "affecter":
         agent = request.form.get("agent")
 
-        if agent:
-            supabase.table("materiels").update({
-                "statut": "affecte",
-                "agent": agent
-            }).eq("id", mid).execute()
+        supabase.table("materiels").update({
+            "statut": "affecte",
+            "agent": agent
+        }).eq("id", mid).execute()
+
+        add_historique(agent, "Affectation", nom_mat)
 
     if action == "reforme":
+
         supabase.table("materiels").update({
             "statut": "reforme",
             "agent": None
         }).eq("id", mid).execute()
 
-    return redirect(url_for("inventaire"))
+        add_historique(session["login"], "Réforme", nom_mat)
+
+    return redirect("/inventaire")
+
 
 
 # ================= DEMANDE AGENT =================
