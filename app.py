@@ -10,6 +10,13 @@ SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+def add_historique(agent, action, materiel):
+    supabase.table("historique").insert({
+        "agent": agent,
+        "action": action,
+        "materiel": materiel,
+        "date": datetime.now().isoformat()
+    }).execute()
 
 # ================= LOGIN =================
 
