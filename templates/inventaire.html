@@ -40,29 +40,34 @@
     <td>{{ m.agent or "" }}</td>
 
     <td>
-        <form method="POST" action="/action_materiel" style="display:flex;gap:6px;align-items:center">
+<form method="POST" action="/action_materiel">
 
-            <input type="hidden" name="id" value="{{ m.id }}">
+<input type="hidden" name="id" value="{{ m.id }}">
 
-            {% if m.statut != "reforme" %}
+<input type="number"
+       name="qte"
+       min="1"
+       max="{{ m.quantite }}"
+       value="1"
+       style="width:60px">
 
-                <!-- Quantité à traiter -->
-                <input type="number" name="qte" min="1" value="1" style="width:60px">
+{% if m.statut != "reforme" and m.quantite > 0 %}
 
-                <select name="agent">
-                    <option value="">-- agent --</option>
-                    {% for a in agents %}
-                        <option value="{{ a.nom }} {{ a.prenom }}">{{ a.nom }} {{ a.prenom }}</option>
-                    {% endfor %}
-                </select>
+<select name="agent">
+<option value="">-- agent --</option>
+{% for a in agents %}
+<option value="{{ a.login }}">{{ a.nom }} {{ a.prenom }}</option>
+{% endfor %}
+</select>
 
-                <button name="action" value="affecter">Affecter</button>
-                <button name="action" value="reforme">Réformer</button>
+<button name="action" value="affecter">Affecter</button>
+<button name="action" value="reforme">Réformer</button>
 
-            {% endif %}
+{% endif %}
 
-        </form>
-    </td>
+</form>
+</td>
+
 </tr>
 {% endfor %}
 </table>
