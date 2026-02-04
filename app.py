@@ -57,7 +57,8 @@ def inventaire():
             "statut": "stock"
         }).execute()
 
-    items = supabase.table("materiels").select("*").execute().data
+    items = supabase.table("materiels").select("*").eq("statut","stock").execute().data
+
     agents = supabase.table("agents").select("*").execute().data
 
     return render_template("inventaire.html", items=items, agents=agents, **session)
