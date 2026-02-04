@@ -11,26 +11,40 @@
 <th>Série</th>
 <th>Type</th>
 <th>Contrôle EPI</th>
+<th>Actions</th>
 </tr>
 
 {% for m in materiels %}
-  <td>
-<form method="POST" action="/action_materiel">
-
-<input type="hidden" name="id" value="{{ m.id }}">
-
-<button name="action" value="stock">Remettre stock</button>
-
-<button name="action" value="reforme">Réformer</button>
-
-</form>
-</td>
-
 <tr>
 <td>{{ m.nom }}</td>
 <td>{{ m.numero_serie }}</td>
 <td>{{ m.type }}</td>
 <td>{{ m.date_controle }}</td>
+
+<td>
+
+<!-- STOCK / RÉFORME -->
+<form method="POST" action="/action_materiel" style="display:inline">
+
+    <input type="hidden" name="id" value="{{ m.id }}">
+
+    <button name="action" value="stock">Remettre stock</button>
+
+    <button name="action" value="reforme">Réformer</button>
+
+</form>
+
+<!-- ÉCHANGE ADMIN -->
+<form method="POST" action="/admin/demande_echange" style="display:inline">
+
+    <input type="hidden" name="materiel" value="{{ m.numero_serie }}">
+    <input type="hidden" name="agent" value="{{ agent.login }}">
+
+    <button style="background:#ff9800;color:white">Échanger</button>
+
+</form>
+
+</td>
 </tr>
 {% endfor %}
 </table>
