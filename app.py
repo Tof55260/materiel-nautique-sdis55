@@ -89,64 +89,44 @@ def action_materiel():
 
     mid = request.form["id"]
     action = request.form["action"]
+    qte = int(request.form.get("qte", 1))
 
-    # On récupère le matériel actuel
     mat = supabase.table("materiels").select("*").eq("id", mid).execute().data[0]
 
-    qte = mat.get("quantite", 1)
-    if qte <= 0:
-    return redirect("/inventaire")
+    stock = mat["quantite"]
 
+    # Sécurité
+    if qte > stock or qte <= 0:
+        return redirect("/inventaire")
 
-    # ================= AFFECTER =================
+    # --- AFFECTER ---
     if action == "affecter":
 
         agent = request.form["agent"]
 
-        # On enlève 1 du stock
-        nouvelle_qte = qte - 1
+        supabase.table("materiels").update({
+            "quantite": stock - qte
+        }).eq("id", mid).execute()
 
-        if nouvelle_qte <= 0:
-            # Plus rien → on affecte et on sort du stock
-            supabase.table("materiels").update({
-                "statut": "affecte",
-                "agent": agent,
-                "quantite": 0
-            }).eq("id", mid).execute()
+        supabase.table("materiels").insert({
+            "nom": mat["nom"],
+            "numero_serie": mat["numero_serie"],
+            "type": mat["type"],
+            "date_controle": mat["date_controle"],
+            "statut": "affecte",
+            "agent": agent,
+            "quantite": qte
+        }).execute()
 
-        else:
-            # Il reste du stock
-            supabase.table("materiels").update({
-                "quantite": nouvelle_qte
-            }).eq("id", mid).execute()
-
-            # Création d’une ligne affectée pour l’agent
-            supabase.table("materiels").insert({
-                "nom": mat["nom"],
-                "numero_serie": mat["numero_serie"],
-                "type": mat["type"],
-                "date_controle": mat["date_controle"],
-                "statut": "affecte",
-                "agent": agent,
-                "quantite": 1
-            }).execute()
-
-    # ================= REFORME =================
+    # --- REFORME ---
     if action == "reforme":
 
-        nouvelle_qte = qte - 1
-
-        if nouvelle_qte <= 0:
-            supabase.table("materiels").update({
-                "statut": "reforme",
-                "quantite": 0
-            }).eq("id", mid).execute()
-        else:
-            supabase.table("materiels").update({
-                "quantite": nouvelle_qte
-            }).eq("id", mid).execute()
+        supabase.table("materiels").update({
+            "quantite": stock - qte
+        }).eq("id", mid).execute()
 
     return redirect("/inventaire")
+
 
 
 
