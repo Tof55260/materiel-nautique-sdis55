@@ -51,7 +51,8 @@
        value="1"
        style="width:60px">
 
-{% if m.statut != "reforme" and m.quantite > 0 %}
+{% if m.statut != "reforme" and (m.quantite or 0) > 0 %}
+
 
 <select name="agent">
 <option value="">-- agent --</option>
