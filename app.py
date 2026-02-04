@@ -10,6 +10,9 @@ SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+# ================= UTIL =================
+
 def add_historique(agent, action, materiel):
     supabase.table("historique").insert({
         "agent": agent,
@@ -40,7 +43,6 @@ def logout():
 def accueil():
     if "login" not in session:
         return redirect("/")
-
     return render_template("index.html", now=datetime.now, **session)
 
 # ================= INVENTAIRE =================
@@ -69,21 +71,10 @@ def inventaire():
     items = supabase.table("materiels").select("*").neq("statut","reforme").execute().data
     agents = supabase.table("agents").select("*").execute().data
 
-    return render_template(
-        "inventaire.html",
-        items=items,
-        agents=agents,
-        **session
-    )
-
-
-
-    items = supabase.table("materiels").select("*").eq("statut","stock").execute().data
-
-    agents = supabase.table("agents").select("*").execute().data
-
     return render_template("inventaire.html", items=items, agents=agents, **session)
-    
+
+# ================= ACTION MATERIEL =================
+
 @app.route("/action_materiel", methods=["POST"])
 def action_materiel():
 
@@ -94,22 +85,18 @@ def action_materiel():
     mat = supabase.table("materiels").select("*").eq("id", mid).execute().data[0]
     stock = mat.get("quantite") or 0
 
-
-    # sécurité
     if qte > stock or qte <= 0:
         return redirect("/inventaire")
 
-    # -------- AFFECTER --------
+    # ----- AFFECTER -----
     if action == "affecter":
 
         agent = request.form["agent"]
 
-        # on retire du stock
         supabase.table("materiels").update({
             "quantite": stock - qte
         }).eq("id", mid).execute()
 
-        # on crée ligne affectée
         supabase.table("materiels").insert({
             "nom": mat["nom"],
             "numero_serie": mat["numero_serie"],
@@ -119,24 +106,29 @@ def action_materiel():
             "agent": agent,
             "quantite": qte
         }).execute()
-if action == "stock":
-    supabase.table("materiels").update({
-        "statut": "stock",
-        "agent": None
-    }).eq("id", mid).execute()
 
-    # -------- REFORME --------
+        add_historique(agent, "affectation", mat["nom"])
+
+    # ----- REMETTRE STOCK -----
+    if action == "stock":
+
+        supabase.table("materiels").update({
+            "statut": "stock",
+            "agent": None
+        }).eq("id", mid).execute()
+
+        add_historique(session["login"], "retour stock", mat["nom"])
+
+    # ----- REFORME -----
     if action == "reforme":
 
         supabase.table("materiels").update({
             "quantite": stock - qte
         }).eq("id", mid).execute()
 
+        add_historique(session["login"], "réforme", mat["nom"])
+
     return redirect("/inventaire")
-
-
-
-
 
 # ================= DEMANDE AGENT =================
 
@@ -156,32 +148,9 @@ def demande_echange():
         "date": datetime.now().isoformat()
     }).execute()
 
+    add_historique(session["login"], "demande échange", request.form["materiel"])
+
     return redirect("/echanges")
-@app.route("/admin/demande_echange", methods=["POST"])
-def admin_demande_echange():
-
-    if session.get("role") != "Admin":
-        return redirect("/accueil")
-
-    agent = request.form["agent"]
-    materiel = request.form["materiel"]
-
-    supabase.table("echanges").insert({
-        "agent": agent,
-        "ancien_materiel": materiel,
-        "statut": "en_attente",
-        "date": datetime.now().isoformat()
-    }).execute()
-
-    supabase.table("notifications").insert({
-        "message": f"Admin a initié un échange pour {agent}",
-        "lu": False,
-        "date": datetime.now().isoformat()
-    }).execute()
-
-    add_historique(agent, "demande échange (admin)", materiel)
-
-    return redirect(f"/admin/agent/{agent}")
 
 # ================= ECHANGES =================
 
@@ -215,36 +184,15 @@ def valider(id):
         "nouveau_materiel": nouveau
     }).eq("id", id).execute()
 
+    add_historique(ex["agent"], "échange validé", nouveau)
+
     return redirect("/echanges")
-@app.route("/notifications")
-def notifications():
-
-    if session.get("role") != "Admin":
-        return redirect("/accueil")
-
-    notes = supabase.table("notifications") \
-        .select("*") \
-        .order("date", desc=True) \
-        .execute().data
-
-    return render_template("notifications.html", notifications=notes, **session)
-
-
-@app.route("/notifications/lu/<int:id>")
-def notif_lu(id):
-
-    supabase.table("notifications").update({
-        "lu": True
-    }).eq("id", id).execute()
-
-    return redirect("/notifications")
 
 # ================= MA FICHE =================
 
 @app.route("/ma-fiche")
 def ma_fiche():
 
-    # infos agent depuis session
     agent = {
         "nom": session.get("nom"),
         "prenom": session.get("prenom"),
@@ -252,59 +200,32 @@ def ma_fiche():
         "role": session.get("role")
     }
 
-    mats = supabase.table("materiels") \
-        .select("*") \
-        .eq("agent", session["login"]) \
-        .execute().data
+    mats = supabase.table("materiels").select("*").eq("agent", session["login"]).execute().data
 
-    hist = supabase.table("historique") \
-        .select("*") \
-        .eq("agent", session["login"]) \
-        .order("date", desc=True) \
-        .execute().data
+    hist = supabase.table("historique").select("*").eq("agent", session["login"]).order("date", desc=True).execute().data
 
-    return render_template(
-        "ma_fiche.html",
-        agent=agent,
-        materiels=mats,
-        historique=hist,
-        **session
-    )
+    return render_template("ma_fiche.html", agent=agent, materiels=mats, historique=hist, **session)
 
 # ================= FICHES AGENTS =================
 
 @app.route("/fiches-agents")
 def fiches_agents():
-
     agents = supabase.table("agents").select("*").execute().data
     return render_template("fiches_agents.html", agents=agents, **session)
+
 @app.route("/admin/agent/<login>")
 def fiche_agent_admin(login):
 
     if session.get("role") != "Admin":
         return redirect("/accueil")
 
-    agent = supabase.table("agents").select("*").eq("login", login).execute().data
-    if not agent:
-        return redirect("/fiches-agents")
-
-    agent = agent[0]
+    agent = supabase.table("agents").select("*").eq("login", login).execute().data[0]
 
     materiels = supabase.table("materiels").select("*").eq("agent", login).execute().data
 
-    historique = supabase.table("historique") \
-        .select("*") \
-        .eq("agent", login) \
-        .order("date", desc=True) \
-        .execute().data
+    historique = supabase.table("historique").select("*").eq("agent", login).order("date", desc=True).execute().data
 
-    return render_template(
-        "fiche_agent_admin.html",
-        agent=agent,
-        materiels=materiels,
-        historique=historique,
-        **session
-    )
+    return render_template("fiche_agent_admin.html", agent=agent, materiels=materiels, historique=historique, **session)
 
 # ================= ADMIN =================
 
