@@ -2,9 +2,9 @@
 
 <div class="brand">
 
-    <!-- LOGO forcé en dur -->
+    <!-- LOGO -->
     <img src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}"
-         style="height:50px;width:auto;">
+         style="height:48px;width:auto;">
 
     <div class="titles">
         <div class="main-title">MATÉRIEL NAUTIQUE</div>
@@ -14,17 +14,29 @@
 </div>
 
 <nav>
+
 <a href="{{ url_for('accueil') }}">Accueil</a>
 <a href="{{ url_for('inventaire') }}">Inventaire</a>
 <a href="{{ url_for('echanges') }}">Échanges</a>
 <a href="{{ url_for('ma_fiche') }}">Ma fiche</a>
 
 {% if session.role == "Admin" %}
+
 <a href="{{ url_for('fiches_agents') }}">Fiches agents</a>
+
+<a href="{{ url_for('notifications') }}">
+Notifications
+{% if session.nb_notifs and session.nb_notifs > 0 %}
+<span class="notif-badge">{{ session.nb_notifs }}</span>
+{% endif %}
+</a>
+
 <a href="{{ url_for('admin_agents') }}">Administration</a>
+
 {% endif %}
 
 <a href="{{ url_for('logout') }}">Déconnexion</a>
+
 </nav>
 
 </header>
