@@ -94,6 +94,9 @@ def action_materiel():
     mat = supabase.table("materiels").select("*").eq("id", mid).execute().data[0]
 
     qte = mat.get("quantite", 1)
+    if qte <= 0:
+    return redirect("/inventaire")
+
 
     # ================= AFFECTER =================
     if action == "affecter":
