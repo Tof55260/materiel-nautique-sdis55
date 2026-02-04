@@ -64,36 +64,47 @@ def inventaire():
     agents = supabase.table("agents").select("*").execute().data
 
     return render_template("inventaire.html", items=items, agents=agents, **session)
-
+    
 @app.route("/action_materiel", methods=["POST"])
 def action_materiel():
 
-    mid = request.form.get("id")
-    action = request.form.get("action")
+    mid = request.form["id"]
+    action = request.form["action"]
+    qte = int(request.form.get("qte",1))
 
-    mat = supabase.table("materiels").select("*").eq("id", mid).execute().data[0]
-    nom_mat = f"{mat['nom']} ({mat['numero_serie']})"
+    mat = supabase.table("materiels").select("*").eq("id",mid).execute().data[0]
 
     if action == "affecter":
-        agent = request.form.get("agent")
 
+        agent = request.form["agent"]
+
+        # retirer du stock
         supabase.table("materiels").update({
-            "statut": "affecte",
-            "agent": agent
-        }).eq("id", mid).execute()
+            "quantite": mat["quantite"] - qte
+        }).eq("id",mid).execute()
 
-        add_historique(agent, "Affectation", nom_mat)
+        # créer ligne affectée
+        supabase.table("materiels").insert({
+            "nom": mat["nom"],
+            "numero_serie": mat["numero_serie"],
+            "type": mat["type"],
+            "date_controle": mat["date_controle"],
+            "statut": "affecte",
+            "agent": agent,
+            "quantite": qte
+        }).execute()
 
     if action == "reforme":
 
         supabase.table("materiels").update({
-            "statut": "reforme",
-            "agent": None
-        }).eq("id", mid).execute()
+            "quantite": mat["quantite"] - qte
+        }).eq("id",mid).execute()
 
-        add_historique(session["login"], "Réforme", nom_mat)
+    # supprimer si plus rien
+    supabase.table("materiels").delete().eq("id",mid).lt("quantite",1).execute()
 
     return redirect("/inventaire")
+
 
 
 
