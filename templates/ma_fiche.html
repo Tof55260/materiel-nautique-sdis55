@@ -17,6 +17,20 @@
       <div class="kv__row"><span>Login</span><strong>{{ agent.get("login","") }}</strong></div>
     </div>
   </div>
+<h3>Historique</h3>
+
+<table>
+<tr><th>Date</th><th>Matériel</th><th>Action</th></tr>
+
+{% for h in historique %}
+<tr>
+<td>{{ h.date[:10] }}</td>
+<td>{{ h.materiel }}</td>
+<td>{{ h.action }}</td>
+</tr>
+{% endfor %}
+
+</table>
 
   <div class="card">
     <h2 class="h2">Matériel affecté</h2>
