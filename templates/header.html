@@ -17,13 +17,13 @@
 <a href="{{ url_for('accueil') }}">Accueil</a>
 <a href="{{ url_for('inventaire') }}">Inventaire</a>
 <a href="{{ url_for('echanges') }}">Échanges</a>
+<a href="{{ url_for('ma_fiche') }}">Ma fiche</a>
 
 {% if session.role == "Admin" %}
 <a href="{{ url_for('fiches_agents') }}">Fiches agents</a>
 <a href="{{ url_for('admin_agents') }}">Administration</a>
 {% endif %}
 
-<a href="{{ url_for('ma_fiche') }}">Ma fiche</a>
 <a href="{{ url_for('logout') }}">Déconnexion</a>
 </nav>
 
