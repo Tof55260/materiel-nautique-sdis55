@@ -1,15 +1,16 @@
-<!DOCTYPE html>
-<html>
-
+{% extends "base.html" %}
+{% block content %}
 
 <h2>Fiches agents</h2>
 
+<ul>
 {% for a in agents %}
-<p>
-<a href="/fiche-agent/{{ a.login }}">
+<li>
+<a href="/admin/agent/{{ a.login }}">
 {{ a.prenom }} {{ a.nom }}
 </a>
-</p>
+</li>
 {% endfor %}
+</ul>
 
-
+{% endblock %}
