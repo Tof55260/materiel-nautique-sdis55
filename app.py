@@ -202,7 +202,21 @@ def echanges():
     stock = supabase.table("materiels").select("*").eq("statut","stock").execute().data
 
     return render_template("echanges.html", echanges=e, stock=stock, **session)
-    
+# ================= NOTIFICATIONS =================
+
+@app.route("/notifications")
+def notifications():
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    notes = supabase.table("notifications") \
+        .select("*") \
+        .order("date", desc=True) \
+        .execute().data
+
+    return render_template("notifications.html", notifications=notes, **session)
+
 # ================= FICHES AGENTS =================
 
 @app.route("/fiches-agents")
