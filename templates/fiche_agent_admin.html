@@ -11,6 +11,7 @@
 <th>Série</th>
 <th>Type</th>
 <th>Contrôle EPI</th>
+<th>Qté</th>
 <th>Actions</th>
 </tr>
 
@@ -20,17 +21,13 @@
 <td>{{ m.numero_serie }}</td>
 <td>{{ m.type }}</td>
 <td>{{ m.date_controle }}</td>
+<td><strong>{{ m.quantite }}</strong></td>
 
 <td>
-<input type="number"
-       name="qte"
-       min="1"
-       max="{{ m.quantite }}"
-       value="1"
-       style="width:60px">
 
-<!-- STOCK / RÉFORME -->
-<form method="POST" action="/action_materiel">
+<!-- ACTION STOCK / REFORME -->
+
+<form method="POST" action="/action_materiel" style="display:inline">
 
 <input type="hidden" name="id" value="{{ m.id }}">
 
@@ -39,21 +36,21 @@
        min="1"
        max="{{ m.quantite }}"
        value="1"
-       style="width:70px">
+       style="width:60px">
 
 <button name="action" value="stock">Stock</button>
 <button name="action" value="reforme">Réformer</button>
 
 </form>
 
+<!-- ECHANGE ADMIN -->
 
-<!-- ÉCHANGE ADMIN -->
 <form method="POST" action="/admin/demande_echange" style="display:inline">
 
-    <input type="hidden" name="materiel" value="{{ m.numero_serie }}">
-    <input type="hidden" name="agent" value="{{ agent.login }}">
+<input type="hidden" name="materiel" value="{{ m.numero_serie }}">
+<input type="hidden" name="agent" value="{{ agent.login }}">
 
-    <button style="background:#ff9800;color:white">Échanger</button>
+<button style="background:#ff9800;color:white">Échanger</button>
 
 </form>
 
