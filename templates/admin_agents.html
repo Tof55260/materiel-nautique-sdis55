@@ -61,7 +61,6 @@ Actif
 
 <td>
 
-{% if a.login != session.login %}
 <form method="POST"
       action="/admin/agents/delete/{{ a.login }}"
       onsubmit="return confirm('Supprimer définitivement {{ a.prenom }} {{ a.nom }} ?');"
@@ -72,11 +71,9 @@ Actif
 </button>
 
 </form>
-{% else %}
-—
-{% endif %}
 
 </td>
+
 </tr>
 {% endfor %}
 
