@@ -1,61 +1,31 @@
-{% extends "base.html" %}
-{% block content %}
+@app.route("/ma-fiche")
+def ma_fiche():
 
-<div class="pagehead">
-  <h1 class="h1">Ma fiche</h1>
-  <p class="muted">Informations et matériels affectés</p>
-</div>
+    if "login" not in session:
+        return redirect("/")
 
-<div class="grid">
-  <div class="card">
-    <h2 class="h2">Identité</h2>
-    <div class="kv">
-      <div class="kv__row"><span>Nom</span><strong>{{ agent.get("nom","") }}</strong></div>
-      <div class="kv__row"><span>Prénom</span><strong>{{ agent.get("prenom","") }}</strong></div>
-      <div class="kv__row"><span>Rôle</span><strong>{{ agent.get("role","") }}</strong></div>
-      <div class="kv__row"><span>Fonction</span><strong>{{ agent.get("fonction","") }}</strong></div>
-      <div class="kv__row"><span>Login</span><strong>{{ agent.get("login","") }}</strong></div>
-    </div>
-  </div>
-<h3>Historique</h3>
+    agent = {
+        "nom": session.get("nom"),
+        "prenom": session.get("prenom"),
+        "login": session.get("login"),
+        "role": session.get("role")
+    }
 
-<table>
-<tr><th>Date</th><th>Matériel</th><th>Action</th></tr>
+    mats = supabase.table("materiels") \
+        .select("*") \
+        .eq("agent", session["login"]) \
+        .execute().data
 
-{% for h in historique %}
-<tr>
-<td>{{ h.date[:10] }}</td>
-<td>{{ h.materiel }}</td>
-<td>{{ h.action }}</td>
-</tr>
-{% endfor %}
+    hist = supabase.table("historique") \
+        .select("*") \
+        .eq("agent", session["login"]) \
+        .order("date", desc=True) \
+        .execute().data
 
-</table>
-
-  <div class="card">
-    <h2 class="h2">Matériel affecté</h2>
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Matériel</th>
-          <th>N° série</th>
-          <th>Contrôle EPI</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for a in affectations %}
-        <tr>
-          <td>{{ a.get("nom","") }}</td>
-          <td>{{ a.get("serie","") }}</td>
-          <td>{{ a.get("controle_epi","") }}</td>
-        </tr>
-        {% else %}
-        <tr><td colspan="3" class="muted">Aucun matériel affecté.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-
-{% endblock %}
+    return render_template(
+        "ma_fiche.html",
+        agent=agent,
+        materiels=mats,
+        historique=hist,
+        **session
+    )
