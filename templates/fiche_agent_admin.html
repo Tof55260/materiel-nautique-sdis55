@@ -22,6 +22,12 @@
 <td>{{ m.date_controle }}</td>
 
 <td>
+<input type="number"
+       name="qte"
+       min="1"
+       max="{{ m.quantite }}"
+       value="1"
+       style="width:60px">
 
 <!-- STOCK / RÉFORME -->
 <form method="POST" action="/action_materiel">
