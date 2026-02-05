@@ -22,18 +22,18 @@
 
 {% if session.role == "Admin" %}
 
-<a href="{{ url_for('fiches_agents') }}">Fiches agents</a>
-
-<a href="{{ url_for('notifications') }}">
+<a href="{{ url_for('notifications') }}" class="notif-link">
 Notifications
-{% if session.nb_notifs and session.nb_notifs > 0 %}
-<span class="notif-badge">{{ session.nb_notifs }}</span>
+{% if session.notifications_unread and session.notifications_unread > 0 %}
+<span class="notif-badge">{{ session.notifications_unread }}</span>
 {% endif %}
 </a>
 
+<a href="{{ url_for('fiches_agents') }}">Fiches agents</a>
 <a href="{{ url_for('admin_agents') }}">Administration</a>
 
 {% endif %}
+
 
 <a href="{{ url_for('logout') }}">Déconnexion</a>
 
