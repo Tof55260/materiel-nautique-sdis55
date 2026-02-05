@@ -286,6 +286,33 @@ def admin_agents():
 
     agents = supabase.table("agents").select("*").execute().data
     return render_template("admin_agents.html", agents=agents, **session)
+@app.route("/admin/agents/create", methods=["POST"])
+def create_agent():
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    nom = request.form["nom"]
+    prenom = request.form["prenom"]
+    naissance = request.form["naissance"]
+    role = request.form["role"]
+
+    # login auto : prenom.nom
+    login = f"{prenom.lower()}.{nom.lower()}"
+
+    # mot de passe temporaire
+    password = "1234"
+
+    supabase.table("agents").insert({
+        "nom": nom,
+        "prenom": prenom,
+        "naissance": naissance,
+        "role": role,
+        "login": login,
+        "password": password
+    }).execute()
+
+    return redirect("/admin/agents")
 
 # ================= RUN =================
 
