@@ -217,6 +217,28 @@ def ma_fiche():
         historique=hist,
         **session
     )
+# ================= FICHES AGENTS =================
+
+@app.route("/fiches-agents")
+def fiches_agents():
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    agents = supabase.table("agents").select("*").execute().data
+
+    return render_template("fiches_agents.html", agents=agents, **session)
+# ================= FICHES AGENTS =================
+
+@app.route("/fiches-agents")
+def fiches_agents():
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    agents = supabase.table("agents").select("*").execute().data
+
+    return render_template("fiches_agents.html", agents=agents, **session)
 
 # ================= RUN =================
 
