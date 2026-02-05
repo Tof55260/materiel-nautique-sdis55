@@ -1,42 +1,32 @@
 <header class="topbar">
-
-<div class="brand">
-
-    <!-- LOGO -->
-    <img src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}"
-         style="height:48px;width:auto;">
-
+  <div class="brand">
+    <img src="{{ url_for('static', filename='images/logo_nautique.jpeg') }}" class="brand__logo" alt="Logo">
     <div class="titles">
-        <div class="main-title">MATÉRIEL NAUTIQUE</div>
-        <div class="sub-title">SDIS 55 — Équipe spécialisée</div>
+      <div class="main-title">MATÉRIEL NAUTIQUE</div>
+      <div class="sub-title">SDIS 55 — Équipe spécialisée</div>
     </div>
+  </div>
 
-</div>
+  <nav class="nav">
+    <a class="nav__link" href="{{ url_for('accueil') }}">Accueil</a>
+    <a class="nav__link" href="{{ url_for('inventaire') }}">Inventaire</a>
+    <a class="nav__link" href="{{ url_for('echanges') }}">Échanges</a>
+    <a class="nav__link" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
 
-<nav>
+    {% if session.role == "Admin" %}
+      <a class="nav__link" href="{{ url_for('fiches_agents') }}">Fiches agents</a>
+      <a class="nav__link" href="{{ url_for('admin_agents') }}">Administration</a>
 
-<a href="{{ url_for('accueil') }}">Accueil</a>
-<a href="{{ url_for('inventaire') }}">Inventaire</a>
-<a href="{{ url_for('echanges') }}">Échanges</a>
-<a href="{{ url_for('ma_fiche') }}">Ma fiche</a>
+      <a class="nav__link nav__notif" href="{{ url_for('notifications') }}" title="Notifications">
+        <span class="bell" aria-hidden="true">🔔</span>
+        <span>Notifications</span>
 
-{% if session.role == "Admin" %}
+        {% if nb_notifs|int > 0 %}
+          <span class="badge pulse">{{ nb_notifs }}</span>
+        {% endif %}
+      </a>
+    {% endif %}
 
-<a href="{{ url_for('notifications') }}" class="notif-link">
-Notifications
-{% if session.notifications_unread and session.notifications_unread > 0 %}
-<span class="notif-badge">{{ session.notifications_unread }}</span>
-{% endif %}
-</a>
-
-<a href="{{ url_for('fiches_agents') }}">Fiches agents</a>
-<a href="{{ url_for('admin_agents') }}">Administration</a>
-
-{% endif %}
-
-
-<a href="{{ url_for('logout') }}">Déconnexion</a>
-
-</nav>
-
+    <a class="nav__link" href="{{ url_for('logout') }}">Déconnexion</a>
+  </nav>
 </header>
