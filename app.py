@@ -127,6 +127,18 @@ def inventaire():
     agents = supabase.table("agents").select("*").execute().data
 
     return render_template("inventaire.html", items=items, agents=agents, **session)
+# ================= ECHANGES =================
+
+@app.route("/echanges")
+def echanges():
+
+    if "login" not in session:
+        return redirect("/")
+
+    e = supabase.table("echanges").select("*").order("date", desc=True).execute().data
+    stock = supabase.table("materiels").select("*").eq("statut","stock").execute().data
+
+    return render_template("echanges.html", echanges=e, stock=stock, **session)
 
 # ================= ADMIN AGENTS =================
 
