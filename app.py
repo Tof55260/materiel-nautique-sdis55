@@ -264,7 +264,7 @@ def create_agent():
     }).execute()
 
     return redirect("/admin/agents")
-   @app.route("/admin/agents/delete", methods=["POST"])
+  @app.route("/admin/agents/delete", methods=["POST"])
 def delete_agent():
 
     if session.get("role") != "Admin":
@@ -295,7 +295,6 @@ def delete_agent():
     supabase.table("agents").delete().eq("login", login).execute()
 
     return redirect("/admin/agents")
-
 
 @app.route("/admin/agents/delete", methods=["POST"])
 def delete_agent():
