@@ -264,6 +264,34 @@ def create_agent():
     }).execute()
 
     return redirect("/admin/agents")
+@app.route("/admin/agents/delete", methods=["POST"])
+def delete_agent():
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    login = request.form["login"]
+
+    # sécurité : on ne peut pas se supprimer soi-même
+    if login == session.get("login"):
+        return redirect("/admin/agents")
+
+    # supprimer matériel affecté
+    supabase.table("materiels").update({
+        "agent": None,
+        "statut": "stock"
+    }).eq("agent", login).execute()
+
+    # supprimer historique
+    supabase.table("historique").delete().eq("agent", login).execute()
+
+    # supprimer échanges
+    supabase.table("echanges").delete().eq("agent", login).execute()
+
+    # supprimer agent
+    supabase.table("agents").delete().eq("login", login).execute()
+
+    return redirect("/admin/agents")
 
 # ================= MA FICHE =================
 
