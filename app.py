@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, render_template, request, redirect, session
 from supabase import create_client
 from datetime import datetime
 import os
+import secrets
 
 app = Flask(__name__)
-app.secret_key = "secret"
+app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
@@ -18,7 +19,7 @@ def inject_notifs():
     return {"nb_notifs": session.get("nb_notifs", 0)}
 
 @app.before_request
-def refresh_notifs_count():
+def refresh_notifs():
 
     if "login" not in session:
         return
@@ -44,13 +45,13 @@ def add_historique(agent, action, materiel):
 
 # ================= LOGIN =================
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET","POST"])
 def login():
 
     if request.method == "POST":
 
         login = request.form["login"].strip().lower()
-        password = request.form.get("password")
+        password = request.form.get("password","")
 
         agents = supabase.table("agents").select("*").eq("login", login).execute().data
 
@@ -58,7 +59,7 @@ def login():
 
             agent = agents[0]
 
-            # première connexion → pas encore de mot de passe
+            # première connexion
             if agent["password"] is None:
                 session.update(agent)
                 return redirect("/premiere-connexion")
@@ -69,7 +70,6 @@ def login():
                 return redirect("/accueil")
 
     return render_template("login.html")
-
 
 
 @app.route("/logout")
@@ -85,7 +85,7 @@ def premiere_connexion():
     if "login" not in session:
         return redirect("/")
 
-    if request.method == "POST":
+    if request.method == "POST" and request.form["password"]:
 
         supabase.table("agents").update({
             "password": request.form["password"]
@@ -148,6 +148,7 @@ def action_materiel():
     if qte <= 0 or qte > stock:
         return redirect("/inventaire")
 
+    # affectation
     if action == "affecter":
 
         agent = request.form["agent"]
@@ -168,6 +169,7 @@ def action_materiel():
 
         add_historique(agent,"affectation",mat["nom"])
 
+    # retour stock
     if action == "stock":
 
         supabase.table("materiels").update({
@@ -177,6 +179,7 @@ def action_materiel():
 
         add_historique(session["login"],"retour stock",mat["nom"])
 
+    # réforme
     if action == "reforme":
 
         supabase.table("materiels").update({
@@ -186,7 +189,9 @@ def action_materiel():
         add_historique(session["login"],"réforme",mat["nom"])
 
     return redirect("/inventaire")
-    
+
+# ================= ECHANGES =================
+
 @app.route("/echanges")
 def echanges():
 
@@ -194,7 +199,7 @@ def echanges():
         return redirect("/")
 
     e = supabase.table("echanges").select("*").order("date", desc=True).execute().data
-    stock = supabase.table("materiels").select("*").eq("statut", "stock").execute().data
+    stock = supabase.table("materiels").select("*").eq("statut","stock").execute().data
 
     return render_template("echanges.html", echanges=e, stock=stock, **session)
 
@@ -233,6 +238,7 @@ def create_agent():
     }).execute()
 
     return redirect("/admin/agents")
+
 # ================= MA FICHE =================
 
 @app.route("/ma-fiche")
@@ -241,31 +247,10 @@ def ma_fiche():
     if "login" not in session:
         return redirect("/")
 
-    agent = {
-        "nom": session.get("nom"),
-        "prenom": session.get("prenom"),
-        "login": session.get("login"),
-        "role": session.get("role")
-    }
+    mats = supabase.table("materiels").select("*").eq("agent",session["login"]).execute().data
+    hist = supabase.table("historique").select("*").eq("agent",session["login"]).order("date",desc=True).execute().data
 
-    mats = supabase.table("materiels") \
-        .select("*") \
-        .eq("agent", session["login"]) \
-        .execute().data
-
-    hist = supabase.table("historique") \
-        .select("*") \
-        .eq("agent", session["login"]) \
-        .order("date", desc=True) \
-        .execute().data
-
-    return render_template(
-        "ma_fiche.html",
-        agent=agent,
-        materiels=mats,
-        historique=hist,
-        **session
-    )
+    return render_template("ma_fiche.html", materiels=mats, historique=hist, **session)
 
 # ================= RUN =================
 
