@@ -187,6 +187,7 @@ def admin_demande_echange():
     agent = request.form["agent"]
     materiel = request.form["materiel"]
 
+    # création échange
     supabase.table("echanges").insert({
         "agent": agent,
         "ancien_materiel": materiel,
@@ -194,9 +195,18 @@ def admin_demande_echange():
         "date": datetime.now().isoformat()
     }).execute()
 
+    # notification ADMIN
+    supabase.table("notifications").insert({
+        "message": f"Demande échange pour {agent}",
+        "lu": False,
+        "type": "echange",
+        "date": datetime.now().isoformat()
+    }).execute()
+
     add_historique(agent, "demande échange (admin)", materiel)
 
     return redirect(f"/admin/agent/{agent}")
+
 
 # ================= ECHANGES =================
 
