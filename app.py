@@ -180,6 +180,17 @@ def action_materiel():
         add_historique(session["login"],"réforme",mat["nom"])
 
     return redirect("/inventaire")
+    
+@app.route("/echanges")
+def echanges():
+
+    if "login" not in session:
+        return redirect("/")
+
+    e = supabase.table("echanges").select("*").order("date", desc=True).execute().data
+    stock = supabase.table("materiels").select("*").eq("statut", "stock").execute().data
+
+    return render_template("echanges.html", echanges=e, stock=stock, **session)
 
 # ================= ADMIN AGENTS =================
 
