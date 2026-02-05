@@ -27,7 +27,8 @@ def refresh_notifs_count():
     # uniquement admin : compteur des notifications non lues
     if session.get("role") == "Admin":
         try:
-            nb = supabase.table("notifications").select("id").eq("lu", False).execute().data
+            nb = supabase.table("notifications").select("id").is_("lu", False).execute().data
+
             session["nb_notifs"] = len(nb)
         except Exception:
             session["nb_notifs"] = 0
