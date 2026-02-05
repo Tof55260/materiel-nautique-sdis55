@@ -1,31 +1,73 @@
-@app.route("/ma-fiche")
-def ma_fiche():
+{% extends "base.html" %}
+{% block content %}
 
-    if "login" not in session:
-        return redirect("/")
+<h2>Ma fiche</h2>
 
-    agent = {
-        "nom": session.get("nom"),
-        "prenom": session.get("prenom"),
-        "login": session.get("login"),
-        "role": session.get("role")
-    }
+<div style="margin-bottom:20px">
 
-    mats = supabase.table("materiels") \
-        .select("*") \
-        .eq("agent", session["login"]) \
-        .execute().data
+    <strong>Nom :</strong> {{ agent.nom }}<br>
+    <strong>Prénom :</strong> {{ agent.prenom }}<br>
+    <strong>Login :</strong> {{ agent.login }}<br>
+    <strong>Profil :</strong> {{ agent.role }}
 
-    hist = supabase.table("historique") \
-        .select("*") \
-        .eq("agent", session["login"]) \
-        .order("date", desc=True) \
-        .execute().data
+</div>
 
-    return render_template(
-        "ma_fiche.html",
-        agent=agent,
-        materiels=mats,
-        historique=hist,
-        **session
-    )
+<hr>
+
+<h3>Mon matériel affecté</h3>
+
+<table>
+
+<tr>
+<th>Nom</th>
+<th>Série</th>
+<th>Type</th>
+<th>Contrôle EPI</th>
+</tr>
+
+{% for m in materiels %}
+<tr>
+<td>{{ m.nom }}</td>
+<td>{{ m.numero_serie }}</td>
+<td>{{ m.type }}</td>
+<td>{{ m.date_controle }}</td>
+</tr>
+{% else %}
+<tr>
+<td colspan="4" style="text-align:center;color:#777">
+Aucun matériel affecté
+</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<hr>
+
+<h3>Historique</h3>
+
+<table>
+
+<tr>
+<th>Date</th>
+<th>Matériel</th>
+<th>Action</th>
+</tr>
+
+{% for h in historique %}
+<tr>
+<td>{{ h.date[:16] }}</td>
+<td>{{ h.materiel }}</td>
+<td>{{ h.action }}</td>
+</tr>
+{% else %}
+<tr>
+<td colspan="3" style="text-align:center;color:#777">
+Aucun historique
+</td>
+</tr>
+{% endfor %}
+
+</table>
+
+{% endblock %}
