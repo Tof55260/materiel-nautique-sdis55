@@ -11,6 +11,29 @@ SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+from flask import g
+
+@app.context_processor
+def inject_notifs():
+    # Valeur par défaut
+    return {"nb_notifs": session.get("nb_notifs", 0)}
+
+@app.before_request
+def refresh_notifs_count():
+    # pas connecté -> rien
+    if "login" not in session:
+        return
+
+    # uniquement admin : compteur des notifications non lues
+    if session.get("role") == "Admin":
+        try:
+            nb = supabase.table("notifications").select("id").eq("lu", False).execute().data
+            session["nb_notifs"] = len(nb)
+        except Exception:
+            session["nb_notifs"] = 0
+    else:
+        session["nb_notifs"] = 0
+
 # ================= UTIL =================
 
 def add_historique(agent, action, materiel):
