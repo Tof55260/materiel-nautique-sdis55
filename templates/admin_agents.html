@@ -40,6 +40,7 @@ Mot de passe à définir lors de la première connexion.
 <th>Profil</th>
 <th>Login</th>
 <th>État</th>
+<th>Actions</th>
 </tr>
 
 {% for a in agents %}
@@ -49,12 +50,32 @@ Mot de passe à définir lors de la première connexion.
 <td>{{ a.naissance }}</td>
 <td>{{ a.role }}</td>
 <td>{{ a.login }}</td>
+
 <td>
-{% if a.password == "TEMP" %}
+{% if a.password == None %}
 <span style="color:red">À activer</span>
 {% else %}
 Actif
 {% endif %}
+</td>
+
+<td>
+
+{% if a.login != session.login %}
+<form method="POST"
+      action="/admin/agents/delete/{{ a.login }}"
+      onsubmit="return confirm('Supprimer définitivement {{ a.prenom }} {{ a.nom }} ?');"
+      style="display:inline">
+
+<button style="background:#c62828;color:white">
+🗑 Supprimer
+</button>
+
+</form>
+{% else %}
+—
+{% endif %}
+
 </td>
 </tr>
 {% endfor %}
