@@ -1,11 +1,55 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
+{% block content %}
 
+<h2>Administration des agents</h2>
 
-<h2>Administration</h2>
+<h3>Créer un agent</h3>
+
+<form method="POST" action="/admin/agents/create" class="form">
+
+<input name="nom" placeholder="Nom" required>
+<input name="prenom" placeholder="Prénom" required>
+
+<input type="date" name="naissance" required>
+
+<select name="role">
+    <option value="Plongeur">Plongeur</option>
+    <option value="SAS">SAS</option>
+    <option value="Admin">Admin</option>
+</select>
+
+<button>Créer</button>
+
+<p style="font-size:12px;color:#666">
+Login auto : prenom.nom — Mot de passe initial : 1234
+</p>
+
+</form>
+
+<hr>
+
+<h3>Liste des agents</h3>
+
+<table>
+
+<tr>
+<th>Nom</th>
+<th>Prénom</th>
+<th>Naissance</th>
+<th>Profil</th>
+<th>Login</th>
+</tr>
 
 {% for a in agents %}
-<p>{{ a.login }}</p>
+<tr>
+<td>{{ a.nom }}</td>
+<td>{{ a.prenom }}</td>
+<td>{{ a.naissance }}</td>
+<td>{{ a.role }}</td>
+<td>{{ a.login }}</td>
+</tr>
 {% endfor %}
 
+</table>
 
+{% endblock %}
