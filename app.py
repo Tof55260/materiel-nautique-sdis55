@@ -202,6 +202,18 @@ def echanges():
     stock = supabase.table("materiels").select("*").eq("statut","stock").execute().data
 
     return render_template("echanges.html", echanges=e, stock=stock, **session)
+    
+# ================= FICHES AGENTS =================
+
+@app.route("/fiches-agents")
+def fiches_agents():
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    agents = supabase.table("agents").select("*").execute().data
+
+    return render_template("fiches_agents.html", agents=agents, **session)
 
 # ================= ADMIN AGENTS =================
 
