@@ -264,17 +264,22 @@ def create_agent():
     }).execute()
 
     return redirect("/admin/agents")
-    @app.route("/admin/agents/delete/<login>", methods=["POST"])
-def delete_agent(login):
+   @app.route("/admin/agents/delete", methods=["POST"])
+def delete_agent():
 
     if session.get("role") != "Admin":
         return redirect("/accueil")
+
+    login = request.form.get("login")
+
+    if not login:
+        return redirect("/admin/agents")
 
     # sécurité : empêcher suppression de soi-même
     if login == session.get("login"):
         return redirect("/admin/agents")
 
-    # supprimer matériel affecté à l’agent
+    # remettre matériel en stock
     supabase.table("materiels").update({
         "agent": None,
         "statut": "stock"
@@ -290,6 +295,7 @@ def delete_agent(login):
     supabase.table("agents").delete().eq("login", login).execute()
 
     return redirect("/admin/agents")
+
 
 @app.route("/admin/agents/delete", methods=["POST"])
 def delete_agent():
