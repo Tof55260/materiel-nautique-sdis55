@@ -44,26 +44,32 @@ def add_historique(agent, action, materiel):
 
 # ================= LOGIN =================
 
-@app.route("/", methods=["GET","POST"])
+@app.route("/", methods=["GET", "POST"])
 def login():
 
     if request.method == "POST":
 
-        a = supabase.table("agents").select("*").eq("login", request.form["login"]).execute().data
+        login = request.form["login"].strip().lower()
+        password = request.form.get("password")
 
-     if a:
+        agents = supabase.table("agents").select("*").eq("login", login).execute().data
 
-    # première connexion
-    if not a[0]["password"]:
-        session.update(a[0])
-        return redirect("/premiere-connexion")
+        if agents:
 
-    # connexion normale
-    if request.form["password"] == a[0]["password"]:
-        session.update(a[0])
-        return redirect("/accueil")
+            agent = agents[0]
+
+            # première connexion → pas encore de mot de passe
+            if agent["password"] is None:
+                session.update(agent)
+                return redirect("/premiere-connexion")
+
+            # connexion normale
+            if password == agent["password"]:
+                session.update(agent)
+                return redirect("/accueil")
 
     return render_template("login.html")
+
 
 
 @app.route("/logout")
