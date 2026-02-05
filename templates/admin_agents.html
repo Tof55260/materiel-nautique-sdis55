@@ -18,10 +18,11 @@
     <option value="Admin">Admin</option>
 </select>
 
-<button>Créer</button>
+<button>Créer agent</button>
 
-<p style="font-size:12px;color:#666">
-Login auto : prenom.nom — Mot de passe initial : 1234
+<p style="font-size:12px;color:#666;margin-top:10px">
+Login généré automatiquement : première lettre du prénom + nom<br>
+Mot de passe à définir lors de la première connexion.
 </p>
 
 </form>
@@ -38,6 +39,7 @@ Login auto : prenom.nom — Mot de passe initial : 1234
 <th>Naissance</th>
 <th>Profil</th>
 <th>Login</th>
+<th>État</th>
 </tr>
 
 {% for a in agents %}
@@ -47,6 +49,13 @@ Login auto : prenom.nom — Mot de passe initial : 1234
 <td>{{ a.naissance }}</td>
 <td>{{ a.role }}</td>
 <td>{{ a.login }}</td>
+<td>
+{% if a.password == "TEMP" %}
+<span style="color:red">À activer</span>
+{% else %}
+Actif
+{% endif %}
+</td>
 </tr>
 {% endfor %}
 
