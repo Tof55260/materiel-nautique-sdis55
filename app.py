@@ -25,11 +25,14 @@ def add_historique(agent, action, materiel):
 
 @app.route("/", methods=["GET", "POST"])
 def login():
+
     if request.method == "POST":
         a = supabase.table("agents").select("*").eq("login", request.form["login"]).execute().data
+
         if a and a[0]["password"] == request.form["password"]:
             session.update(a[0])
             return redirect("/accueil")
+
     return render_template("login.html")
 
 @app.route("/logout")
@@ -41,14 +44,15 @@ def logout():
 
 @app.route("/accueil")
 def accueil():
+
     if "login" not in session:
         return redirect("/")
-    nb = supabase.table("notifications").select("*").eq("lu",False).execute().data
 
-session["nb_notifs"] = len(nb)
+    nb = supabase.table("notifications").select("*").eq("lu", False).execute().data
 
-return render_template("index.html", now=datetime.now, **session)
+    session["nb_notifs"] = len(nb)
 
+    return render_template("index.html", now=datetime.now, **session)
 
 # ================= INVENTAIRE =================
 
@@ -90,10 +94,10 @@ def action_materiel():
     mat = supabase.table("materiels").select("*").eq("id", mid).execute().data[0]
     stock = mat.get("quantite") or 0
 
-    if qte > stock or qte <= 0:
+    if qte <= 0 or qte > stock:
         return redirect("/inventaire")
 
-    # ----- AFFECTER -----
+    # AFFECTER
     if action == "affecter":
 
         agent = request.form["agent"]
@@ -114,7 +118,7 @@ def action_materiel():
 
         add_historique(agent, "affectation", mat["nom"])
 
-    # ----- REMETTRE STOCK -----
+    # RETOUR STOCK
     if action == "stock":
 
         supabase.table("materiels").update({
@@ -124,7 +128,7 @@ def action_materiel():
 
         add_historique(session["login"], "retour stock", mat["nom"])
 
-    # ----- REFORME -----
+    # REFORME
     if action == "reforme":
 
         supabase.table("materiels").update({
@@ -135,7 +139,7 @@ def action_materiel():
 
     return redirect("/inventaire")
 
-# ================= DEMANDE AGENT =================
+# ================= DEMANDE ECHANGE =================
 
 @app.route("/demande_echange", methods=["POST"])
 def demande_echange():
@@ -147,15 +151,10 @@ def demande_echange():
         "date": datetime.now().isoformat()
     }).execute()
 
-    supabase.table("notifications").insert({
-        "message": f"{session['prenom']} demande un échange",
-        "lu": False,
-        "date": datetime.now().isoformat()
-    }).execute()
-
     add_historique(session["login"], "demande échange", request.form["materiel"])
 
     return redirect("/echanges")
+
 @app.route("/admin/demande_echange", methods=["POST"])
 def admin_demande_echange():
 
@@ -172,12 +171,6 @@ def admin_demande_echange():
         "date": datetime.now().isoformat()
     }).execute()
 
-    supabase.table("notifications").insert({
-        "message": f"Admin a initié un échange pour {agent}",
-        "lu": False,
-        "date": datetime.now().isoformat()
-    }).execute()
-
     add_historique(agent, "demande échange (admin)", materiel)
 
     return redirect(f"/admin/agent/{agent}")
@@ -188,7 +181,7 @@ def admin_demande_echange():
 def echanges():
 
     e = supabase.table("echanges").select("*").order("date", desc=True).execute().data
-    stock = supabase.table("materiels").select("*").eq("statut", "stock").execute().data
+    stock = supabase.table("materiels").select("*").eq("statut","stock").execute().data
 
     return render_template("echanges.html", echanges=e, stock=stock, **session)
 
@@ -200,35 +193,23 @@ def valider(id):
     ex = supabase.table("echanges").select("*").eq("id", id).execute().data[0]
 
     supabase.table("materiels").update({
-        "statut": "stock",
-        "agent": None
+        "statut":"stock",
+        "agent":None
     }).eq("numero_serie", ex["ancien_materiel"]).execute()
 
     supabase.table("materiels").update({
-        "statut": "affecte",
-        "agent": ex["agent"]
+        "statut":"affecte",
+        "agent":ex["agent"]
     }).eq("numero_serie", nouveau).execute()
 
     supabase.table("echanges").update({
-        "statut": "valide",
-        "nouveau_materiel": nouveau
+        "statut":"valide",
+        "nouveau_materiel":nouveau
     }).eq("id", id).execute()
 
     add_historique(ex["agent"], "échange validé", nouveau)
 
     return redirect("/echanges")
-@app.route("/notifications")
-def notifications():
-
-    if session.get("role") != "Admin":
-        return redirect("/accueil")
-
-    notes = supabase.table("notifications") \
-        .select("*") \
-        .order("date", desc=True) \
-        .execute().data
-
-    return render_template("notifications.html", notifications=notes, **session)
 
 # ================= MA FICHE =================
 
@@ -252,6 +233,7 @@ def ma_fiche():
 
 @app.route("/fiches-agents")
 def fiches_agents():
+
     agents = supabase.table("agents").select("*").execute().data
     return render_template("fiches_agents.html", agents=agents, **session)
 
@@ -264,7 +246,6 @@ def fiche_agent_admin(login):
     agent = supabase.table("agents").select("*").eq("login", login).execute().data[0]
 
     materiels = supabase.table("materiels").select("*").eq("agent", login).execute().data
-
     historique = supabase.table("historique").select("*").eq("agent", login).order("date", desc=True).execute().data
 
     return render_template("fiche_agent_admin.html", agent=agent, materiels=materiels, historique=historique, **session)
