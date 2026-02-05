@@ -51,17 +51,17 @@ def login():
 
         a = supabase.table("agents").select("*").eq("login", request.form["login"]).execute().data
 
-        if a:
+     if a:
 
-            session.update(a[0])
+    # première connexion
+    if not a[0]["password"]:
+        session.update(a[0])
+        return redirect("/premiere-connexion")
 
-            # première connexion
-            if not a[0]["password"]:
-                return redirect("/premiere-connexion")
-
-            # connexion normale
-            if request.form["password"] == a[0]["password"]:
-                return redirect("/accueil")
+    # connexion normale
+    if request.form["password"] == a[0]["password"]:
+        session.update(a[0])
+        return redirect("/accueil")
 
     return render_template("login.html")
 
@@ -227,6 +227,39 @@ def create_agent():
     }).execute()
 
     return redirect("/admin/agents")
+# ================= MA FICHE =================
+
+@app.route("/ma-fiche")
+def ma_fiche():
+
+    if "login" not in session:
+        return redirect("/")
+
+    agent = {
+        "nom": session.get("nom"),
+        "prenom": session.get("prenom"),
+        "login": session.get("login"),
+        "role": session.get("role")
+    }
+
+    mats = supabase.table("materiels") \
+        .select("*") \
+        .eq("agent", session["login"]) \
+        .execute().data
+
+    hist = supabase.table("historique") \
+        .select("*") \
+        .eq("agent", session["login"]) \
+        .order("date", desc=True) \
+        .execute().data
+
+    return render_template(
+        "ma_fiche.html",
+        agent=agent,
+        materiels=mats,
+        historique=hist,
+        **session
+    )
 
 # ================= RUN =================
 
