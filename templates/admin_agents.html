@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 {% block content %}
 
@@ -62,16 +61,22 @@ Actif
 
 <td>
 
+{% if a.login != session.login %}
 <form method="POST"
-      action="/admin/agents/delete/{{ a.login }}"
+      action="/admin/agents/delete"
       onsubmit="return confirm('Supprimer définitivement {{ a.prenom }} {{ a.nom }} ?');"
       style="display:inline">
 
-<button style="background:#c62828;color:white">
-🗑 Supprimer
-</button>
+    <input type="hidden" name="login" value="{{ a.login }}">
+
+    <button type="submit" style="background:#c62828;color:white">
+        🗑 Supprimer
+    </button>
 
 </form>
+{% else %}
+—
+{% endif %}
 
 </td>
 
