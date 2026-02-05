@@ -51,16 +51,20 @@ def login():
 
         a = supabase.table("agents").select("*").eq("login", request.form["login"]).execute().data
 
-        if a and a[0]["password"] == request.form["password"]:
+        if a:
 
             session.update(a[0])
 
-            if a[0]["password"] == "TEMP":
+            # première connexion
+            if not a[0]["password"]:
                 return redirect("/premiere-connexion")
 
-            return redirect("/accueil")
+            # connexion normale
+            if request.form["password"] == a[0]["password"]:
+                return redirect("/accueil")
 
     return render_template("login.html")
+
 
 @app.route("/logout")
 def logout():
@@ -208,7 +212,7 @@ def create_agent():
         "naissance":naissance,
         "role":role,
         "login":login,
-        "password":"TEMP"
+        "password": None
     }).execute()
 
     return redirect("/admin/agents")
