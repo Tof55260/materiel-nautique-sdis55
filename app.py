@@ -210,6 +210,31 @@ def valider(id):
     add_historique(ex["agent"], "échange validé", nouveau)
 
     return redirect("/echanges")
+    
+# ================= NOTIFICATIONS =================
+
+@app.route("/notifications")
+def notifications():
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    notes = supabase.table("notifications") \
+        .select("*") \
+        .order("date", desc=True) \
+        .execute().data
+
+    return render_template("notifications.html", notifications=notes, **session)
+
+
+@app.route("/notifications/lu/<int:id>")
+def notif_lu(id):
+
+    supabase.table("notifications").update({
+        "lu": True
+    }).eq("id", id).execute()
+
+    return redirect("/notifications")
 
 # ================= MA FICHE =================
 
