@@ -127,6 +127,7 @@ def inventaire():
     agents = supabase.table("agents").select("*").execute().data
 
     return render_template("inventaire.html", items=items, agents=agents, **session)
+
 # ================= ECHANGES =================
 
 @app.route("/echanges")
@@ -139,6 +140,30 @@ def echanges():
     stock = supabase.table("materiels").select("*").eq("statut","stock").execute().data
 
     return render_template("echanges.html", echanges=e, stock=stock, **session)
+
+# ================= MA FICHE =================
+
+@app.route("/ma-fiche")
+def ma_fiche():
+
+    if "login" not in session:
+        return redirect("/")
+
+    mats = supabase.table("materiels").select("*").eq("agent",session["login"]).execute().data
+    hist = supabase.table("historique").select("*").eq("agent",session["login"]).order("date",desc=True).execute().data
+
+    return render_template("ma_fiche.html", materiels=mats, historique=hist, **session)
+
+# ================= FICHES AGENTS =================
+
+@app.route("/fiches-agents")
+def fiches_agents():
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    agents = supabase.table("agents").select("*").execute().data
+    return render_template("fiches_agents.html", agents=agents, **session)
 
 # ================= ADMIN AGENTS =================
 
@@ -157,8 +182,7 @@ def create_agent():
     nom = request.form["nom"].strip().lower()
     prenom = request.form["prenom"].strip().lower()
 
-    login = prenom[0] + nom
-    login = login.replace(" ","").replace("-","")
+    login = (prenom[0] + nom).replace(" ","").replace("-","")
 
     supabase.table("agents").insert({
         "nom": nom.capitalize(),
@@ -176,10 +200,7 @@ def delete_agent():
 
     login = request.form.get("login")
 
-    if not login:
-        return redirect("/admin/agents")
-
-    if login == session.get("login"):
+    if not login or login == session.get("login"):
         return redirect("/admin/agents")
 
     supabase.table("materiels").update({
@@ -192,53 +213,17 @@ def delete_agent():
     supabase.table("agents").delete().eq("login", login).execute()
 
     return redirect("/admin/agents")
-# ================= MA FICHE =================
 
-@app.route("/ma-fiche")
-def ma_fiche():
+# ================= NOTIFICATIONS =================
 
-    if "login" not in session:
-        return redirect("/")
-
-    mats = supabase.table("materiels") \
-        .select("*") \
-        .eq("agent", session["login"]) \
-        .execute().data
-
-    hist = supabase.table("historique") \
-        .select("*") \
-        .eq("agent", session["login"]) \
-        .order("date", desc=True) \
-        .execute().data
-
-    return render_template(
-        "ma_fiche.html",
-        materiels=mats,
-        historique=hist,
-        **session
-    )
-# ================= FICHES AGENTS =================
-
-@app.route("/fiches-agents")
-def fiches_agents():
+@app.route("/notifications")
+def notifications():
 
     if session.get("role") != "Admin":
         return redirect("/accueil")
 
-    agents = supabase.table("agents").select("*").execute().data
-
-    return render_template("fiches_agents.html", agents=agents, **session)
-# ================= FICHES AGENTS =================
-
-@app.route("/fiches-agents")
-def fiches_agents():
-
-    if session.get("role") != "Admin":
-        return redirect("/accueil")
-
-    agents = supabase.table("agents").select("*").execute().data
-
-    return render_template("fiches_agents.html", agents=agents, **session)
+    notes = supabase.table("notifications").select("*").order("date",desc=True).execute().data
+    return render_template("notifications.html", notifications=notes, **session)
 
 # ================= RUN =================
 
