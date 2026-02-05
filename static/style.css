@@ -263,3 +263,99 @@ padding:2px 6px;
 font-size:12px;
 margin-left:4px;
 }
+/* ===== Topbar / Brand ===== */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:12px 18px;
+  background:#0b3a7a; /* bleu */
+  color:#fff;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:260px;
+}
+
+.brand__logo{
+  height:52px;           /* <-- LOGO maîtrisé */
+  width:auto;
+  border-radius:8px;
+  background:#fff;
+  padding:4px;
+  box-shadow:0 2px 10px rgba(0,0,0,.15);
+}
+
+.titles{ line-height:1.1; }
+.main-title{
+  font-weight:800;
+  letter-spacing:.6px;
+  font-size:16px;
+}
+.sub-title{
+  opacity:.9;
+  font-size:13px;
+  font-weight:600;
+}
+
+/* ===== Nav (pas de scroll horizontal) ===== */
+.nav{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;        /* <-- évite la barre de défilement */
+  justify-content:flex-end;
+}
+
+.nav__link{
+  color:#fff;
+  text-decoration:none;
+  font-weight:700;
+  font-size:14px;
+  padding:8px 10px;
+  border-radius:10px;
+  transition:.15s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
+}
+
+.nav__link:hover{
+  background:rgba(255,255,255,.14);
+}
+
+.nav__notif{
+  position:relative;
+}
+
+/* ===== Badge + Pulse ===== */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:22px;
+  height:22px;
+  padding:0 7px;
+  border-radius:999px;
+  background:#e53935; /* rouge */
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  line-height:1;
+  box-shadow:0 6px 14px rgba(0,0,0,.25);
+}
+
+.pulse{
+  animation:pulse 1.4s infinite;
+}
+
+@keyframes pulse{
+  0%{ transform:scale(1); box-shadow:0 0 0 0 rgba(229,57,53,.55), 0 6px 14px rgba(0,0,0,.25); }
+  70%{ transform:scale(1.03); box-shadow:0 0 0 10px rgba(229,57,53,0), 0 6px 14px rgba(0,0,0,.25); }
+  100%{ transform:scale(1); box-shadow:0 0 0 0 rgba(229,57,53,0), 0 6px 14px rgba(0,0,0,.25); }
+}
