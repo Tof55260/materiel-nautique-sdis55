@@ -32,6 +32,18 @@ def refresh_notifs():
             session["nb_notifs"] = 0
     else:
         session["nb_notifs"] = 0
+        
+@app.route("/notifications/lu/<int:id>")
+def notif_lu(id):
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    supabase.table("notifications").update({
+        "lu": True
+    }).eq("id", id).execute()
+
+    return redirect("/notifications")
 
 # ================= UTIL =================
 
