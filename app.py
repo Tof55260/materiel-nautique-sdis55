@@ -128,6 +128,35 @@ def inventaire():
 
     return render_template("inventaire.html", items=items, agents=agents, **session)
 
+# ================= DEMANDE ECHANGE AGENT =================
+
+@app.route("/demande_echange", methods=["POST"])
+def demande_echange():
+
+    if "login" not in session:
+        return redirect("/")
+
+    materiel = request.form["materiel"]
+    commentaire = request.form["commentaire"]
+
+    supabase.table("echanges").insert({
+        "agent": session["login"],
+        "ancien_materiel": materiel,
+        "commentaire": commentaire,
+        "statut": "en_attente",
+        "date": datetime.now().isoformat()
+    }).execute()
+
+    supabase.table("notifications").insert({
+        "message": f"{session['prenom']} demande un échange : {commentaire}",
+        "lu": False,
+        "date": datetime.now().isoformat()
+    }).execute()
+
+    add_historique(session["login"], "demande échange", materiel)
+
+    return redirect("/ma-fiche")
+
 # ================= ECHANGES =================
 
 @app.route("/echanges")
@@ -142,6 +171,7 @@ def echanges():
     return render_template("echanges.html", echanges=e, stock=stock, **session)
 
 # ================= MA FICHE =================
+
 @app.route("/ma-fiche")
 def ma_fiche():
 
@@ -155,24 +185,11 @@ def ma_fiche():
         "role": session.get("role")
     }
 
-    mats = supabase.table("materiels") \
-        .select("*") \
-        .eq("agent", session["login"]) \
-        .execute().data
+    mats = supabase.table("materiels").select("*").eq("agent", session["login"]).execute().data
 
-    hist = supabase.table("historique") \
-        .select("*") \
-        .eq("agent", session["login"]) \
-        .order("date", desc=True) \
-        .execute().data
+    hist = supabase.table("historique").select("*").eq("agent", session["login"]).order("date", desc=True).execute().data
 
-    return render_template(
-        "ma_fiche.html",
-        agent=agent,
-        materiels=mats,
-        historique=hist,
-        **session
-    )
+    return render_template("ma_fiche.html", agent=agent, materiels=mats, historique=hist, **session)
 
 # ================= FICHES AGENTS =================
 
