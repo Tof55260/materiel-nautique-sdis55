@@ -25,7 +25,7 @@
 
 <td>
 
-<!-- ACTION STOCK / REFORME -->
+<!-- STOCK / REFORME -->
 
 <form method="POST" action="/action_materiel" style="display:inline">
 
@@ -43,16 +43,54 @@
 
 </form>
 
-<!-- ECHANGE ADMIN -->
+</td>
+</tr>
+{% endfor %}
+</table>
 
+<hr>
+
+<h3>Demandes d’échange</h3>
+
+<table>
+<tr>
+<th>Date</th>
+<th>Matériel</th>
+<th>Commentaire</th>
+<th>Statut</th>
+<th>Action</th>
+</tr>
+
+{% for e in echanges %}
+<tr>
+<td>{{ e.date[:16] }}</td>
+<td>{{ e.ancien_materiel }}</td>
+<td>{{ e.commentaire }}</td>
+
+<td>
+{% if e.statut == "en_attente" %}
+<span style="color:orange">En attente</span>
+{% elif e.statut == "valide" %}
+<span style="color:green">Validé</span>
+{% elif e.statut == "refuse" %}
+<span style="color:red">Refusé</span>
+{% else %}
+{{ e.statut }}
+{% endif %}
+</td>
+
+<td>
+
+{% if e.statut == "en_attente" %}
 <form method="POST" action="/admin/demande_echange" style="display:inline">
 
-<input type="hidden" name="materiel" value="{{ m.numero_serie }}">
-<input type="hidden" name="agent" value="{{ agent.login }}">
+<input type="hidden" name="id" value="{{ e.id }}">
 
-<button style="background:#ff9800;color:white">Échanger</button>
+<button name="action" value="valide">✅ Valider</button>
+<button name="action" value="refuse">❌ Refuser</button>
 
 </form>
+{% endif %}
 
 </td>
 </tr>
