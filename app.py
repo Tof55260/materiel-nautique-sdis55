@@ -197,11 +197,33 @@ def ma_fiche():
         "role": session.get("role")
     }
 
-    mats = supabase.table("materiels").select("*").eq("agent", session["login"]).execute().data
+    mats = supabase.table("materiels") \
+        .select("*") \
+        .eq("agent", session["login"]) \
+        .execute().data
 
-    hist = supabase.table("historique").select("*").eq("agent", session["login"]).order("date", desc=True).execute().data
+    hist = supabase.table("historique") \
+        .select("*") \
+        .eq("agent", session["login"]) \
+        .order("date", desc=True) \
+        .execute().data
 
-    return render_template("ma_fiche.html", agent=agent, materiels=mats, historique=hist, **session)
+    # demandes d'échange de l'agent
+    echanges = supabase.table("echanges") \
+        .select("*") \
+        .eq("agent", session["login"]) \
+        .order("date", desc=True) \
+        .execute().data
+
+    return render_template(
+        "ma_fiche.html",
+        agent=agent,
+        materiels=mats,
+        historique=hist,
+        echanges=echanges,
+        **session
+    )
+
 
 # ================= FICHES AGENTS =================
 
