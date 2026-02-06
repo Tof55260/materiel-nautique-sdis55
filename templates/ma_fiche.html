@@ -3,44 +3,69 @@
 
 <h2>Ma fiche</h2>
 
-<div style="margin-bottom:20px">
-
-    <strong>Nom :</strong> {{ agent.nom }}<br>
-    <strong>Prénom :</strong> {{ agent.prenom }}<br>
-    <strong>Login :</strong> {{ agent.login }}<br>
-    <strong>Profil :</strong> {{ agent.role }}
-
-</div>
-
-<hr>
-
-<h3>Mon matériel affecté</h3>
+<h3>Matériel affecté</h3>
 
 <table>
-
 <tr>
 <th>Nom</th>
 <th>Série</th>
 <th>Type</th>
-<th>Contrôle EPI</th>
+<th>Commentaire</th>
+<th>Action</th>
 </tr>
 
 {% for m in materiels %}
 <tr>
+
 <td>{{ m.nom }}</td>
 <td>{{ m.numero_serie }}</td>
 <td>{{ m.type }}</td>
-<td>{{ m.date_controle }}</td>
-</tr>
-{% else %}
-<tr>
-<td colspan="4" style="text-align:center;color:#777">
-Aucun matériel affecté
+
+<form method="POST" action="/demande_echange">
+
+<td>
+<input name="commentaire"
+       placeholder="Motif de l'échange..."
+       required
+       style="width:200px">
 </td>
+
+<td>
+
+<input type="hidden" name="materiel" value="{{ m.numero_serie }}">
+
+<button style="background:#ff9800;color:white">
+🔁 Demander échange
+</button>
+
+</td>
+
+</form>
+
 </tr>
 {% endfor %}
-
 </table>
+
+<hr>
+
+<h3>Historique</h3>
+
+<table>
+<tr>
+<th>Date</th>
+<th>Matériel</th>
+<th>Action</th>
+</tr>
+
+{% for h in historique %}
+<tr>
+<td>{{ h.date[:16] }}</td>
+<td>{{ h.materiel }}</td>
+<td>{{ h.action }}</td>
+</tr>
+{% endfor %}
+</table>
+
 
 <hr>
 
