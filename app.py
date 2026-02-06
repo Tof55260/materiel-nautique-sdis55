@@ -242,6 +242,38 @@ def echanges():
     stock = supabase.table("materiels").select("*").eq("statut", "stock").execute().data
 
     return render_template("echanges.html", echanges=e, stock=stock, **session)
+@app.route("/admin/traiter_echange", methods=["POST"])
+def traiter_echange():
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    eid = request.form["id"]
+    nouveau = request.form["nouveau"]
+
+    e = supabase.table("echanges").select("*").eq("id", eid).execute().data[0]
+
+    # ancien retourne stock
+    supabase.table("materiels").update({
+        "agent": None,
+        "statut": "stock"
+    }).eq("numero_serie", e["ancien_materiel"]).execute()
+
+    # nouveau affecté agent
+    supabase.table("materiels").update({
+        "agent": e["agent"],
+        "statut": "affecte"
+    }).eq("numero_serie", nouveau).execute()
+
+    # échange traité
+    supabase.table("echanges").update({
+        "statut": "traite",
+        "nouveau_materiel": nouveau
+    }).eq("id", eid).execute()
+
+    add_historique(e["agent"], "échange traité", nouveau)
+
+    return redirect("/echanges")
 
 
 # ================= MA FICHE =================
