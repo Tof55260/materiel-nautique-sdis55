@@ -1,98 +1,31 @@
-{% extends "base.html" %}
-{% block content %}
-
-<h2>Ma fiche</h2>
-
-<h3>Matériel affecté</h3>
+{% if echanges %}
 
 <table>
 <tr>
-<th>Nom</th>
-<th>Série</th>
-<th>Type</th>
+<th>Date</th>
+<th>Matériel</th>
 <th>Commentaire</th>
-<th>Action</th>
+<th>Statut</th>
 </tr>
 
-{% for m in materiels %}
+{% for e in echanges %}
 <tr>
-
-<td>{{ m.nom }}</td>
-<td>{{ m.numero_serie }}</td>
-<td>{{ m.type }}</td>
-
-<form method="POST" action="/demande_echange">
-
+<td>{{ e.date[:16] }}</td>
+<td>{{ e.ancien_materiel }}</td>
+<td>{{ e.commentaire }}</td>
 <td>
-<input name="commentaire"
-       placeholder="Motif de l'échange..."
-       required
-       style="width:200px">
-</td>
-
-<td>
-
-<input type="hidden" name="materiel" value="{{ m.numero_serie }}">
-
-<button style="background:#ff9800;color:white">
-🔁 Demander échange
-</button>
-
-</td>
-
-</form>
-
-</tr>
-{% endfor %}
-</table>
-
-<hr>
-
-<h3>Historique</h3>
-
-<table>
-<tr>
-<th>Date</th>
-<th>Matériel</th>
-<th>Action</th>
-</tr>
-
-{% for h in historique %}
-<tr>
-<td>{{ h.date[:16] }}</td>
-<td>{{ h.materiel }}</td>
-<td>{{ h.action }}</td>
-</tr>
-{% endfor %}
-</table>
-
-
-<hr>
-
-<h3>Historique</h3>
-
-<table>
-
-<tr>
-<th>Date</th>
-<th>Matériel</th>
-<th>Action</th>
-</tr>
-
-{% for h in historique %}
-<tr>
-<td>{{ h.date[:16] }}</td>
-<td>{{ h.materiel }}</td>
-<td>{{ h.action }}</td>
-</tr>
+{% if e.statut == "en_attente" %}
+<span style="color:orange">En attente</span>
+{% elif e.statut == "valide" %}
+<span style="color:green">Validé</span>
 {% else %}
-<tr>
-<td colspan="3" style="text-align:center;color:#777">
-Aucun historique
+{{ e.statut }}
+{% endif %}
 </td>
 </tr>
 {% endfor %}
-
 </table>
 
-{% endblock %}
+{% else %}
+<p style="color:#666">Aucune demande d’échange pour le moment.</p>
+{% endif %}
