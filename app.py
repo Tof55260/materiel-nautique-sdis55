@@ -330,6 +330,34 @@ def fiche_agent_admin(login):
         echanges=echanges_agent,
         **session
     )
+@app.route("/admin/demande_echange", methods=["POST"])
+def admin_demande_echange():
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    eid = request.form.get("id")
+    action = request.form.get("action")   # valide / refuse
+
+    if not eid or action not in ["valide", "refuse"]:
+        return redirect("/echanges")
+
+    # mise à jour statut
+    supabase.table("echanges").update({
+        "statut": action
+    }).eq("id", eid).execute()
+
+    # notif agent (optionnel mais sympa)
+    try:
+        supabase.table("notifications").insert({
+            "message": f"Demande d’échange {action}",
+            "lu": False,
+            "date": datetime.now().isoformat()
+        }).execute()
+    except:
+        pass
+
+    return redirect("/echanges")
 
 
 # ================= ADMIN AGENTS =================
