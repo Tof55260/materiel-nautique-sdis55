@@ -1,3 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Ma fiche</h2>
+
+<h3>{{ agent.prenom }} {{ agent.nom }}</h3>
+<p><b>Login :</b> {{ agent.login }}</p>
+<p><b>Profil :</b> {{ agent.role }}</p>
+
+<hr>
+
+<h3>Matériel affecté</h3>
+
+{% if materiels %}
+
+<table>
+<tr>
+<th>Nom</th>
+<th>Série</th>
+<th>Type</th>
+<th>Date contrôle</th>
+<th>Demande échange</th>
+</tr>
+
+{% for m in materiels %}
+<tr>
+<td>{{ m.nom }}</td>
+<td>{{ m.numero_serie }}</td>
+<td>{{ m.type }}</td>
+<td>{{ m.date_controle }}</td>
+
+<td>
+
+<form method="POST" action="/demande-echange">
+
+<input type="hidden" name="materiel" value="{{ m.numero_serie }}">
+
+<textarea name="commentaire"
+          placeholder="Expliquez la raison…"
+          required
+          style="width:200px;height:50px"></textarea>
+
+<br>
+
+<button style="background:#ff9800;color:white">
+🔄 Demander échange
+</button>
+
+</form>
+
+</td>
+</tr>
+{% endfor %}
+
+</table>
+
+{% else %}
+<p>Aucun matériel affecté.</p>
+{% endif %}
+
+<hr>
+
+<h3>Mes demandes d’échange</h3>
+
 {% if echanges %}
 
 <table>
@@ -13,6 +77,7 @@
 <td>{{ e.date[:16] }}</td>
 <td>{{ e.ancien_materiel }}</td>
 <td>{{ e.commentaire }}</td>
+
 <td>
 {% if e.statut == "en_attente" %}
 <span style="color:orange">En attente</span>
@@ -27,5 +92,33 @@
 </table>
 
 {% else %}
-<p style="color:#666">Aucune demande d’échange pour le moment.</p>
+<p style="color:#666">Aucune demande d’échange.</p>
 {% endif %}
+
+<hr>
+
+<h3>Historique</h3>
+
+{% if historique %}
+
+<table>
+<tr>
+<th>Date</th>
+<th>Action</th>
+<th>Matériel</th>
+</tr>
+
+{% for h in historique %}
+<tr>
+<td>{{ h.date[:16] }}</td>
+<td>{{ h.action }}</td>
+<td>{{ h.materiel }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% else %}
+<p>Aucun historique.</p>
+{% endif %}
+
+{% endblock %}
