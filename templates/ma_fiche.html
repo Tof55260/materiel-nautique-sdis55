@@ -31,22 +31,23 @@
 
 <td>
 
-<form method="POST" action="/demande-echange">
+<form method="POST" action="/demande_echange">
 
-<input type="hidden" name="materiel" value="{{ m.numero_serie }}">
+  <input type="hidden" name="materiel" value="{{ m.numero_serie }}">
 
-<textarea name="commentaire"
-          placeholder="Expliquez la raison…"
-          required
-          style="width:200px;height:50px"></textarea>
+  <textarea name="commentaire"
+            placeholder="Explique la raison de la demande…"
+            required
+            style="width:250px;height:60px"></textarea>
 
-<br>
+  <br>
 
-<button style="background:#ff9800;color:white">
-🔄 Demander échange
-</button>
+  <button style="background:#ff9800;color:white">
+    🔁 Demander échange
+  </button>
 
 </form>
+
 
 </td>
 </tr>
