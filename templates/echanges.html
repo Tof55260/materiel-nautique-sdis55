@@ -1,44 +1,79 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="pagehead">
-  <h1 class="h1">Échanges</h1>
-  <p class="muted">Suivi des demandes</p>
-</div>
+<h2>Gestion des échanges</h2>
 
-<div class="card">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Agent</th>
-        <th>Matériel</th>
-        <th>Motif</th>
-        <th>Statut</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for d in demandes %}
-      <tr>
-        <td>{{ d.get("date","") }}</td>
-        <td>{{ d.get("agent","") }}</td>
-        <td>{{ d.get("materiel","") }}</td>
-        <td>{{ d.get("motif","") }}</td>
-        <td>
-          {% set s = d.get("statut","En attente") %}
-          <span class="badge
-            {% if s == 'Validé' %} badge--ok
-            {% elif s == 'Refusé' %} badge--ko
-            {% else %} badge--wait
-            {% endif %}
-          ">{{ s }}</span>
-        </td>
-      </tr>
-      {% else %}
-      <tr><td colspan="5" class="muted">Aucune demande pour le moment.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+<table>
+
+<tr>
+<th>Date</th>
+<th>Agent</th>
+<th>Ancien matériel</th>
+<th>Commentaire</th>
+<th>Statut</th>
+<th>Nouveau matériel</th>
+<th>Action</th>
+</tr>
+
+{% for e in echanges %}
+<tr>
+
+<td>{{ e.date[:16] }}</td>
+<td>{{ e.agent }}</td>
+<td>{{ e.ancien_materiel }}</td>
+<td>{{ e.commentaire }}</td>
+
+<td>
+{% if e.statut == "en_attente" %}
+<span style="color:orange;font-weight:bold">En attente</span>
+{% elif e.statut == "traite" %}
+<span style="color:green;font-weight:bold">Traité</span>
+{% else %}
+{{ e.statut }}
+{% endif %}
+</td>
+
+<td>
+
+{% if e.statut == "en_attente" %}
+
+<form method="POST" action="/admin/traiter_echange">
+
+<input type="hidden" name="id" value="{{ e.id }}">
+
+<select name="nouveau" required>
+
+<option value="">— Choisir matériel —</option>
+
+{% for s in stock %}
+<option value="{{ s.numero_serie }}">
+{{ s.nom }} — {{ s.numero_serie }}
+</option>
+{% endfor %}
+
+</select>
+
+</td>
+
+<td>
+
+<button style="background:#4caf50;color:white;padding:5px 10px">
+✅ Traiter
+</button>
+
+</form>
+
+{% else %}
+
+—
+
+{% endif %}
+
+</td>
+
+</tr>
+{% endfor %}
+
+</table>
 
 {% endblock %}
