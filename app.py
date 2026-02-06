@@ -284,6 +284,46 @@ def delete_agent():
     supabase.table("agents").delete().eq("login", login).execute()
 
     return redirect("/admin/agents")
+# ================= FICHE AGENT ADMIN =================
+
+@app.route("/admin/agent/<login>")
+def fiche_agent_admin(login):
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    agent_data = supabase.table("agents").select("*").eq("login", login).execute().data
+
+    if not agent_data:
+        return redirect("/fiches-agents")
+
+    agent = agent_data[0]
+
+    materiels = supabase.table("materiels") \
+        .select("*") \
+        .eq("agent", login) \
+        .execute().data
+
+    historique = supabase.table("historique") \
+        .select("*") \
+        .eq("agent", login) \
+        .order("date", desc=True) \
+        .execute().data
+
+    echanges = supabase.table("echanges") \
+        .select("*") \
+        .eq("agent", login) \
+        .order("date", desc=True) \
+        .execute().data
+
+    return render_template(
+        "fiche_agent_admin.html",
+        agent=agent,
+        materiels=materiels,
+        historique=historique,
+        echanges=echanges,
+        **session
+    )
 
 # ================= NOTIFICATIONS =================
 
