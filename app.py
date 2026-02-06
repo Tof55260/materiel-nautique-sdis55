@@ -142,17 +142,6 @@ def echanges():
     return render_template("echanges.html", echanges=e, stock=stock, **session)
 
 # ================= MA FICHE =================
-
-@app.route("/ma-fiche")
-def ma_fiche():
-
-    if "login" not in session:
-        return redirect("/")
-
-    mats = supabase.table("materiels").select("*").eq("agent",session["login"]).execute().data
-    hist = supabase.table("historique").select("*").eq("agent",session["login"]).order("date",desc=True).execute().data
-
-    return render_template("ma_fiche.html", materiels=mats, historique=hist, **session)
 @app.route("/ma-fiche")
 def ma_fiche():
 
