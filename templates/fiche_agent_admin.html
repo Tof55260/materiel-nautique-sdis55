@@ -43,6 +43,22 @@
 
 </form>
 
+<!-- FORCER ECHANGE ADMIN -->
+
+<form method="POST"
+      action="/demande_echange"
+      style="display:inline"
+      onsubmit="return confirm('Créer une demande d’échange pour ce matériel ?');">
+
+<input type="hidden" name="materiel" value="{{ m.numero_serie }}">
+<input type="hidden" name="commentaire" value="Demande initiée par admin">
+
+<button style="background:#ff9800;color:white">
+🔁 Échanger
+</button>
+
+</form>
+
 </td>
 </tr>
 {% endfor %}
