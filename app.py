@@ -299,7 +299,12 @@ def ma_fiche():
         "role": session.get("role")
     }
 
-    mats = supabase.table("materiels").select("*").eq("agent", session["login"]).execute().data
+    mats = supabase.table("materiels") \
+    .select("*") \
+    .eq("agent", session["login"]) \
+    .eq("statut", "affecte") \
+    .execute().data
+
     hist = supabase.table("historique").select("*").eq("agent", session["login"]).order("date", desc=True).execute().data
 
     # suivi demandes échange
@@ -359,7 +364,12 @@ def fiche_agent_admin(login):
 
     agent = agent_data[0]
 
-    materiels = supabase.table("materiels").select("*").eq("agent", login).execute().data
+    materiels = supabase.table("materiels") \
+    .select("*") \
+    .eq("agent", login) \
+    .eq("statut", "affecte") \
+    .execute().data
+
     historique = supabase.table("historique").select("*").eq("agent", login).order("date", desc=True).execute().data
     echanges_agent = supabase.table("echanges").select("*").eq("agent", login).order("date", desc=True).execute().data
 
