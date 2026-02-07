@@ -111,18 +111,27 @@ def accueil():
 def inventaire():
     if "login" not in session:
         return redirect("/")
+if request.method == "POST":
 
-    if request.method == "POST":
-        supabase.table("materiels").insert({
-            "nom": request.form["nom"],
-            "numero_serie": request.form["numero"],
-            "type": request.form["type"],
-            "date_controle": request.form.get("date") or None,
-            "quantite": int(request.form["quantite"]),
-            "statut": "stock"
-        }).execute()
+    agent = request.form.get("agent") or None
 
-        return redirect("/inventaire")
+    statut = "affecte" if agent else "stock"
+
+    supabase.table("materiels").insert({
+        "nom": request.form["nom"],
+        "numero_serie": request.form["numero"],
+        "type": request.form["type"],
+        "date_controle": request.form["date"] or None,
+        "quantite": int(request.form["quantite"]),
+        "statut": statut,
+        "agent": agent
+    }).execute()
+
+    if agent:
+        add_historique(agent, "affectation directe", request.form["nom"])
+
+    return redirect("/inventaire")
+
 
     items = supabase.table("materiels").select("*").neq("statut", "reforme").execute().data
     agents = supabase.table("agents").select("*").execute().data
