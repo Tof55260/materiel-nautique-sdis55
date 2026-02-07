@@ -13,6 +13,16 @@
 
     <!-- Quantité ajout -->
     <input name="quantite" type="number" value="1" min="1" required placeholder="Quantité">
+    
+<select name="agent">
+    <option value="">— Stock magasin —</option>
+
+    {% for a in agents %}
+    <option value="{{ a.login }}">
+        {{ a.prenom }} {{ a.nom }}
+    </option>
+    {% endfor %}
+</select>
 
     <button>Ajouter</button>
 </form>
