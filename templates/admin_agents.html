@@ -62,18 +62,35 @@ Actif
 <td>
 
 {% if a.login != session.login %}
+
+<!-- RESET MOT DE PASSE -->
+<form method="POST"
+      action="/admin/agents/reset_password"
+      onsubmit="return confirm('Réinitialiser le mot de passe de {{ a.prenom }} {{ a.nom }} ?');"
+      style="display:inline">
+
+<input type="hidden" name="login" value="{{ a.login }}">
+
+<button type="submit" style="background:#1976d2;color:white">
+🔑 Reset
+</button>
+
+</form>
+
+<!-- SUPPRIMER -->
 <form method="POST"
       action="/admin/agents/delete"
       onsubmit="return confirm('Supprimer définitivement {{ a.prenom }} {{ a.nom }} ?');"
       style="display:inline">
 
-    <input type="hidden" name="login" value="{{ a.login }}">
+<input type="hidden" name="login" value="{{ a.login }}">
 
-    <button type="submit" style="background:#c62828;color:white">
-        🗑 Supprimer
-    </button>
+<button type="submit" style="background:#c62828;color:white">
+🗑 Supprimer
+</button>
 
 </form>
+
 {% else %}
 —
 {% endif %}
