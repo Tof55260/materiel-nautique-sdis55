@@ -483,6 +483,27 @@ def delete_agent():
 
     supabase.table("agents").delete().eq("login", login_value).execute()
     return redirect("/admin/agents")
+@app.route("/admin/agents/reset_password", methods=["POST"])
+def reset_password():
+
+    if session.get("role") != "Admin":
+        return redirect("/accueil")
+
+    login_value = request.form.get("login")
+
+    if not login_value:
+        return redirect("/admin/agents")
+
+    # empêche reset de soi-même
+    if login_value == session.get("login"):
+        return redirect("/admin/agents")
+
+    supabase.table("agents").update({
+        "password": None
+    }).eq("login", login_value).execute()
+
+    return redirect("/admin/agents")
+
 
 
 # ================= RUN =================
