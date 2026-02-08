@@ -503,6 +503,213 @@ def reset_password():
     }).eq("login", login_value).execute()
 
     return redirect("/admin/agents")
+from datetime import date as dt_date
+
+def current_year():
+    return datetime.now().year
+
+def can_edit_interventions():
+    return session.get("role") in ["Admin", "CU"]
+
+def role_allows_plongeur(role: str) -> bool:
+    # CU => plongeur + sas
+    # Plongeur => plongeur + sas
+    # SAS => sas only
+    return role in ["CU", "Plongeur"]
+
+def role_allows_sas(role: str) -> bool:
+    return role in ["CU", "Plongeur", "SAS"]
+
+def agents_for_roles():
+    """
+    Retourne 3 listes d'agents filtrées pour les sélections :
+    - cu_list : role == CU
+    - plongeurs_list : role in (Plongeur, CU)
+    - sas_list : role in (SAS, Plongeur, CU)
+    """
+    all_agents = supabase.table("agents").select("login,nom,prenom,role").execute().data or []
+
+    cu_list = [a for a in all_agents if a.get("role") == "CU"]
+    plongeurs_list = [a for a in all_agents if role_allows_plongeur(a.get("role", ""))]
+    sas_list = [a for a in all_agents if role_allows_sas(a.get("role", ""))]
+
+    # tri alpha pour confort
+    keyfn = lambda a: (a.get("nom",""), a.get("prenom",""))
+    cu_list.sort(key=keyfn)
+    plongeurs_list.sort(key=keyfn)
+    sas_list.sort(key=keyfn)
+
+    return cu_list, plongeurs_list, sas_list
+
+
+# ================= ACCUEIL (compteur interventions) =================
+
+# ⚠️ Remplace ta route /accueil par celle-ci si tu veux le compteur
+@app.route("/accueil")
+def accueil():
+
+    if "login" not in session:
+        return redirect("/")
+
+    y = current_year()
+    try:
+        # Compte des interventions de l'année
+        rows = supabase.table("interventions").select("id").eq("annee", y).execute().data or []
+        nb_interventions = len(rows)
+    except Exception:
+        nb_interventions = 0
+
+    return render_template(
+        "index.html",
+        now=datetime.now,
+        nb_interventions=nb_interventions,
+        annee_interventions=y,
+        **session
+    )
+
+
+# ================= INTERVENTIONS =================
+
+@app.route("/interventions", methods=["GET", "POST"])
+def interventions():
+
+    if "login" not in session:
+        return redirect("/")
+
+    # année affichée
+    y = request.args.get("annee")
+    try:
+        y = int(y) if y else current_year()
+    except ValueError:
+        y = current_year()
+
+    # création (Admin/CU uniquement)
+    if request.method == "POST":
+        if not can_edit_interventions():
+            return redirect("/interventions?annee=" + str(y))
+
+        numero = request.form.get("numero", "").strip()
+        date_str = request.form.get("date", "").strip()
+        lieu = request.form.get("lieu", "").strip()
+        motif = request.form.get("motif", "").strip()
+
+        cu = request.form.get("cu") or None
+        plongeurs = request.form.getlist("plongeurs")  # multi
+        sas = request.form.getlist("sas")              # multi
+
+        if not (numero and date_str and lieu and motif):
+            return redirect("/interventions?annee=" + str(y))
+
+        # année calculée depuis la date
+        try:
+            y_insert = int(date_str[:4])
+        except Exception:
+            y_insert = y
+
+        supabase.table("interventions").insert({
+            "numero": numero,
+            "date": date_str,
+            "lieu": lieu,
+            "motif": motif,
+            "annee": y_insert,
+            "cu": cu,
+            "plongeurs": plongeurs,
+            "sas": sas
+        }).execute()
+
+        return redirect("/interventions?annee=" + str(y_insert))
+
+    # GET : affichage
+    interventions_list = supabase.table("interventions") \
+        .select("*") \
+        .eq("annee", y) \
+        .order("date", desc=True) \
+        .execute().data or []
+
+    # années disponibles pour le filtre
+    years_rows = supabase.table("interventions").select("annee").execute().data or []
+    years = sorted({r.get("annee") for r in years_rows if r.get("annee")}, reverse=True)
+    if not years:
+        years = [current_year()]
+
+    cu_list, plongeurs_list, sas_list = agents_for_roles()
+
+    # mapping login -> "Prenom NOM"
+    all_agents = supabase.table("agents").select("login,nom,prenom").execute().data or []
+    name_map = {a["login"]: f"{a.get('prenom','')} {a.get('nom','')}".strip() for a in all_agents}
+
+    return render_template(
+        "interventions.html",
+        interventions=interventions_list,
+        years=years,
+        selected_year=y,
+        can_edit=can_edit_interventions(),
+        cu_list=cu_list,
+        plongeurs_list=plongeurs_list,
+        sas_list=sas_list,
+        name_map=name_map,
+        **session
+    )
+
+
+@app.route("/interventions/<int:interv_id>/edit", methods=["GET", "POST"])
+def edit_intervention(interv_id):
+
+    if "login" not in session:
+        return redirect("/")
+
+    if not can_edit_interventions():
+        return redirect("/interventions")
+
+    rows = supabase.table("interventions").select("*").eq("id", interv_id).execute().data or []
+    if not rows:
+        return redirect("/interventions")
+
+    itv = rows[0]
+
+    if request.method == "POST":
+        numero = request.form.get("numero", "").strip()
+        date_str = request.form.get("date", "").strip()
+        lieu = request.form.get("lieu", "").strip()
+        motif = request.form.get("motif", "").strip()
+
+        cu = request.form.get("cu") or None
+        plongeurs = request.form.getlist("plongeurs")
+        sas = request.form.getlist("sas")
+
+        if not (numero and date_str and lieu and motif):
+            return redirect(f"/interventions/{interv_id}/edit")
+
+        try:
+            y_insert = int(date_str[:4])
+        except Exception:
+            y_insert = itv.get("annee") or current_year()
+
+        supabase.table("interventions").update({
+            "numero": numero,
+            "date": date_str,
+            "lieu": lieu,
+            "motif": motif,
+            "annee": y_insert,
+            "cu": cu,
+            "plongeurs": plongeurs,
+            "sas": sas
+        }).eq("id", interv_id).execute()
+
+        return redirect("/interventions?annee=" + str(y_insert))
+
+    cu_list, plongeurs_list, sas_list = agents_for_roles()
+
+    return render_template(
+        "intervention_edit.html",
+        itv=itv,
+        can_edit=True,
+        cu_list=cu_list,
+        plongeurs_list=plongeurs_list,
+        sas_list=sas_list,
+        **session
+    )
+
 
 
 
