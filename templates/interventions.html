@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Interventions</h2>
+
+<form method="GET" action="/interventions" style="margin-bottom:15px">
+  <label>Année :</label>
+  <select name="annee" onchange="this.form.submit()">
+    {% for y in years %}
+      <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+{% if can_edit %}
+<h3>Ajouter une intervention</h3>
+
+<form method="POST" action="/interventions?annee={{ selected_year }}" class="form" style="margin-bottom:20px">
+  <input name="numero" placeholder="Numéro intervention" required>
+  <input type="date" name="date" required>
+  <input name="lieu" placeholder="Lieu" required>
+  <input name="motif" placeholder="Motif" required>
+
+  <div style="display:grid;gap:10px;grid-template-columns:1fr 1fr 1fr;margin-top:10px">
+    <div>
+      <label>CU</label>
+      <select name="cu">
+        <option value="">—</option>
+        {% for a in cu_list %}
+          <option value="{{ a.login }}">{{ a.prenom }} {{ a.nom }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label>Plongeurs</label>
+      <select name="plongeurs" multiple size="6" style="width:100%">
+        {% for a in plongeurs_list %}
+          <option value="{{ a.login }}">{{ a.prenom }} {{ a.nom }}</option>
+        {% endfor %}
+      </select>
+      <div style="font-size:12px;color:#666">Ctrl/Shift pour multi-sélection</div>
+    </div>
+
+    <div>
+      <label>SAS</label>
+      <select name="sas" multiple size="6" style="width:100%">
+        {% for a in sas_list %}
+          <option value="{{ a.login }}">{{ a.prenom }} {{ a.nom }}</option>
+        {% endfor %}
+      </select>
+      <div style="font-size:12px;color:#666">Ctrl/Shift pour multi-sélection</div>
+    </div>
+  </div>
+
+  <button style="margin-top:10px">Ajouter</button>
+</form>
+{% endif %}
+
+<h3>Liste {{ selected_year }}</h3>
+
+<table>
+  <tr>
+    <th>N°</th>
+    <th>Date</th>
+    <th>Lieu</th>
+    <th>Motif</th>
+    <th>Participants</th>
+    {% if can_edit %}<th>Actions</th>{% endif %}
+  </tr>
+
+  {% for itv in interventions %}
+  <tr>
+    <td><strong>{{ itv.numero }}</strong></td>
+    <td>{{ itv.date }}</td>
+    <td>{{ itv.lieu }}</td>
+    <td>{{ itv.motif }}</td>
+
+    <td style="min-width:260px">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+
+        {% if itv.cu %}
+          <span style="padding:2px 8px;border-radius:999px;background:#e3f2fd">
+            CU : {{ name_map.get(itv.cu, itv.cu) }}
+          </span>
+        {% endif %}
+
+        {% if itv.plongeurs %}
+          <span style="padding:2px 8px;border-radius:999px;background:#e8f5e9">
+            Plg : {{ itv.plongeurs|map('string')|join(', ') }}
+          </span>
+        {% endif %}
+
+        {% if itv.sas %}
+          <span style="padding:2px 8px;border-radius:999px;background:#fff3e0">
+            SAS : {{ itv.sas|map('string')|join(', ') }}
+          </span>
+        {% endif %}
+      </div>
+
+      <!-- Affichage "lisible" (facultatif) -->
+      <div style="font-size:12px;color:#666;margin-top:6px">
+        {% if itv.plongeurs %}
+          Plongeurs : {{ itv.plongeurs|map('string')|join(', ') }}
+        {% endif %}
+        {% if itv.sas %}
+          <br>SAS : {{ itv.sas|map('string')|join(', ') }}
+        {% endif %}
+      </div>
+    </td>
+
+    {% if can_edit %}
+    <td>
+      <a href="/interventions/{{ itv.id }}/edit">✏️ Modifier</a>
+    </td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}
