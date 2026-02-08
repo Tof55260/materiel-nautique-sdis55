@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Modifier intervention</h2>
+
+<form method="POST" class="form">
+
+  <input name="numero" value="{{ itv.numero }}" required>
+  <input type="date" name="date" value="{{ itv.date }}" required>
+  <input name="lieu" value="{{ itv.lieu }}" required>
+  <input name="motif" value="{{ itv.motif }}" required>
+
+  <div style="display:grid;gap:10px;grid-template-columns:1fr 1fr 1fr;margin-top:10px">
+    <div>
+      <label>CU</label>
+      <select name="cu">
+        <option value="">—</option>
+        {% for a in cu_list %}
+          <option value="{{ a.login }}" {% if itv.cu == a.login %}selected{% endif %}>
+            {{ a.prenom }} {{ a.nom }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label>Plongeurs</label>
+      <select name="plongeurs" multiple size="8" style="width:100%">
+        {% for a in plongeurs_list %}
+          <option value="{{ a.login }}"
+            {% if itv.plongeurs and (a.login in itv.plongeurs) %}selected{% endif %}>
+            {{ a.prenom }} {{ a.nom }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label>SAS</label>
+      <select name="sas" multiple size="8" style="width:100%">
+        {% for a in sas_list %}
+          <option value="{{ a.login }}"
+            {% if itv.sas and (a.login in itv.sas) %}selected{% endif %}>
+            {{ a.prenom }} {{ a.nom }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <button style="margin-top:10px">Enregistrer</button>
+  <a href="/interventions?annee={{ itv.annee }}" style="margin-left:10px">Annuler</a>
+
+</form>
+
+{% endblock %}
