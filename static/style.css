@@ -436,3 +436,151 @@ th, td {
 }
 
 }
+/* ================= INTERVENTIONS ================= */
+
+.interventions-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+
+.interventions-header h2 {
+  margin:0;
+}
+
+/* Badge année */
+.badge-year {
+  background:#002b55;
+  color:white;
+  padding:6px 14px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:14px;
+}
+
+/* Carte intervention */
+.intervention-card {
+  border:1px solid #dde3ec;
+  border-left:6px solid #002b55;
+  border-radius:10px;
+  padding:16px 18px;
+  margin-bottom:15px;
+  background:#f9fbfe;
+  transition:.15s;
+}
+
+.intervention-card:hover {
+  background:#ffffff;
+  box-shadow:0 6px 16px rgba(0,0,0,.08);
+}
+
+/* Ligne principale */
+.intervention-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.intervention-num {
+  font-weight:900;
+  font-size:16px;
+  color:#002b55;
+}
+
+.intervention-date {
+  font-size:13px;
+  font-weight:700;
+  color:#666;
+}
+
+/* Infos */
+.intervention-body {
+  margin-top:10px;
+}
+
+.intervention-lieu {
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.intervention-motif {
+  font-size:14px;
+  color:#444;
+}
+
+/* Participants */
+.participants {
+  margin-top:10px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+/* Badges rôles */
+.role-badge {
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.role-cu {
+  background:#e3f2fd;
+  color:#0d47a1;
+}
+
+.role-plongeur {
+  background:#e8f5e9;
+  color:#1b5e20;
+}
+
+.role-sas {
+  background:#fff3e0;
+  color:#e65100;
+}
+
+/* Actions admin */
+.intervention-actions {
+  margin-top:12px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.intervention-actions a {
+  font-size:13px;
+  font-weight:700;
+  text-decoration:none;
+  padding:6px 12px;
+  border-radius:6px;
+  background:#004a8f;
+  color:white;
+}
+
+.intervention-actions a:hover {
+  background:#c40018;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+
+  .intervention-top {
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .intervention-actions {
+    width:100%;
+  }
+
+  .intervention-actions a {
+    width:100%;
+    text-align:center;
+  }
+}
