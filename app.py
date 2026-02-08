@@ -94,16 +94,6 @@ def premiere_connexion():
 
     return render_template("premiere_connexion.html")
 
-
-# ================= ACCUEIL =================
-
-@app.route("/accueil")
-def accueil():
-    if "login" not in session:
-        return redirect("/")
-    return render_template("index.html", now=datetime.now, **session)
-
-
 # ================= INVENTAIRE =================
 
 @app.route("/inventaire", methods=["GET", "POST"])
