@@ -13,4 +13,14 @@
 
 </div>
 
+<div class="card" style="margin-top:15px">
+  <h3>Interventions</h3>
+  <p style="font-size:20px;margin:0">
+    <strong>{{ nb_interventions|default(0) }}</strong> interventions en {{ annee_interventions|default("") }}
+  </p>
+  <p style="margin-top:8px">
+    <a href="{{ url_for('interventions') }}">Voir le registre</a>
+  </p>
+</div>
+
 {% endblock %}
