@@ -18,6 +18,8 @@
     <a class="nav__link" href="{{ url_for('inventaire') }}">Inventaire</a>
     <a class="nav__link" href="{{ url_for('echanges') }}">Échanges</a>
     <a class="nav__link" href="{{ url_for('ma_fiche') }}">Ma fiche</a>
+    <a class="nav__link" href="{{ url_for('interventions') }}">Interventions</a>
+
 
     {% if session.get("role") == "Admin" %}
 
